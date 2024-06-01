@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\ECommerce.Common.Cryptography\ECommerce.Common.Cryptography.csproj" />
+      <ProjectReference Include="..\ECommerce.Common.Domain\ECommerce.Common.Domain.csproj" />
+      <ProjectReference Include="..\ECommerce.Common.Infrastructure\ECommerce.Common.Infrastructure.csproj" />
+    </ItemGroup>
+
+</Project>
