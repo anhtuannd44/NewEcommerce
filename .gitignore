@@ -371,3 +371,5 @@ FodyWeavers.xsd
 **/API/.idea/*
 #Upload Folder
 /API/Ecommerce.Microservices/ECommerce.Shop/ECommerce.Shop.Web/Uploads/
+**/.idea
+.idea

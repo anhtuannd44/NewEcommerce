@@ -11,6 +11,9 @@ import OrderOriginDialog from './order-origin/OrderOriginDialog'
 import { IOrderAttribute, IOrderOrigin, IUser } from 'src/redux/admin/interface/IAdminGeneralState'
 import PaperHeader from 'src/views/shared/paper/PaperHeader'
 import PaperContent from 'src/views/shared/paper/PaperContent'
+import OrderAttributeDialog from './order-attribute/OrderAttributeDialog'
+import { Controller, Control, FieldValues, useFormContext } from 'react-hook-form'
+import _ from 'lodash'
 
 export interface IAdditionalInfoBoxProps {
   userList: IUser[] | undefined
@@ -39,6 +42,8 @@ const BadgeContentSpan = styled('span')(({ theme }) => ({
 const AdditionalInfoBox = (props: IAdditionalInfoBoxProps) => {
   const { userList, orderRequest, orderRequestBody, orderRequestBodyControls, orderAttributeList, orderOriginList, filterUserOptions, updateDateDelivery, updateOrderAttribute, updateGeneralField } =
     props
+
+  const { control } = useFormContext()
 
   const [isOpenOrderOriginDialog, setIsOpenOrderOriginDialog] = useState<boolean>(false)
 
@@ -82,7 +87,7 @@ const AdditionalInfoBox = (props: IAdditionalInfoBoxProps) => {
               type='text'
               label='Mã đơn'
               placeholder='VD: 2024xxxxxx'
-              helperText='Nếu để trống, mã đơn sẽ tự động sinh ra với định dạng: Năm + Thứ tự tăng dần'
+              helperText='Tự sinh nếu để trống'
               sx={{
                 fontSize: '0.4rem !important'
               }}
@@ -92,108 +97,132 @@ const AdditionalInfoBox = (props: IAdditionalInfoBoxProps) => {
             />
           </Grid>
           <Grid item xs={12}>
-            <Autocomplete
-              fullWidth
-              size='small'
-              options={userList || []}
-              renderInput={params => (
-                <FormControl error={orderRequest.isSubmitted && !orderRequestBodyControls.picStaffId.result.isValid} variant='standard' fullWidth>
-                  <TextField {...params} error={orderRequest.isSubmitted && !orderRequestBodyControls.picStaffId.result.isValid} label='Người phụ trách' />
-                  <FormHelperText>{orderRequest.isSubmitted && orderRequestBodyControls.picStaffId.result.errorMessage}</FormHelperText>
-                </FormControl>
-              )}
-              onChange={(event, newValue, reason) => {
-                if (event.type === 'keydown' && ((event as React.KeyboardEvent).key === 'Backspace' || (event as React.KeyboardEvent).key === 'Delete') && reason === 'removeOption') {
-                  return
-                }
-                updateGeneralField('picStaffId', newValue?.id || '')
+            <Controller
+              name='picStaffId'
+              control={control}
+              render={({ field: { onChange, value }, fieldState }) => {
+                const users = [...(userList || [])]
+                const userIds = users.map(item => item.id)
+                return (
+                  <Autocomplete
+                    fullWidth
+                    size='small'
+                    options={userIds}
+                    renderInput={params => (
+                      <FormControl error={!!fieldState.error} variant='standard' fullWidth>
+                        <TextField {...params} error={!!fieldState.error} label='Người phụ trách' />
+                        <FormHelperText>{fieldState.error?.message}</FormHelperText>
+                      </FormControl>
+                    )}
+                    onChange={(event, newValue, reason) => {
+                      onChange(newValue)
+                    }}
+                    getOptionLabel={option => users.find(x => x.id === option)?.fullName || ''}
+                    renderOption={(props, option) => {
+                      const user = users.find(x => x.id === option)
+                      return (
+                        <li key={option} {...props}>
+                          <Badge
+                            overlap='circular'
+                            badgeContent={<BadgeContentSpan />}
+                            anchorOrigin={{
+                              vertical: 'bottom',
+                              horizontal: 'right'
+                            }}>
+                            <Avatar alt='John Doe' src='/images/avatars/1.png' sx={{ width: '2.5rem', height: '2.5rem' }} />
+                          </Badge>
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              marginLeft: 3,
+                              alignItems: 'flex-start',
+                              flexDirection: 'column'
+                            }}>
+                            <Typography sx={{ fontWeight: 600 }}>{user?.fullName}</Typography>
+                          </Box>
+                        </li>
+                      )
+                    }}
+                  />
+                )
               }}
-              filterOptions={filterUserOptions}
-              getOptionLabel={option => option.fullName}
-              renderOption={(props, option) => (
-                <li key={option.id} {...props}>
-                  <Badge
-                    overlap='circular'
-                    badgeContent={<BadgeContentSpan />}
-                    anchorOrigin={{
-                      vertical: 'bottom',
-                      horizontal: 'right'
-                    }}>
-                    <Avatar alt='John Doe' src='/images/avatars/1.png' sx={{ width: '2.5rem', height: '2.5rem' }} />
-                  </Badge>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      marginLeft: 3,
-                      alignItems: 'flex-start',
-                      flexDirection: 'column'
-                    }}>
-                    <Typography sx={{ fontWeight: 600 }}>{option.fullName}</Typography>
-                  </Box>
-                </li>
-              )}
             />
           </Grid>
           <Grid item xs={12}>
-            <Autocomplete
-              fullWidth
-              size='small'
-              id='orderOriginId'
-              options={orderOriginList?.filter(x => x.isActive) || []}
-              renderInput={params => (
-                <FormControl variant='standard' fullWidth>
-                  <TextField {...params} label='Nguồn' />
-                </FormControl>
-              )}
-              onChange={(event, newValue, reason) => {
-                if (event.type === 'keydown' && ((event as React.KeyboardEvent).key === 'Backspace' || (event as React.KeyboardEvent).key === 'Delete') && reason === 'removeOption') {
-                  return
-                }
-                updateGeneralField('orderOriginId', newValue?.id || '')
-              }}
-              renderOption={(props, option) => (
-                <li key={option.id} {...props}>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      marginLeft: 3,
-                      alignItems: 'flex-start',
-                      flexDirection: 'column'
-                    }}>
-                    <Typography sx={{ fontWeight: 400, py: 1 }}>{option.name}</Typography>
-                  </Box>
-                </li>
-              )}
-              getOptionLabel={option => option.name}
-              PaperComponent={({ children }) => {
+            <Controller
+              name='orderOriginId'
+              control={control}
+              render={({ field: { onChange, value }, fieldState }) => {
+                const orderOrigins = _.clone(orderOriginList || [])
+                const orderOriginIds = orderOrigins.filter(x => x.isActive).map(item => item.id)
                 return (
-                  <Paper>
-                    <Button
-                      fullWidth
-                      startIcon={
-                        <Plus
-                          sx={{
-                            border: '1px solid',
-                            borderRadius: '99px'
-                          }}
-                        />
+                  <Autocomplete
+                    fullWidth
+                    size='small'
+                    id='≈å'
+                    options={orderOriginIds}
+                    renderInput={params => (
+                      <FormControl error={!!fieldState.error} variant='standard' fullWidth>
+                        <TextField {...params} error={!!fieldState.error} label='Nguồn' />
+                        <FormHelperText>{fieldState.error?.message}</FormHelperText>
+                      </FormControl>
+                    )}
+                    onChange={(event, newValue, reason) => {
+                      if (event.type === 'keydown' && ((event as React.KeyboardEvent).key === 'Backspace' || (event as React.KeyboardEvent).key === 'Delete') && reason === 'removeOption') {
+                        return
                       }
-                      sx={{
-                        fontSize: '.85rem',
-                        fontWeight: 400,
-                        px: 7,
-                        py: 2,
-                        m: 0
-                      }}
-                      onMouseDown={() => {
-                        handleOpenOrderOriginDialog()
-                      }}
-                      style={{ justifyContent: 'flex-start' }}>
-                      Thêm/Chỉnh sửa nguồn
-                    </Button>
-                    <Divider sx={{ margin: 0 }} />
-                    {children}
-                  </Paper>
+                      onChange(newValue)
+                    }}
+                    renderOption={(props, option) => {
+                      const item = orderOrigins.find(x => x.id === option)
+                      return (
+                        <li key={option} {...props}>
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              marginLeft: 3,
+                              alignItems: 'flex-start',
+                              flexDirection: 'column'
+                            }}>
+                            <Typography sx={{ fontWeight: 400, py: 1 }}>{item?.name}</Typography>
+                          </Box>
+                        </li>
+                      )
+                    }}
+                    getOptionLabel={option => orderOrigins.find(x => x.id === option)?.name || ''}
+                    PaperComponent={({ children }) => {
+                      const a = 1
+                      return (
+                        <Paper>
+                          <Button
+                            fullWidth
+                            startIcon={
+                              <Plus
+                                sx={{
+                                  border: '1px solid',
+                                  borderRadius: '99px'
+                                }}
+                              />
+                            }
+                            sx={{
+                              fontSize: '.85rem',
+                              fontWeight: 400,
+                              px: 7,
+                              py: 2,
+                              m: 0
+                            }}
+                            onMouseDown={() => {
+                              handleOpenOrderOriginDialog()
+                            }}
+                            style={{ justifyContent: 'flex-start' }}>
+                            Thêm/Chỉnh sửa nguồn
+                          </Button>
+                          <Divider sx={{ margin: 0 }} />
+                          {children}
+                        </Paper>
+                      )
+                    }}
+                  />
                 )
               }}
             />
@@ -269,29 +298,56 @@ const AdditionalInfoBox = (props: IAdditionalInfoBoxProps) => {
               onChange={(event, newValue, reason) => {
                 handleOnChangeOrderAttribute(newValue)
               }}
-              getOptionLabel={option => option.name}
               renderOption={(props, option) => (
                 <li key={option.id} {...props}>
                   <Box
                     sx={{
                       display: 'flex',
+                      marginLeft: 3,
                       alignItems: 'flex-start',
                       flexDirection: 'column'
                     }}>
-                    <Typography>{option.name}</Typography>
+                    <Typography sx={{ fontWeight: 400, py: 1 }}>{option.name}</Typography>
                   </Box>
                 </li>
               )}
+              getOptionLabel={option => option.name}
+              PaperComponent={({ children }) => {
+                return (
+                  <Paper>
+                    <Button
+                      fullWidth
+                      startIcon={
+                        <Plus
+                          sx={{
+                            border: '1px solid',
+                            borderRadius: '99px'
+                          }}
+                        />
+                      }
+                      sx={{
+                        fontSize: '.85rem',
+                        fontWeight: 400,
+                        px: 7,
+                        py: 2,
+                        m: 0
+                      }}
+                      onMouseDown={() => {
+                        setIsOpenOrderOriginDialog(true)
+                      }}
+                      style={{ justifyContent: 'flex-start' }}>
+                      Quản lý loại đơn hàng
+                    </Button>
+                    <Divider sx={{ margin: 0 }} />
+                    {children}
+                  </Paper>
+                )
+              }}
             />
-            <Typography variant='body2'>
-              Bạn có thể thêm mới loại sản phẩm tại{' '}
-              <Link onClick={() => {}} sx={{ cursor: 'pointer' }}>
-                đây
-              </Link>
-            </Typography>
           </Grid>
         </Grid>
-        <OrderOriginDialog open={isOpenOrderOriginDialog} handleClose={handleCloseOrderOriginDialog} />
+        <OrderOriginDialog open={isOpenOrderOriginDialog} setIsOpenOrderOriginDialog={setIsOpenOrderOriginDialog} />
+        <OrderAttributeDialog open={isOpenOrderOriginDialog} handleClose={handleCloseOrderOriginDialog} />
       </PaperContent>
     </Paper>
   )

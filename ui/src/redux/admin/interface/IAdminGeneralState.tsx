@@ -43,6 +43,7 @@ export interface IProductList {
 
 export interface IOrderAttributeList {
   orderAttributes?: IOrderAttribute[]
+	total?: number
   status: IRequestStatus
 }
 

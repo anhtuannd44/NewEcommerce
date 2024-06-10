@@ -58,16 +58,16 @@ interface IEditOrderOriginRequest {
   isEditing: boolean
 }
 
-interface IOrderOriginDialogProps {
+interface IOrderAttributeDialogProps {
   open: boolean
   orderOriginList: IOrderOriginList
   createOrUpdateOriginList: (item: IOrderOrigin) => void
   handlePushMessageSnackbar: (message: IMessageCommon) => void
-  setIsOpenOrderOriginDialog: (isOpen: boolean) => void
+  handleClose: () => void
 }
 
-const OrderOriginDialog = (props: IOrderOriginDialogProps) => {
-  const { open, orderOriginList, createOrUpdateOriginList, handlePushMessageSnackbar, setIsOpenOrderOriginDialog } = props
+const OrderAttributeDialog = (props: IOrderAttributeDialogProps) => {
+  const { open, orderOriginList, createOrUpdateOriginList, handlePushMessageSnackbar, handleClose } = props
   const initOrderOriginState: IOrderOriginState = {
     createRequest: {
       name: '',
@@ -110,10 +110,6 @@ const OrderOriginDialog = (props: IOrderOriginDialogProps) => {
         name: value
       }
     }))
-  }
-
-  const handleClose = () => {
-    setIsOpenOrderOriginDialog(false)
   }
 
   const handleChangePage = (newPage: number) => {
@@ -302,7 +298,7 @@ const OrderOriginDialog = (props: IOrderOriginDialogProps) => {
                       {state.editRequest.slice(state.paging.page * state.paging.itemsPerPage, (state.paging.page + 1) * state.paging.itemsPerPage).map((row, index) => (
                         <TableRow hover role='checkbox' tabIndex={-1} key={index} sx={{ cursor: 'pointer' }}>
                           <TableCell key={`name-${index}`} align='left'>
-                            {state.paging.page * state.paging.itemsPerPage + index + 1}
+                            {(state.paging.page) * state.paging.itemsPerPage + index + 1}
                           </TableCell>
                           <TableCell key={`sku-${index}`} align='left'>
                             {!row.isEditing ? (
@@ -383,7 +379,7 @@ const OrderOriginDialog = (props: IOrderOriginDialogProps) => {
                 </TableContainer>
                 <TablePagination
                   component='div'
-                  rowsPerPageOptions={[-1]}
+									rowsPerPageOptions={[-1]}
                   count={state.editRequest.length}
                   rowsPerPage={state.paging.itemsPerPage}
                   page={state.paging.page}
@@ -417,4 +413,4 @@ const mapDispatchToProps = (dispatch: AppDispatch) => ({
   handlePushMessageSnackbar: (message: IMessageCommon) => dispatch(handlePushMessageSnackbar(message))
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(OrderOriginDialog)
+export default connect(mapStateToProps, mapDispatchToProps)(OrderAttributeDialog)

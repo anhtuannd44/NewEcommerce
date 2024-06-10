@@ -49,13 +49,14 @@ const CustomerSelectBox = (props: ICustomerSelectBoxProps) => {
         leftHeader={<Typography variant='h6'>Thông tin khách hàng</Typography>}
         rightHeader={
           <Button
-            type='button'
+            type='submit'
             variant='contained'
             size='large'
             fullWidth
-            onClick={() => {
-              handleSubmit()
-            }}>
+            // onClick={() => {
+            //   handleSubmit()
+            // }}>
+						>
             Hoàn Tất
           </Button>
         }

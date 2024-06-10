@@ -100,7 +100,8 @@ const adminGeneralSlice = createSlice({
         state.orderAttributeList.status.isLoading = false
         state.orderAttributeList.status.isSentRequest = false
         state.orderAttributeList.status.isSuccess = true
-        state.orderAttributeList.orderAttributes = action.payload
+        state.orderAttributeList.orderAttributes = action.payload.data
+        state.orderAttributeList.total = action.payload.total
         state.message.type = MessageType.Success
         state.message.text = action.payload.message || SUCCESS_MESSAGE_CREATE_UPDATE_DEFAULT
       })

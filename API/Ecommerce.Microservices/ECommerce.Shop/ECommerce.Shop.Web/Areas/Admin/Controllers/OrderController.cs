@@ -39,7 +39,7 @@ public class OrderController : AdminBaseController
 
     [HttpPost]
     [Route("create")]
-    public async Task<IActionResult> CreateOrder([FromBody]OrderDetailDto dto)
+    public async Task<IActionResult> CreateOrder([FromBody] OrderDetailDto dto)
     {
         var id = await _orderService.CreateOrder(dto);
         return Ok(id);
@@ -47,12 +47,12 @@ public class OrderController : AdminBaseController
 
     [HttpGet]
     [Route("attribute")]
-    public async Task<IActionResult> GetOrderAttributeList()
+    public async Task<IActionResult> GetOrderAttributeList([FromQuery] OrderAttributeFilterParamsDto dto)
     {
         _logger.LogInformation("Start getting order attribute list - GetOrderAttributeList");
         try
         {
-            var result = await _orderService.GetOrderAttribute();
+            var result = await _orderService.GetOrderAttribute(dto);
             if (!result.IsSuccess)
             {
                 return BadRequest(result);
@@ -91,7 +91,7 @@ public class OrderController : AdminBaseController
 
     [HttpGet]
     [Route("orderOrigin")]
-    public async Task<IActionResult> GetOrderOriginListAsync([FromQuery] ProductFilterParamsDto dto)
+    public async Task<IActionResult> GetOrderOriginListAsync([FromQuery] OrderOriginFilterParamsDto dto)
     {
         try
         {

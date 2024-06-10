@@ -17,7 +17,7 @@ export const getUserList = createAsyncThunk('getUserList', async () => {
 export const getOrderAttributeList = createAsyncThunk('getOrderAttributeList', async (_, { rejectWithValue }) => {
   try {
     const response = await http.get('order/attribute')
-    return response.data
+    return response
   } catch (error: any) {
     if (!error.response) {
       return rejectWithValue(ERROR_MESSAGE_NETWORK)

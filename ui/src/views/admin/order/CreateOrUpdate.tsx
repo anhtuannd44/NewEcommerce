@@ -1,9 +1,11 @@
 'use client'
 import { useEffect } from 'react'
 import { connect } from 'react-redux'
-import { Alert, AppBar, Backdrop, Box, CircularProgress, createFilterOptions, Grid, Snackbar } from '@mui/material'
+import { useForm, Controller, FormProvider } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { Alert, createFilterOptions, Grid, Snackbar } from '@mui/material'
 import 'react-datepicker/dist/react-datepicker.css'
-import { IOrderAdminState, IOrderRequestBody, IOrderRequestBodyControl, IOrderRequestBodyItemControls } from 'src/redux/admin/interface/IOrderAdmin'
+import { IOrderAdminState, IOrderRequestBodyControl, IOrderRequestBodyItemControls } from 'src/redux/admin/interface/IOrderAdmin'
 import { createOrUpdateOrder, getOrderAttributeList, getOrderOriginList, getOrderTagList, getProductList, getUserList } from 'src/api/order'
 import { AppDispatch, RootState } from 'src/redux/store'
 import { handleValidateOrderBody, handleValidateOrderItems, resetMessage, setSubmitted, updateOrderBodyControls, updateOrderItemControls } from 'src/redux/admin/slice/orderAdminSlice'
@@ -15,25 +17,27 @@ import { IOrderAttributeList, IOrderOriginList, IOrderTagList, IProductList, IUs
 import { IMessageCommon } from 'src/redux/admin/interface/ICommon'
 import { MessageType } from 'src/common/enums'
 import _ from 'lodash'
+import { defaultOrderRequest, orderRequestSchema } from 'src/form/admin/order/orderRequest'
+import { IOrderRequestBody } from 'src/form/admin/interface/IOrderRequest'
 
 interface ICreateOrUpdateOrderAdminProps {
   userList: IUserList
   productList: IProductList
   orderAttributeList: IOrderAttributeList
   orderOriginList: IOrderOriginList
-	orderTagList: IOrderTagList
+  orderTagList: IOrderTagList
   orderAdmin: IOrderAdminState
   message: IMessageCommon
   getProductList: () => void
   getUserList: () => void
   getOrderAttributeList: () => void
   getOrderOriginList: () => void
-	getOrderTagList: () => void
+  getOrderTagList: () => void
   updateOrderItemControls: (controls: IOrderRequestBodyItemControls[]) => void
   updateOrderBodyControls: (control: IOrderRequestBodyControl) => void
   resetMessage: () => void
-  setSubmitted: () => void,
-	createOrUpdateOrder: (order: IOrderRequestBody) => void
+  setSubmitted: () => void
+  createOrUpdateOrder: (order: IOrderRequestBody) => void
 }
 
 const CreateOrUpdateOrderAdmin = (props: ICreateOrUpdateOrderAdminProps) => {
@@ -42,7 +46,7 @@ const CreateOrUpdateOrderAdmin = (props: ICreateOrUpdateOrderAdminProps) => {
     productList,
     orderAttributeList,
     orderOriginList,
-		orderTagList,
+    orderTagList,
     orderAdmin,
     message,
     getProductList,
@@ -52,9 +56,9 @@ const CreateOrUpdateOrderAdmin = (props: ICreateOrUpdateOrderAdminProps) => {
     resetMessage,
     getOrderAttributeList,
     getOrderOriginList,
-		getOrderTagList,
+    getOrderTagList,
     setSubmitted,
-		createOrUpdateOrder
+    createOrUpdateOrder
   } = props
 
   useEffect(() => {
@@ -70,14 +74,20 @@ const CreateOrUpdateOrderAdmin = (props: ICreateOrUpdateOrderAdminProps) => {
     if (!orderOriginList.orderOrigins) {
       getOrderOriginList()
     }
-		if (!orderTagList.orderTags) {
+    if (!orderTagList.orderTags) {
       getOrderTagList()
     }
   }, [])
 
+  const methods = useForm({
+    defaultValues: defaultOrderRequest,
+    resolver: yupResolver(orderRequestSchema),
+		mode: "onChange"
+  })
+
   const filterUserOptions = createFilterOptions({ ignoreAccents: false, stringify: (option: IUser) => `${option.fullName} ${option.phoneNumber}` })
 
-  const handleSubmit = () => {
+  const onSubmit = () => {
     setSubmitted()
     const currentOrderState = _.cloneDeep(orderAdmin)
 
@@ -95,11 +105,11 @@ const CreateOrUpdateOrderAdmin = (props: ICreateOrUpdateOrderAdminProps) => {
         updateOrderItemControls(validateOrderItems.itemsControls)
       }
     } else {
-			isAllValid = false
-		}
+      isAllValid = false
+    }
 
     if (isAllValid) {
-       createOrUpdateOrder(currentOrderState.orderRequest)
+      // createOrUpdateOrder(currentOrderState.orderRequest)
     }
   }
 
@@ -113,40 +123,44 @@ const CreateOrUpdateOrderAdmin = (props: ICreateOrUpdateOrderAdminProps) => {
 
   return (
     <>
-      <Grid container spacing={6}>
-        <Grid item xs={9}>
-          <CustomerSelectBox handleSubmit={handleSubmit} filterUserOptions={filterUserOptions} />
-        </Grid>
-        <Grid item xs={3}>
-          <AdditionalInfoBox filterUserOptions={filterUserOptions} />
-        </Grid>
-      </Grid>
-      <Grid container>
-        <Grid item xs={12}>
-          <ProductSelectionBox />
-        </Grid>
-      </Grid>
-      {/* <Backdrop sx={{ color: '#fff', zIndex: 99999 }} open={isLoading}>
+      <FormProvider {...methods}>
+        <form onSubmit={methods.handleSubmit(onSubmit)}>
+          <Grid container spacing={6}>
+            <Grid item xs={9}>
+              <CustomerSelectBox handleSubmit={onSubmit} filterUserOptions={filterUserOptions} />
+            </Grid>
+            <Grid item xs={3}>
+              <AdditionalInfoBox filterUserOptions={filterUserOptions} />
+            </Grid>
+          </Grid>
+          <Grid container>
+            <Grid item xs={12}>
+              <ProductSelectionBox />
+            </Grid>
+          </Grid>
+          {/* <Backdrop sx={{ color: '#fff', zIndex: 99999 }} open={isLoading}>
         <CircularProgress color='inherit' />
       </Backdrop> */}
-      <Snackbar
-        sx={{ zIndex: 9999 }}
-        open={Boolean(message?.text)}
-        autoHideDuration={6000}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        onClose={() => {
-          handleCloseSnackbar()
-        }}>
-        <Alert
-          onClose={() => {
-            handleCloseSnackbar()
-          }}
-          severity={message.type === MessageType.Success ? 'success' : message.type === MessageType.Error ? 'error' : 'warning'}
-          variant='filled'
-          sx={{ width: '100%' }}>
-          {message.text}
-        </Alert>
-      </Snackbar>
+          <Snackbar
+            sx={{ zIndex: 9999 }}
+            open={Boolean(message?.text)}
+            autoHideDuration={6000}
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+            onClose={() => {
+              handleCloseSnackbar()
+            }}>
+            <Alert
+              onClose={() => {
+                handleCloseSnackbar()
+              }}
+              severity={message.type === MessageType.Success ? 'success' : message.type === MessageType.Error ? 'error' : 'warning'}
+              variant='filled'
+              sx={{ width: '100%' }}>
+              {message.text}
+            </Alert>
+          </Snackbar>
+        </form>
+      </FormProvider>
     </>
   )
 }
@@ -156,7 +170,7 @@ const mapStateToProps = (state: RootState) => ({
   userList: state.adminGeneral.userList,
   productList: state.adminGeneral.productList,
   orderOriginList: state.adminGeneral.orderOriginList,
-	orderTagList: state.adminGeneral.orderTagList,
+  orderTagList: state.adminGeneral.orderTagList,
   orderAttributeList: state.adminGeneral.orderAttributeList,
   message: state.orderAdmin.message
 })
@@ -171,7 +185,7 @@ const mapDispatchToProps = (dispatch: AppDispatch) => ({
   updateOrderBodyControls: (control: IOrderRequestBodyControl) => dispatch(updateOrderBodyControls(control)),
   resetMessage: () => dispatch(resetMessage()),
   setSubmitted: () => dispatch(setSubmitted()),
-	createOrUpdateOrder: (order: IOrderRequestBody) => dispatch(createOrUpdateOrder(order))
+  createOrUpdateOrder: (order: IOrderRequestBody) => dispatch(createOrUpdateOrder(order))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateOrUpdateOrderAdmin)

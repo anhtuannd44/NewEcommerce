@@ -5,6 +5,7 @@ namespace ECommerce.Shop.Domain.DTOs.Order;
 public class OrderAttributeListResponseDto : ActionEntityStatusDto
 {
     public List<OrderAttributeDto> Data { get; set; }
+    public int Total { get; set; }
 }
 
 public class OrderAttributeDto

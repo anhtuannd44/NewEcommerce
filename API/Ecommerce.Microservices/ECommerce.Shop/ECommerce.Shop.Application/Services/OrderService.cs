@@ -133,7 +133,7 @@ public class OrderService : BaseService, IOrderService
         var productIds = dto.Items.Select(x => x.ProductId);
 
         var productList = await _unitOfWork.Repository<Product>().Where(x => productIds.Contains(x.Id)).ToListAsync();
-        
+
         dto.ConstructionStaffIds.ForEach(x =>
         {
             _unitOfWork.Repository<ConstructionStaff>().Add(new ConstructionStaff
@@ -142,7 +142,7 @@ public class OrderService : BaseService, IOrderService
                 OrderId = order.Id
             });
         });
-        
+
         dto.ResponsibleStaffIds.ForEach(x =>
         {
             _unitOfWork.Repository<ResponsibleStaff>().Add(new ResponsibleStaff
@@ -167,7 +167,7 @@ public class OrderService : BaseService, IOrderService
 
             orderItems.Add(new OrderItem
             {
-                ProductId = x.ProductId.Value,
+                ProductId = x.ProductId,
                 Price = x.Price,
                 ProductName = currentProduct?.Name,
                 DiscountType = (DiscountType)x.DiscountType,
@@ -184,7 +184,7 @@ public class OrderService : BaseService, IOrderService
         return order.Id;
     }
 
-    public async Task<OrderAttributeListResponseDto> GetOrderAttribute()
+    public async Task<OrderAttributeListResponseDto> GetOrderAttribute(OrderAttributeFilterParamsDto dto)
     {
         var result = new OrderAttributeListResponseDto
         {
@@ -192,14 +192,42 @@ public class OrderService : BaseService, IOrderService
         };
         try
         {
-            var orderAttributeList = await _unitOfWork.Repository<OrderAttribute>().AsNoTracking().Select(x =>
-                new OrderAttributeDto
-                {
-                    Id = x.Id,
-                    Name = x.Name
-                }
-            ).ToListAsync();
-            result.Data = orderAttributeList;
+            var query = _unitOfWork.Repository<OrderAttribute>()
+                .AsNoTracking()
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(dto.Keyword))
+            {
+                query = query.Where(x => x.Name.Contains(dto.Keyword.Trim()));
+            }
+
+            if (dto.DateFrom.HasValue)
+                query = query.Where(x => dto.DateFrom.Value <= x.CreatedDate);
+
+            if (dto.DateTo.HasValue)
+                query = query.Where(x => dto.DateTo.Value >= x.CreatedDate);
+
+            query = dto.SortName switch
+            {
+                "title" => query.OrderByIf(x => x.Name, dto.IsAscending ?? true),
+                _ => query.OrderByDescending(x => x.CreatedDate)
+            };
+
+            var orderAttributeList = await query.ToListAsync();
+            if (dto.PageNumber != null && dto.PageSize != null)
+            {
+                orderAttributeList = orderAttributeList.Skip((dto.PageNumber.Value - 1) * dto.PageSize.Value).Take(dto.PageSize.Value).ToList();
+            }
+
+            var total = await query.CountAsync();
+
+            result.Data = orderAttributeList.Select(x => new OrderAttributeDto
+            {
+                Id = x.Id,
+                Name = x.Name
+            }).ToList();
+
+            result.Total = total;
             result.IsSuccess = true;
             _logger.LogInformation(string.Format(ShopDomainConstants.MessageGetEntitySuccess, nameof(OrderAttribute)));
         }
@@ -212,7 +240,7 @@ public class OrderService : BaseService, IOrderService
         return result;
     }
 
-    public async Task<OrderOriginListResponseDto> GetOrderOriginListAsync(ProductFilterParamsDto dto)
+    public async Task<OrderOriginListResponseDto> GetOrderOriginListAsync(OrderOriginFilterParamsDto dto)
     {
         var result = new OrderOriginListResponseDto
         {

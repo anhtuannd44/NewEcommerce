@@ -42,21 +42,6 @@ export interface IOrderRequestBody {
   items: IProductItemRequestBody[] | undefined
 }
 
-export interface IOrderRequestBodyControl {
-  customerId: IValidationRequest
-  orderCode: IValidationRequest
-  deliveryAddress: IValidationRequest
-  billingAddress: IValidationRequest
-  picStaffId: IValidationRequest
-  dateDelivery: IValidationRequest
-  constructionStaffIds: IValidationRequest
-  preTotal: IValidationRequest
-  totalPriceAfterDiscount: IValidationRequest
-  shippingFee: IValidationRequest
-  discountType: IValidationRequest
-  discountValue: IValidationRequest
-}
-
 export interface IProductItemRequestBody {
   productId: string
   price: number | null
@@ -74,6 +59,21 @@ export interface IProductItemRequestBody {
   productCode: string
   productUrl: string
   isShowNote?: boolean
+}
+
+export interface IOrderRequestBodyControl {
+  customerId: IValidationRequest
+  orderCode: IValidationRequest
+  deliveryAddress: IValidationRequest
+  billingAddress: IValidationRequest
+  picStaffId: IValidationRequest
+  dateDelivery: IValidationRequest
+  constructionStaffIds: IValidationRequest
+  preTotal: IValidationRequest
+  totalPriceAfterDiscount: IValidationRequest
+  shippingFee: IValidationRequest
+  discountType: IValidationRequest
+  discountValue: IValidationRequest
 }
 
 export interface  IOrderRequestBodyItemControls {
