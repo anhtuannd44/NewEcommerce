@@ -1,4 +1,4 @@
-import { DiscountType, OrderStatus } from "src/common/enums"
+import { DiscountType, OrderStatus } from 'src/common/enums'
 
 export interface IOrderRequestBody {
   customerId: string | null
@@ -7,9 +7,9 @@ export interface IOrderRequestBody {
   billingAddress: string
   picStaffId: string
   dateDelivery: Date | null
-	dateActualDelivery: Date | null
-	dateAcceptance?: Date | null
-	dateAppointedDelivery?: Date | null
+  dateActualDelivery: Date | null
+  dateAcceptance: Date | null
+  dateAppointedDelivery: Date | null
   constructionStaffIds: string[]
   preTotal: number
   totalPriceAfterDiscount: number
@@ -27,7 +27,7 @@ export interface IOrderRequestBody {
   solution: string
   responsibleStaffIds: string[]
   tags: string[]
-	status: OrderStatus
+  status: OrderStatus
   items: IProductItemRequestBody[]
 }
 

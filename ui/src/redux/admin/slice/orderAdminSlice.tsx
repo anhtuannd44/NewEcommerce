@@ -1,8 +1,8 @@
+import _ from 'lodash'
 import { Draft, createSlice } from '@reduxjs/toolkit'
 import { IOrderAdminState, IOrderRequestBody, IOrderRequestBodyControl, IOrderRequestBodyItemControl, IOrderRequestBodyItemControls, IProductItemRequestBody } from '../interface/IOrderAdmin'
 import { DiscountType, MessageType, OrderStatus } from 'src/common/enums'
 import { checkValidity } from 'src/utils/utility'
-import _ from 'lodash'
 import { SUCCESS_MESSAGE_CREATE_UPDATE_DEFAULT } from 'src/common/constants'
 import { IUser } from '../interface/IAdminGeneralState'
 
@@ -197,7 +197,7 @@ const initialOrderAdminState: IOrderAdminState = {
     solution: '',
     responsibleStaffIds: [],
     tags: [],
-		status: OrderStatus.Processing,
+    status: OrderStatus.Processing,
     items: undefined
   },
   controls: {
@@ -291,7 +291,7 @@ const orderAdminSlice = createSlice({
       const order = { ...state.orderRequest } as any
       const { field } = action.payload
       order[field] = action.payload.value
-			state.orderRequest = handleCalculateTotal(order)
+      state.orderRequest = handleCalculateTotal(order)
 
       if (field in state.controls.order) {
         state.controls.order[field as keyof Draft<IOrderRequestBodyControl>].result = checkValidity(

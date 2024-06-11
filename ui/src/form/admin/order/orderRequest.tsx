@@ -52,48 +52,58 @@ export const defaultOrderRequest: IOrderRequestBody = {
   items: []
 }
 
-const orderItemSchema = Yup.object().shape({
-  price: Yup.number().required('Price is required').nullable(),
-  quantity: Yup.number().min(1).required('Quantity is required'),
-  discountValue: Yup.number().min(0).required('Discount value is required'),
-  preTotal: Yup.number().min(0).required('Pre-total is required'),
-  totalPriceAfterDiscount: Yup.number().min(0).required('Total price after discount is required'),
-  note: Yup.string(),
-  isVat: Yup.boolean().required('VAT flag is required'),
-  vatValue: Yup.number().min(0).required('VAT value is required'),
-  discountPercent: Yup.number().min(0).max(100).required('Discount percent is required'),
-  imgUrl: Yup.string().url('Must be a valid URL'),
-  name: Yup.string().required('Product name is required'),
-  productCode: Yup.string().required('Product code is required'),
-  productUrl: Yup.string().url('Must be a valid URL'),
-  isShowNote: Yup.boolean()
+export const productItemSchema = Yup.object().shape({
+  productId: Yup.string().required(),
+  price: Yup.number().nullable().default(null),
+  quantity: Yup.number().required(),
+  discountType: Yup.mixed<DiscountType>()
+    .oneOf(Object.values(DiscountType) as DiscountType[])
+    .required(),
+  discountValue: Yup.number().required(),
+  preTotal: Yup.number().required(),
+  totalPriceAfterDiscount: Yup.number().required(),
+  note: Yup.string().required(),
+  isVat: Yup.boolean().required(),
+  vatValue: Yup.number().required(),
+  discountPercent: Yup.number().required(),
+  imgUrl: Yup.string().optional(),
+  name: Yup.string().required(),
+  productCode: Yup.string().required(),
+  productUrl: Yup.string().required(),
+  isShowNote: Yup.boolean().optional()
 })
 
 export const orderRequestSchema = Yup.object().shape({
-  customerId: Yup.string().nullable(),
-  orderCode: Yup.string().required('Order code is required'),
-  deliveryAddress: Yup.string().required('Delivery address is required'),
-  billingAddress: Yup.string().required('Billing address is required'),
-  picStaffId: Yup.string().required('Người phụ trách không được để trống'),
-  dateDelivery: Yup.date().required('Date of delivery is required').nullable(),
-  dateActualDelivery: Yup.date().nullable(),
-  dateAcceptance: Yup.date().nullable(),
-  dateAppointedDelivery: Yup.date().nullable(),
-  constructionStaffIds: Yup.array().of(Yup.string()).required('Construction staff IDs are required'),
-  preTotal: Yup.number().min(0).required('Pre-total is required'),
-  totalPriceAfterDiscount: Yup.number().min(0).required('Total price after discount is required'),
-  shippingFee: Yup.number().min(0).required('Shipping fee is required'),
-  deposit: Yup.number().min(0).required('Deposit is required'),
-  orderAttributeId: Yup.string().required('Loại đơn hàng không được để trống'),
-  orderOriginId: Yup.string().required('Nguồn đơn hàng không được để trống'),
-  discountValue: Yup.number().min(0).required('Discount value is required'),
-  discountNote: Yup.string(),
-  note: Yup.string(),
-  isComplain: Yup.boolean().required('Complain flag is required'),
-  problem: Yup.string(),
-  rootCause: Yup.string(),
-  solution: Yup.string(),
-  responsibleStaffIds: Yup.array().of(Yup.string()).required('Responsible staff IDs are required'),
-  tags: Yup.array().of(Yup.string()),
-  items: Yup.array().of(orderItemSchema).required('Items are required')
+  customerId: Yup.string().required().nullable(),
+  orderCode: Yup.string().required(),
+  deliveryAddress: Yup.string().required(),
+  billingAddress: Yup.string().required(),
+  picStaffId: Yup.string().required(),
+  dateDelivery: Yup.date().nullable().default(null),
+  dateActualDelivery: Yup.date().nullable().default(null),
+  dateAcceptance: Yup.date().nullable().default(null),
+  dateAppointedDelivery: Yup.date().nullable().default(null),
+  constructionStaffIds: Yup.array().of(Yup.string().required()).required(),
+  preTotal: Yup.number().required(),
+  totalPriceAfterDiscount: Yup.number().required(),
+  shippingFee: Yup.number().required(),
+  deposit: Yup.number().required(),
+  orderAttributeId: Yup.string().required(),
+  orderOriginId: Yup.string().required(),
+  discountType: Yup.mixed<DiscountType>()
+    .oneOf(Object.values(DiscountType) as DiscountType[])
+    .required(),
+  discountValue: Yup.number().required(),
+  discountNote: Yup.string().required(),
+  note: Yup.string().required(),
+  isComplain: Yup.boolean().required(),
+  problem: Yup.string().required(),
+  rootCause: Yup.string().required(),
+  solution: Yup.string().required(),
+  responsibleStaffIds: Yup.array().of(Yup.string().required()).required(),
+  tags: Yup.array().of(Yup.string().required()).required(),
+  status: Yup.mixed<OrderStatus>()
+    .oneOf(Object.values(OrderStatus) as OrderStatus[])
+    .required().default(OrderStatus.Processing),
+  items: Yup.array().of(productItemSchema).required()
 })

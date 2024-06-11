@@ -9,6 +9,8 @@ import { IUser } from 'src/redux/admin/interface/IAdminGeneralState'
 import PaperHeader from 'src/views/shared/paper/PaperHeader'
 import PaperContent from 'src/views/shared/paper/PaperContent'
 import { updateCustomerSelected, updateGeneralField } from 'src/redux/admin/slice/orderAdminSlice'
+import { Controller, useFormContext } from 'react-hook-form'
+import _ from 'lodash'
 
 export interface ICustomerSelectBoxProps {
   filterUserOptions: (options: IUser[], state: FilterOptionsState<IUser>) => IUser[]
@@ -31,6 +33,8 @@ const BadgeContentSpan = styled('span')(({ theme }) => ({
 
 const CustomerSelectBox = (props: ICustomerSelectBoxProps) => {
   const { userList, isSubmitted, orderRequestBody, orderRequestBodyControls, handleSubmit, filterUserOptions, updateGeneralField, updateCustomerSelected } = props
+
+  const { control, watch } = useFormContext()
 
   const productBorrowInfo: IProductBorrowProps = {
     borrow: '1',
@@ -56,7 +60,7 @@ const CustomerSelectBox = (props: ICustomerSelectBoxProps) => {
             // onClick={() => {
             //   handleSubmit()
             // }}>
-						>
+          >
             Hoàn Tất
           </Button>
         }
@@ -130,62 +134,77 @@ const CustomerSelectBox = (props: ICustomerSelectBoxProps) => {
                 </>
               ) : (
                 <>
-                  <Autocomplete
-                    fullWidth
-                    id='customeSelection'
-                    options={userList}
-                    renderInput={params => (
-                      <FormControl error={isSubmitted && !orderRequestBodyControls.customerId.result.isValid} variant='standard' fullWidth>
-                        <TextField
-                          {...params}
-                          error={isSubmitted && !orderRequestBodyControls.customerId.result.isValid}
-                          label='Tìm theo tên, SĐT hoặc Mã khách hàng ...'
-                          InputProps={{
-                            ...params.InputProps,
-                            startAdornment: <Magnify color='action' style={{ marginRight: '8px' }} />
-                          }}
-                        />
-                        <FormHelperText>{isSubmitted && orderRequestBodyControls.customerId.result.errorMessage}</FormHelperText>
-                      </FormControl>
-                    )}
-                    onChange={(event, newValue, reason) => {
-                      if (event.type === 'keydown' && ((event as React.KeyboardEvent).key === 'Backspace' || (event as React.KeyboardEvent).key === 'Delete') && reason === 'removeOption') {
-                        return
-                      }
-                      handleSelectCustomer(newValue)
+                  <Controller
+                    name='customerId'
+                    control={control}
+                    render={({ field: { onChange }, fieldState }) => {
+                      const users = _.clone(userList || [])
+                      const userIds = users.map(item => item.id)
+                      return (
+                        <>
+                          <Autocomplete
+                            fullWidth
+                            id='customerId'
+                            options={userIds}
+                            renderInput={params => (
+                              <FormControl error={!!fieldState.error} variant='standard' fullWidth>
+                                <TextField
+                                  {...params}
+                                  error={!!fieldState.error}
+                                  label='Tìm theo tên, SĐT hoặc Mã khách hàng ...'
+                                  InputProps={{
+                                    ...params.InputProps,
+                                    startAdornment: <Magnify color='action' style={{ marginRight: '8px' }} />
+                                  }}
+                                />
+                                <FormHelperText>{fieldState.error?.message}</FormHelperText>
+                              </FormControl>
+                            )}
+                            onChange={(event, newValue, reason) => {
+                              if (event.type === 'keydown' && ((event as React.KeyboardEvent).key === 'Backspace' || (event as React.KeyboardEvent).key === 'Delete') && reason === 'removeOption') {
+                                return
+                              }
+                              onChange(newValue)
+                            }}
+                            // filterOptions={filterUserOptions}
+                            getOptionLabel={option => users.find(x => x.id === option)?.fullName || ''}
+                            renderOption={(props, option) => {
+                              const item = users.find(x => x.id === option)
+                              return (
+                                <li key={option} {...props}>
+                                  <Badge
+                                    overlap='circular'
+                                    badgeContent={<BadgeContentSpan />}
+                                    anchorOrigin={{
+                                      vertical: 'bottom',
+                                      horizontal: 'right'
+                                    }}>
+                                    <Avatar alt='John Doe' src='/images/avatars/1.png' sx={{ width: '2.5rem', height: '2.5rem' }} />
+                                  </Badge>
+                                  <Box
+                                    sx={{
+                                      display: 'flex',
+                                      marginLeft: 3,
+                                      alignItems: 'flex-start',
+                                      flexDirection: 'column'
+                                    }}>
+                                    <Typography sx={{ fontWeight: 600 }}>{item?.fullName}</Typography>
+                                    <Typography variant='body2' sx={{ fontSize: '0.8rem', color: 'text.disabled' }}>
+                                      {item?.phoneNumber} - {item?.email} - {item?.address}
+                                    </Typography>
+                                  </Box>
+                                </li>
+                              )
+                            }}
+                          />
+                          <Box pt={5} textAlign='center'>
+                            <EmptyBox />
+                            <Typography variant='body2'>Vui lòng chọn thông tin khác hàng</Typography>
+                          </Box>
+                        </>
+                      )
                     }}
-                    filterOptions={filterUserOptions}
-                    getOptionLabel={option => option.fullName}
-                    renderOption={(props, option) => (
-                      <li key={option.id} {...props}>
-                        <Badge
-                          overlap='circular'
-                          badgeContent={<BadgeContentSpan />}
-                          anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'right'
-                          }}>
-                          <Avatar alt='John Doe' src='/images/avatars/1.png' sx={{ width: '2.5rem', height: '2.5rem' }} />
-                        </Badge>
-                        <Box
-                          sx={{
-                            display: 'flex',
-                            marginLeft: 3,
-                            alignItems: 'flex-start',
-                            flexDirection: 'column'
-                          }}>
-                          <Typography sx={{ fontWeight: 600 }}>{option.fullName}</Typography>
-                          <Typography variant='body2' sx={{ fontSize: '0.8rem', color: 'text.disabled' }}>
-                            {option.phoneNumber} - {option.email} - {option.address}
-                          </Typography>
-                        </Box>
-                      </li>
-                    )}
                   />
-                  <Box pt={5} textAlign='center'>
-                    <EmptyBox />
-                    <Typography variant='body2'>Vui lòng chọn thông tin khác hàng</Typography>
-                  </Box>
                 </>
               )}
             </Grid>

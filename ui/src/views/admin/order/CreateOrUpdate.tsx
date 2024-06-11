@@ -79,9 +79,9 @@ const CreateOrUpdateOrderAdmin = (props: ICreateOrUpdateOrderAdminProps) => {
     }
   }, [])
 
-  const methods = useForm({
+  const methods = useForm<IOrderRequestBody>({
     defaultValues: defaultOrderRequest,
-    resolver: yupResolver(orderRequestSchema),
+    resolver: yupResolver<IOrderRequestBody>(orderRequestSchema),
 		mode: "onChange"
   })
 
