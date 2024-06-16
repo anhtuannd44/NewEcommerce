@@ -1,93 +1,162 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
-import apiConfig from 'src/apiConfig.json'
-import { ITokenInfo, IUserInfo } from './IAuthApi'
-import { getTokenInfoFromLocalStorage, removeStoredAuthState, setStoredAuthState } from './service/storedAuthState'
-import { isTokenExpired } from './service/authServices'
-import { refreshAccessToken } from './authApi'
-
-import { redirect } from 'next/navigation'
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
+import { get } from 'lodash'
+import { ERROR_MESSAGE_COMMON } from 'src/common/constants'
 
 const requestSerivceInstance = axios.create({
-	baseURL: apiConfig.apiRoot
+  baseURL: `${process.env.API_ROOT}/api/admin`
 })
 
-const saveTokenInfo = function* (tokenInfo: ITokenInfo, userInfo: IUserInfo): Generator<any, void, any> {
-	setStoredAuthState(tokenInfo, userInfo)
+export interface APIError {
+  status?: number
+  statusText?: string
+  message?: string
+  title?: string
+}
+
+export interface FetchDataResult<T> {
+  data?: T
+  error?: APIError
+}
+
+export interface IApiServices {
+  get: <T>(url: string, params?: object) => Promise<FetchDataResult<T>>
+  getWithAuth: <T>(url: string, params?: object) => Promise<FetchDataResult<T>>
+  post: <T>(url: string, payload: object) => Promise<FetchDataResult<T>>
+  put: <T>(url: string, payload: object) => Promise<FetchDataResult<T>>
+  delete: <T>(url: string, payload: object) => Promise<FetchDataResult<T>>
 }
 
 export const isClient = () => typeof window !== 'undefined'
 
 export type CustomOptions = Omit<RequestInit, 'method'> & {
-	baseUrl?: string | undefined
+  baseUrl?: string | undefined
 }
 
-const request = async (method: 'GET' | 'POST' | 'PUT' | 'DELETE', url: string, options?: CustomOptions) => {
-	let body: FormData | string | undefined = undefined
-	if (options?.body instanceof FormData) {
-		body = options.body
-	} else if (options?.body) {
-		body = JSON.stringify(options.body)
-	}
-	const baseHeaders: { [key: string]: string } =
-		body instanceof FormData
-			? {}
-			: {
-					'Content-Type': 'application/json'
-			  }
-
-	// if (isClient()) {
-
-	//   let token: string
-	//   const tokenInfo = getTokenInfoFromLocalStorage()
-
-	//   if (!tokenInfo?.accessToken) {
-	//     location.href = '/login'
-	//     return
-	//   }
-
-	//   token = tokenInfo?.accessToken
-
-	//   if (isTokenExpired(tokenInfo.expireIn)) {
-	//     const tokenRes = await refreshAccessToken(tokenInfo.accessToken)
-	//     if (!(tokenRes?.tokenInfo?.accessToken)) {
-	//       location.href = '/login'
-	//       return
-	//     }
-	//     setStoredAuthState(tokenRes.tokenInfo, tokenRes.userInfo)
-	//     token = tokenRes.tokenInfo.accessToken
-	//   }
-
-	//   baseHeaders.Authorization = `Bearer ${token}`
-	// }
-
-	const axiosConfig: AxiosRequestConfig = {
-		method: method,
-		url,
-		headers: {
-			...baseHeaders,
-			...options?.headers
-		} as any,
-		data: body
-	}
-
-	const res = await requestSerivceInstance.request(axiosConfig)
-
-	return res.data
+export enum APIMessages {
+  incorrectPassword = 'Incorrect Password',
+  emailAlreadyExists = 'Email Already Exists',
+  emailNotExists = 'Email Not Exists'
 }
 
-const http = {
-	get(url: string, options?: Omit<CustomOptions, 'body'> | undefined) {
-		return request('GET', url, options)
-	},
-	post(url: string, body: any, options?: Omit<CustomOptions, 'body'> | undefined) {
-		return request('POST', url, { ...options, body })
-	},
-	put(url: string, body: any, options?: Omit<CustomOptions, 'body'> | undefined) {
-		return request('PUT', url, { ...options, body })
-	},
-	delete(url: string, options?: Omit<CustomOptions, 'body'> | undefined) {
-		return request('DELETE', url, { ...options })
-	}
+export enum APIStatus {
+  SUCCESS = 200,
+  CREATED = 201,
+  NO_CONTENT = 204,
+  BAD_REQUEST = 400,
+  UNAUTHORIZED = 401,
+  INTERNAL_SERVER_ERROR = 500
+}
+
+export const APIStatusMessages = {
+  [APIStatus.INTERNAL_SERVER_ERROR]: 'Internal Server Error',
+  [APIStatus.BAD_REQUEST]: 'Bad Request'
+}
+
+type APIMessagesKey = keyof typeof APIMessages
+type APIStatusMessagesKey = keyof typeof APIStatusMessages
+
+const getMessageFromKeyErrors = (data: { errors: Record<string, APIMessagesKey> }): string | null => {
+  if (data?.errors) {
+    const keyMessage: APIMessagesKey = data?.errors[Object.keys(data?.errors)[0]]
+    const message = APIMessages[keyMessage]
+    if (message) {
+      return message
+    }
+  } else {
+    return get(data, 'message', '')
+  }
+  return null
+}
+
+const handleAPIError = (error: AxiosResponse): APIError => {
+  const data = error?.data
+
+  const dataError: APIError = {}
+  if (data) {
+    dataError.status = data?.status
+    dataError.message = getMessageFromKeyErrors(data) || error?.statusText
+  } else {
+    dataError.status = error?.status || get(error, 'response.status') || get(error, 'response.data.error.code')
+
+    dataError.message = APIStatusMessages[error?.status as APIStatusMessagesKey] || error?.statusText || get(error, 'response.data.error.message') || get(error, 'response.data')
+    ;('')
+    dataError.title = get(error, 'response.data.error.title')
+  }
+  dataError.statusText = error?.statusText
+  console.log(dataError)
+  return dataError
+}
+export const baseService = axios.create({
+  timeout: 60000,
+  baseURL: `${process.env.API_ROOT}/api/admin`
+})
+
+async function fetchData<T>(configs: AxiosRequestConfig): Promise<FetchDataResult<T>> {
+  try {
+    const response = await requestSerivceInstance.request<T>({
+      ...configs,
+      headers: {
+        ...configs.headers,
+        'Content-Type': 'application/json'
+        // Authorization: `Bearer ${localStorage.getItem('access_token')}`
+      }
+    })
+
+    return { data: response.data }
+  } catch (error: any) {
+    if (error.code === 'ERR_NETWORK') {
+      return {
+        error: {
+          status: 500,
+          statusText: 'ERR_NETWORK',
+          message: ERROR_MESSAGE_COMMON,
+          title: 'ERR_NETWORK'
+        }
+      }
+    }
+    if (error.response?.status === 401) {
+      localStorage.removeItem('access_token')
+      // await signOut({ redirect: true });
+    }
+
+    return { error: handleAPIError(error as AxiosResponse) }
+  }
+}
+
+const http: IApiServices = {
+  get(url, params) {
+    return fetchData({
+      url,
+      method: 'get',
+      params: params
+    })
+  },
+  getWithAuth(url, params) {
+    return this.get(url, params)
+  },
+
+  post(url, payload) {
+    return fetchData({
+      url,
+      method: 'post',
+      data: payload
+    })
+  },
+
+  put(url) {
+    return fetchData({
+      url,
+      method: 'put'
+    })
+  },
+
+  delete(url, payload) {
+    return fetchData({
+      url,
+      method: 'delete',
+      data: payload
+    })
+  }
 }
 
 export default http

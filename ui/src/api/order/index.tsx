@@ -4,87 +4,64 @@ import { ERROR_MESSAGE_COMMON, ERROR_MESSAGE_NETWORK } from 'src/common/constant
 import { IOrderOrigin } from 'src/redux/admin/interface/IAdminGeneralState'
 import { IOrderRequestBody } from 'src/redux/admin/interface/IOrderAdmin'
 
-export const getProductList = createAsyncThunk('getProductList', async () => {
+export const getProductList = createAsyncThunk('getProductList', async (_, { rejectWithValue }) => {
   const response = await http.get('/product')
-  return response
+  if (response.data) {
+    return response.data
+  }
+
+  return rejectWithValue(response.error?.message || ERROR_MESSAGE_COMMON)
 })
 
-export const getUserList = createAsyncThunk('getUserList', async () => {
+export const getUserList = createAsyncThunk('getUserList', async (_, { rejectWithValue }) => {
   const response = await http.get('/user')
-  return response
+  if (response.data) {
+    return response.data
+  }
+
+  return rejectWithValue(response.error?.message || ERROR_MESSAGE_COMMON)
 })
 
 export const getOrderAttributeList = createAsyncThunk('getOrderAttributeList', async (_, { rejectWithValue }) => {
-  try {
-    const response = await http.get('order/attribute')
-    return response
-  } catch (error: any) {
-    if (!error.response) {
-      return rejectWithValue(ERROR_MESSAGE_NETWORK)
-    }
-    const { data } = error.response
-    if (data) {
-      return rejectWithValue(data.message)
-    } else {
-      return rejectWithValue(ERROR_MESSAGE_COMMON)
-    }
+  const response = await http.get('order/attribute')
+  if (response.data) {
+    return response.data
   }
+
+  return rejectWithValue(response.error?.message || ERROR_MESSAGE_COMMON)
 })
 
 export const getOrderOriginList = createAsyncThunk('getOrderOriginList', async (_, { rejectWithValue }) => {
-  try {
-    const response = await http.get('order/orderOrigin')
-    return response
-  } catch (error: any) {
-    if (!error.response) {
-      return rejectWithValue(ERROR_MESSAGE_NETWORK)
-    }
-    const { data } = error.response
-    if (data) {
-      return rejectWithValue(data.message)
-    } else {
-      return rejectWithValue(ERROR_MESSAGE_COMMON)
-    }
+  const response = await http.get('order/orderOrigin')
+
+  if (response.data) {
+    return response.data
   }
+
+  return rejectWithValue(response.error?.message || ERROR_MESSAGE_COMMON)
 })
 
 export const getOrderTagList = createAsyncThunk('getOrderTagList', async (_, { rejectWithValue }) => {
-  try {
-    const response = await http.get('order/tags')
-    return response
-  } catch (error: any) {
-    if (!error.response) {
-      return rejectWithValue(ERROR_MESSAGE_NETWORK)
-    }
-    const { data } = error.response
-    if (data) {
-      return rejectWithValue(data.message)
-    } else {
-      return rejectWithValue(ERROR_MESSAGE_COMMON)
-    }
+  const response = await http.get('order/tags')
+
+  if (response.data) {
+    return response.data
   }
+
+  return rejectWithValue(response.error?.message || ERROR_MESSAGE_COMMON)
 })
 
 export const createOrUpdateOrder = createAsyncThunk('createOrUpdateOrder', async (order: IOrderRequestBody, { rejectWithValue }) => {
-  try {
-    const response = await http.post('order/create', order)
-    return response
-  } catch (error: any) {
-    if (!error.response) {
-      return rejectWithValue(ERROR_MESSAGE_NETWORK)
-    }
-    const { data } = error.response
-    if (data) {
-      return rejectWithValue(data.message)
-    } else {
-      return rejectWithValue(ERROR_MESSAGE_COMMON)
-    }
+  const response = await http.post('order/create', order)
+  if (response.data) {
+    return response.data
   }
+
+  return rejectWithValue(response.error?.message || ERROR_MESSAGE_COMMON)
 })
 
 export const createOrUpdateOrigin = async (item: IOrderOrigin) => {
   try {
-    console.log('sss')
     const response = await http.post('order/orderOrigin/createOrUpdate', item)
     return { isSuccess: true, data: response.data }
   } catch (error: any) {
