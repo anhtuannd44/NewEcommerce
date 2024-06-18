@@ -1,56 +1,17 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { get } from 'lodash'
 import { ERROR_MESSAGE_COMMON } from 'src/common/constants'
+import { APIMessages } from './enums/apiEnums'
+import { APIStatusMessages } from './constants/apiContants'
+import { APIError, FetchDataResult, IApiServices } from './interface/IApiService'
+import { isTokenExpired } from '../auth/service/authServices'
+import { logout } from 'src/auth/service/authServices'
+import { getTokenInfoFromLocalCookie } from 'src/auth/service/storedAuthState'
 
 const requestSerivceInstance = axios.create({
-  baseURL: `${process.env.API_ROOT}/api/admin`
+  baseURL: `${process.env.API_ROOT}/api/admin`,
+  timeout: 60000
 })
-
-export interface APIError {
-  status?: number
-  statusText?: string
-  message?: string
-  title?: string
-}
-
-export interface FetchDataResult<T> {
-  data?: T
-  error?: APIError
-}
-
-export interface IApiServices {
-  get: <T>(url: string, params?: object) => Promise<FetchDataResult<T>>
-  getWithAuth: <T>(url: string, params?: object) => Promise<FetchDataResult<T>>
-  post: <T>(url: string, payload: object) => Promise<FetchDataResult<T>>
-  put: <T>(url: string, payload: object) => Promise<FetchDataResult<T>>
-  delete: <T>(url: string, payload: object) => Promise<FetchDataResult<T>>
-}
-
-export const isClient = () => typeof window !== 'undefined'
-
-export type CustomOptions = Omit<RequestInit, 'method'> & {
-  baseUrl?: string | undefined
-}
-
-export enum APIMessages {
-  incorrectPassword = 'Incorrect Password',
-  emailAlreadyExists = 'Email Already Exists',
-  emailNotExists = 'Email Not Exists'
-}
-
-export enum APIStatus {
-  SUCCESS = 200,
-  CREATED = 201,
-  NO_CONTENT = 204,
-  BAD_REQUEST = 400,
-  UNAUTHORIZED = 401,
-  INTERNAL_SERVER_ERROR = 500
-}
-
-export const APIStatusMessages = {
-  [APIStatus.INTERNAL_SERVER_ERROR]: 'Internal Server Error',
-  [APIStatus.BAD_REQUEST]: 'Bad Request'
-}
 
 type APIMessagesKey = keyof typeof APIMessages
 type APIStatusMessagesKey = keyof typeof APIStatusMessages
@@ -83,24 +44,59 @@ const handleAPIError = (error: AxiosResponse): APIError => {
     dataError.title = get(error, 'response.data.error.title')
   }
   dataError.statusText = error?.statusText
-  console.log(dataError)
   return dataError
 }
-export const baseService = axios.create({
-  timeout: 60000,
-  baseURL: `${process.env.API_ROOT}/api/admin`
-})
 
-async function fetchData<T>(configs: AxiosRequestConfig): Promise<FetchDataResult<T>> {
+export interface ITokenInfo {
+  tokenType: string
+  accessToken: string
+  refreshToken: string
+  expires: string
+  expireIn: number
+}
+
+async function fetchData<T>(configs: AxiosRequestConfig, auth: boolean = false): Promise<FetchDataResult<T>> {
   try {
-    const response = await requestSerivceInstance.request<T>({
-      ...configs,
-      headers: {
-        ...configs.headers,
-        'Content-Type': 'application/json'
-        // Authorization: `Bearer ${localStorage.getItem('access_token')}`
+    let axiosHeaders = {
+      ...configs.headers,
+      'Content-Type': 'application/json'
+    }
+
+    if (auth) {
+      const currentUrl = window.location.href
+      const tokenInfo = getTokenInfoFromLocalCookie()
+
+      if (tokenInfo) {
+        let { refreshToken, expireIn, accessToken } = tokenInfo
+
+        if (!accessToken || isTokenExpired(expireIn)) {
+          if (!refreshToken) {
+            logout(currentUrl)
+          }
+
+          try {
+            accessToken = '' // await getNewAccessToken(refreshToken);
+            // saveToken(newAccessToken, refreshToken, 3600); // Giả sử token có hiệu lực trong 1 giờ
+          } catch {
+            logout(currentUrl)
+          }
+        }
+
+        axiosHeaders = {
+          ...axiosHeaders,
+          Authorization: `Bearer ${accessToken}`
+        }
+      } else {
+        logout(currentUrl)
       }
-    })
+    }
+
+    const axiosConfigs = {
+      ...configs,
+      headers: axiosHeaders
+    }
+
+    const response = await requestSerivceInstance.request<T>(axiosConfigs)
 
     return { data: response.data }
   } catch (error: any) {
@@ -116,7 +112,7 @@ async function fetchData<T>(configs: AxiosRequestConfig): Promise<FetchDataResul
     }
     if (error.response?.status === 401) {
       localStorage.removeItem('access_token')
-      // await signOut({ redirect: true });
+      logout()
     }
 
     return { error: handleAPIError(error as AxiosResponse) }
@@ -124,7 +120,7 @@ async function fetchData<T>(configs: AxiosRequestConfig): Promise<FetchDataResul
 }
 
 const http: IApiServices = {
-  get(url, params) {
+  get(url, params, auth) {
     return fetchData({
       url,
       method: 'get',
@@ -132,30 +128,40 @@ const http: IApiServices = {
     })
   },
   getWithAuth(url, params) {
-    return this.get(url, params)
+    return this.get(url, params, true)
   },
 
-  post(url, payload) {
+  post(url, payload, auth) {
     return fetchData({
       url,
       method: 'post',
       data: payload
     })
   },
-
-  put(url) {
-    return fetchData({
-      url,
-      method: 'put'
-    })
+  postWithAuth(url, payload) {
+    return this.post(url, payload, true)
   },
 
-  delete(url, payload) {
+  put(url, payload, auth) {
+    return fetchData({
+      url,
+      method: 'put',
+      data: payload
+    })
+  },
+  putWithAuth(url, payload) {
+    return this.put(url, payload, true)
+  },
+
+  delete(url, payload, auth) {
     return fetchData({
       url,
       method: 'delete',
       data: payload
     })
+  },
+  deleteWithAuth(url, payload) {
+    return this.delete(url, payload, true)
   }
 }
 

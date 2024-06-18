@@ -4,7 +4,7 @@ import request from 'src/api/requestApi'
 import {
   removeStoredAuthState,
   setStoredAuthState,
-} from '../../../api/service/storedAuthState'
+} from '../../../auth/service/storedAuthState'
 import * as actions from '../actions/authAction'
 import * as actionTypes from '../action-types/authActionType'
 import { ILoginAction, IRefreshAccessTokenAction, ISignUpAction } from '../interface/IAuth'

@@ -1,4 +1,3 @@
-import { IncomingMessage } from "http"
 import { ITokenInfo, IUserInfo } from "src/api/IAuthApi"
 import Cookies from "js-cookie"
 
@@ -12,22 +11,16 @@ export const setStoredAuthState = (tokenInfo: ITokenInfo, userInfo: IUserInfo) =
 
     Cookies.set('tokenInfo', JSON.stringify(tokenInfo), { options })
     Cookies.set('userInfo', JSON.stringify(userInfo), { options })
-
-    localStorage.setItem('tokenInfo', JSON.stringify(tokenInfo))
-    localStorage.setItem('userInfo', JSON.stringify(userInfo))
 }
 
-export const removeStoredAuthState = (): void => {
+export const removeStoredAuthState = () => {
     Cookies.remove('tokenInfo')
     Cookies.remove('userInfo')
-
-    window.localStorage.removeItem('tokenInfo')
-    window.localStorage.removeItem('userInfo')
 }
 
-export const getTokenInfoFromLocalStorage = () : ITokenInfo | null => {
+export const getTokenInfoFromLocalCookie = () : ITokenInfo | null => {
     try {
-        const tokenInfo = localStorage.getItem('tokenInfo')
+        const tokenInfo = Cookies.get('tokenInfo')
 
         if (tokenInfo === null || typeof tokenInfo === 'undefined' || tokenInfo === 'undefined' || tokenInfo === '') {
             return null
