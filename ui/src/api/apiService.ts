@@ -55,15 +55,19 @@ export interface ITokenInfo {
   expireIn: number
 }
 
-async function fetchData<T>(configs: AxiosRequestConfig, auth: boolean = false): Promise<FetchDataResult<T>> {
+async function fetchData<T>(configs: RequestInit, url: string, auth: boolean = false): Promise<FetchDataResult<T>> {
   try {
-    let axiosHeaders = {
+    let headers: HeadersInit = {
       ...configs.headers,
       'Content-Type': 'application/json'
     }
 
+    const baseUrl = `${process.env.API_ROOT}/api/admin`
+		const fullUrl = url.startsWith('/') ? `${baseUrl}${url}` : `${baseUrl}/${url}`
+
+    const currentHref = window.location.href
+
     if (auth) {
-      const currentUrl = window.location.href
       const tokenInfo = getTokenInfoFromLocalCookie()
 
       if (tokenInfo) {
@@ -71,97 +75,112 @@ async function fetchData<T>(configs: AxiosRequestConfig, auth: boolean = false):
 
         if (!accessToken || isTokenExpired(expireIn)) {
           if (!refreshToken) {
-            logout(currentUrl)
+            logout(currentHref)
+            return { error: { status: 401, statusText: 'Unauthorized', message: 'No refresh token', title: 'Unauthorized' } }
           }
 
           try {
-            accessToken = '' // await getNewAccessToken(refreshToken);
-            // saveToken(newAccessToken, refreshToken, 3600); // Giả sử token có hiệu lực trong 1 giờ
+            // const newTokenInfo = await getNewAccessToken(refreshToken);
+            // accessToken = newTokenInfo.accessToken;
+            // refreshToken = newTokenInfo.refreshToken;
+            // expireIn = newTokenInfo.expireIn;
+            // saveToken(accessToken, refreshToken, expireIn);
           } catch {
-            logout(currentUrl)
+            logout(currentHref)
+            return { error: { status: 401, statusText: 'Unauthorized', message: 'Failed to refresh token', title: 'Unauthorized' } }
           }
         }
 
-        axiosHeaders = {
-          ...axiosHeaders,
+        headers = {
+          ...headers,
           Authorization: `Bearer ${accessToken}`
         }
       } else {
-        logout(currentUrl)
+        logout(currentHref)
+        return { error: { status: 401, statusText: 'Unauthorized', message: 'No token info', title: 'Unauthorized' } }
       }
     }
 
-    const axiosConfigs = {
+    const fetchConfigs: RequestInit = {
       ...configs,
-      headers: axiosHeaders
+      headers
     }
 
-    const response = await requestSerivceInstance.request<T>(axiosConfigs)
+    const response = await fetch(fullUrl, fetchConfigs)
 
-    return { data: response.data }
+    if (!response.ok) {
+      if (response.status === 401) {
+        logout(currentHref)
+      }
+      return {
+        error: {
+          status: response.status,
+          statusText: response.statusText,
+          message: await response.text(),
+          title: response.statusText
+        }
+      }
+    }
+
+    const data = await response.json()
+    console.log(response)
+    return { data }
   } catch (error: any) {
-    if (error.code === 'ERR_NETWORK') {
+    if (error.name === 'TypeError') {
+      // Handle network errors
       return {
         error: {
           status: 500,
           statusText: 'ERR_NETWORK',
-          message: ERROR_MESSAGE_COMMON,
+          message: 'Network error occurred',
           title: 'ERR_NETWORK'
         }
       }
     }
-    if (error.response?.status === 401) {
-      localStorage.removeItem('access_token')
-      logout()
+    return {
+      error: {
+        status: 500,
+        statusText: 'Internal Server Error',
+        message: error.message || 'An unknown error occurred',
+        title: 'Internal Server Error'
+      }
     }
-
-    return { error: handleAPIError(error as AxiosResponse) }
   }
 }
 
+const buildQueryParams = (params?: object): string => {
+  if (!params) return ''
+  return '?' + new URLSearchParams(params as any).toString()
+}
+
 const http: IApiServices = {
-  get(url, params, auth) {
-    return fetchData({
-      url,
-      method: 'get',
-      params: params
-    })
+  get: async <T>(url: string, params?: object, auth: boolean = false): Promise<FetchDataResult<T>> => {
+    const queryParams = buildQueryParams(params)
+    return await fetchData<T>({ method: 'GET' }, `${url}${queryParams}`, auth)
   },
   getWithAuth(url, params) {
     return this.get(url, params, true)
   },
 
-  post(url, payload, auth) {
-    return fetchData({
-      url,
-      method: 'post',
-      data: payload
-    })
+  post: async <T>(url: string, body: object, auth: boolean = false): Promise<FetchDataResult<T>> => {
+    return await fetchData<T>({ method: 'POST', body: JSON.stringify(body) }, url, auth)
   },
-  postWithAuth(url, payload) {
-    return this.post(url, payload, true)
+  postWithAuth(url, body) {
+    return this.post(url, body, true)
   },
 
-  put(url, payload, auth) {
-    return fetchData({
-      url,
-      method: 'put',
-      data: payload
-    })
+  put: async <T>(url: string, body: any, auth: boolean = false): Promise<FetchDataResult<T>> => {
+    return await fetchData<T>({ method: 'PUT', body: JSON.stringify(body) }, url, auth)
   },
-  putWithAuth(url, payload) {
-    return this.put(url, payload, true)
+  putWithAuth(url, body) {
+    return this.put(url, body, true)
   },
 
-  delete(url, payload, auth) {
-    return fetchData({
-      url,
-      method: 'delete',
-      data: payload
-    })
+  delete: async <T>(url: string, body: any, auth: boolean = false): Promise<FetchDataResult<T>> => {
+    return await fetchData<T>({ method: 'DELETE', body: JSON.stringify(body) }, url, auth)
   },
-  deleteWithAuth(url, payload) {
-    return this.delete(url, payload, true)
+  deleteWithAuth(url, body) {
+    return this.delete(url, body, true)
   }
 }
 

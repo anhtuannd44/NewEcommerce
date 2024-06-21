@@ -1,6 +1,6 @@
 import { call, put, takeLatest } from 'redux-saga/effects'
 import { getToken, refreshAccessToken } from '../../../api/authApi'
-import request from 'src/api/requestApi'
+import request from 'src/api/apiService'
 import {
   removeStoredAuthState,
   setStoredAuthState,
@@ -8,7 +8,7 @@ import {
 import * as actions from '../actions/authAction'
 import * as actionTypes from '../action-types/authActionType'
 import { ILoginAction, IRefreshAccessTokenAction, ISignUpAction } from '../interface/IAuth'
-import http from 'src/api/requestApi'
+import http from 'src/api/apiService'
 
 export function* authWatcher() {
   yield takeLatest(actionTypes.LOGIN, loginSaga)

@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import http from 'src/api/requestApi'
+import http from 'src/api/apiService'
 import { ERROR_MESSAGE_COMMON, ERROR_MESSAGE_NETWORK } from 'src/common/constants'
 import { IBrand, IProductAdmin, IProductCategoryAdminCreateBody } from 'src/redux/admin/interface/IProductAdmin'
 

@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import http from 'src/api/requestApi'
+import http from 'src/api/apiService'
 
 export const getFileList = createAsyncThunk('getFileList', async () => {
   const response = await http.get('/file?pageSize=12')
