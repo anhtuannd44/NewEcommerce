@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.Shop.Web.Areas.Admin.Controllers;
 
-//[Authorize]
+[Authorize]
 [Area(ShopDomainConstants.AdminAreaName)]
 public class AdminBaseController : BaseController
 {

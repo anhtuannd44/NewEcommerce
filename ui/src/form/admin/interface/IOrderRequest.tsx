@@ -1,32 +1,31 @@
 import { DiscountType, OrderStatus } from 'src/common/enums'
 
 export interface IOrderRequestBody {
-  customerId: string | null
-  orderCode: string
+  customerId: string
+  orderCode?: string
   deliveryAddress: string
-  billingAddress: string
+  billingAddress?: string
   picStaffId: string
-  dateDelivery: Date | null
-  dateActualDelivery: Date | null
-  dateAcceptance: Date | null
-  dateAppointedDelivery: Date | null
+  dateDelivery?: Date
+  dateActualDelivery?: Date | null
+  dateAcceptance?: Date | null
+  dateAppointedDelivery?: Date | null
   constructionStaffIds: string[]
   preTotal: number
   totalPriceAfterDiscount: number
-  shippingFee: number
-  deposit: number
-  orderAttributeId: string
+  shippingFee: number | null
+  deposit: number | null
+  orderAttributeId?: string
   orderOriginId: string
-  discountType: DiscountType
-  discountValue: number
-  discountNote: string
-  note: string
-  isComplain: boolean
-  problem: string
-  rootCause: string
-  solution: string
+  discountType?: DiscountType
+  discountValue?: number
+  discountNote?: string
+  note?: string
+  problem?: string
+  rootCause?: string
+  solution?: string
   responsibleStaffIds: string[]
-  tags: string[]
+  tags?: string[]
   status: OrderStatus
   items: IProductItemRequestBody[]
 }

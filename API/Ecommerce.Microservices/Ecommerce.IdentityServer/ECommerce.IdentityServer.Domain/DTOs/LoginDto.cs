@@ -4,10 +4,10 @@ namespace ECommerce.IdentityServer.Domain.DTOs;
 
 public class LoginDto
 {
-    [JsonPropertyName("grand_type")] public string GrantType { get; set; }
+    [JsonPropertyName("grantType")] public string GrantType { get; set; }
     [JsonPropertyName("email")] public string Email { get; set; }
     [JsonPropertyName("password")] public string Password { get; set; }
-    [JsonPropertyName("refresh_token")] public string RefreshToken { get; set; }
+    [JsonPropertyName("refreshToken")] public string RefreshToken { get; set; }
 }
 
 public class RefreshTokenDto

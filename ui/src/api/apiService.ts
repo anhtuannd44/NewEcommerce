@@ -1,103 +1,93 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
-import { get } from 'lodash'
-import { ERROR_MESSAGE_COMMON } from 'src/common/constants'
-import { APIMessages } from './enums/apiEnums'
-import { APIStatusMessages } from './constants/apiContants'
-import { APIError, FetchDataResult, IApiServices } from './interface/IApiService'
+import { APIServer } from './enums/apiEnums'
+import { FetchDataResult, IApiServices } from './interface/IApiService'
 import { isTokenExpired } from '../auth/service/authServices'
 import { logout } from 'src/auth/service/authServices'
-import { getTokenInfoFromLocalCookie } from 'src/auth/service/storedAuthState'
+import { getTokenInfoFromLocalCookie, setStoredAuthState } from 'src/auth/service/storedAuthState'
+import { parseAuthResponse, refreshAccessToken } from './authApi'
 
-const requestSerivceInstance = axios.create({
-  baseURL: `${process.env.API_ROOT}/api/admin`,
-  timeout: 60000
-})
+const serverMapping = {
+  [APIServer.IdentityServer]: process.env.API_IDENTITY,
+  [APIServer.RootApiServer]: process.env.API_ROOT,
+  [APIServer.Other]: undefined
+}
 
-type APIMessagesKey = keyof typeof APIMessages
-type APIStatusMessagesKey = keyof typeof APIStatusMessages
+let isRefreshing = false
+let refreshSubscribers: ((token: string) => void)[] = []
 
-const getMessageFromKeyErrors = (data: { errors: Record<string, APIMessagesKey> }): string | null => {
-  if (data?.errors) {
-    const keyMessage: APIMessagesKey = data?.errors[Object.keys(data?.errors)[0]]
-    const message = APIMessages[keyMessage]
-    if (message) {
-      return message
+const subscribeTokenRefresh = (cb: (token: string) => void): void => {
+  refreshSubscribers.push(cb)
+}
+
+const onRefreshed = (token: string): void => {
+  refreshSubscribers.forEach(cb => cb(token))
+  refreshSubscribers = []
+}
+
+const checkAuthentication = async (): Promise<string | null> => {
+  const tokenInfo = getTokenInfoFromLocalCookie()
+  if (tokenInfo) {
+    let { refreshToken, expireIn, accessToken } = tokenInfo
+
+    if (!accessToken || isTokenExpired(expireIn)) {
+      if (!refreshToken) {
+        return null
+      }
+
+      if (!isRefreshing) {
+        isRefreshing = true
+        try {
+          const newTokenInfo = await refreshAccessToken(refreshToken)
+
+          if (!newTokenInfo.data) {
+            return null
+          }
+
+          const saveInfo = parseAuthResponse(newTokenInfo.data)
+          setStoredAuthState(saveInfo.tokenInfo, saveInfo.userInfo)
+          accessToken = saveInfo.tokenInfo.accessToken
+          isRefreshing = false
+          onRefreshed(accessToken)
+          return accessToken
+        } catch (error) {
+          isRefreshing = false
+          return null
+        }
+      } else {
+        return new Promise<string | null>(resolve => {
+          subscribeTokenRefresh((newToken: string) => {
+            resolve(newToken)
+          })
+        })
+      }
     }
+
+    return accessToken
   } else {
-    return get(data, 'message', '')
+    return null
   }
-  return null
 }
 
-const handleAPIError = (error: AxiosResponse): APIError => {
-  const data = error?.data
-
-  const dataError: APIError = {}
-  if (data) {
-    dataError.status = data?.status
-    dataError.message = getMessageFromKeyErrors(data) || error?.statusText
-  } else {
-    dataError.status = error?.status || get(error, 'response.status') || get(error, 'response.data.error.code')
-
-    dataError.message = APIStatusMessages[error?.status as APIStatusMessagesKey] || error?.statusText || get(error, 'response.data.error.message') || get(error, 'response.data')
-    ;('')
-    dataError.title = get(error, 'response.data.error.title')
-  }
-  dataError.statusText = error?.statusText
-  return dataError
-}
-
-export interface ITokenInfo {
-  tokenType: string
-  accessToken: string
-  refreshToken: string
-  expires: string
-  expireIn: number
-}
-
-async function fetchData<T>(configs: RequestInit, url: string, auth: boolean = false): Promise<FetchDataResult<T>> {
+const fetchData = async <T>(configs: RequestInit, url: string, server: APIServer, auth: boolean = false): Promise<FetchDataResult<T>> => {
   try {
     let headers: HeadersInit = {
       ...configs.headers,
       'Content-Type': 'application/json'
     }
 
-    const baseUrl = `${process.env.API_ROOT}/api/admin`
-		const fullUrl = url.startsWith('/') ? `${baseUrl}${url}` : `${baseUrl}/${url}`
+    const baseUrl = serverMapping[server]
+    const fullUrl = url.startsWith('/') ? `${baseUrl}${url}` : `${baseUrl}/${url}`
 
     const currentHref = window.location.href
 
     if (auth) {
-      const tokenInfo = getTokenInfoFromLocalCookie()
-
-      if (tokenInfo) {
-        let { refreshToken, expireIn, accessToken } = tokenInfo
-
-        if (!accessToken || isTokenExpired(expireIn)) {
-          if (!refreshToken) {
-            logout(currentHref)
-            return { error: { status: 401, statusText: 'Unauthorized', message: 'No refresh token', title: 'Unauthorized' } }
-          }
-
-          try {
-            // const newTokenInfo = await getNewAccessToken(refreshToken);
-            // accessToken = newTokenInfo.accessToken;
-            // refreshToken = newTokenInfo.refreshToken;
-            // expireIn = newTokenInfo.expireIn;
-            // saveToken(accessToken, refreshToken, expireIn);
-          } catch {
-            logout(currentHref)
-            return { error: { status: 401, statusText: 'Unauthorized', message: 'Failed to refresh token', title: 'Unauthorized' } }
-          }
-        }
-
-        headers = {
-          ...headers,
-          Authorization: `Bearer ${accessToken}`
-        }
-      } else {
+      const accessToken = await checkAuthentication()
+      if (!accessToken) {
         logout(currentHref)
         return { error: { status: 401, statusText: 'Unauthorized', message: 'No token info', title: 'Unauthorized' } }
+      }
+      headers = {
+        ...headers,
+        Authorization: `Bearer ${accessToken}`
       }
     }
 
@@ -123,7 +113,6 @@ async function fetchData<T>(configs: RequestInit, url: string, auth: boolean = f
     }
 
     const data = await response.json()
-    console.log(response)
     return { data }
   } catch (error: any) {
     if (error.name === 'TypeError') {
@@ -154,33 +143,31 @@ const buildQueryParams = (params?: object): string => {
 }
 
 const http: IApiServices = {
-  get: async <T>(url: string, params?: object, auth: boolean = false): Promise<FetchDataResult<T>> => {
+  get: <T>(url: string, params?: object, server: APIServer = APIServer.RootApiServer) => {
     const queryParams = buildQueryParams(params)
-    return await fetchData<T>({ method: 'GET' }, `${url}${queryParams}`, auth)
+    return fetchData<T>({ method: 'GET' }, `${url}${queryParams}`, server)
   },
-  getWithAuth(url, params) {
-    return this.get(url, params, true)
+  getWithAuth: <T>(url: string, params?: object, server: APIServer = APIServer.RootApiServer) => {
+    const queryParams = buildQueryParams(params)
+    return fetchData<T>({ method: 'GET' }, `${url}${queryParams}`, server, true)
   },
-
-  post: async <T>(url: string, body: object, auth: boolean = false): Promise<FetchDataResult<T>> => {
-    return await fetchData<T>({ method: 'POST', body: JSON.stringify(body) }, url, auth)
+  post: <T>(url: string, body: object, server: APIServer = APIServer.RootApiServer) => {
+    return fetchData<T>({ method: 'POST', body: JSON.stringify(body) }, url, server)
   },
-  postWithAuth(url, body) {
-    return this.post(url, body, true)
+  postWithAuth: <T>(url: string, body: object, server: APIServer = APIServer.RootApiServer) => {
+    return fetchData<T>({ method: 'POST', body: JSON.stringify(body) }, url, server, true)
   },
-
-  put: async <T>(url: string, body: any, auth: boolean = false): Promise<FetchDataResult<T>> => {
-    return await fetchData<T>({ method: 'PUT', body: JSON.stringify(body) }, url, auth)
+  put: <T>(url: string, body: any, server: APIServer = APIServer.RootApiServer) => {
+    return fetchData<T>({ method: 'PUT', body: JSON.stringify(body) }, url, server)
   },
-  putWithAuth(url, body) {
-    return this.put(url, body, true)
+  putWithAuth: <T>(url: string, body: any, server: APIServer = APIServer.RootApiServer) => {
+    return fetchData({ method: 'PUT', body: JSON.stringify(body) }, url, server, true)
   },
-
-  delete: async <T>(url: string, body: any, auth: boolean = false): Promise<FetchDataResult<T>> => {
-    return await fetchData<T>({ method: 'DELETE', body: JSON.stringify(body) }, url, auth)
+  delete: <T>(url: string, body: any, server: APIServer = APIServer.RootApiServer) => {
+    return fetchData<T>({ method: 'DELETE', body: JSON.stringify(body) }, url, server)
   },
-  deleteWithAuth(url, body) {
-    return this.delete(url, body, true)
+  deleteWithAuth: <T>(url: string, body: any, server: APIServer = APIServer.RootApiServer) => {
+    return fetchData<T>({ method: 'DELETE', body: JSON.stringify(body) }, url, server, true)
   }
 }
 

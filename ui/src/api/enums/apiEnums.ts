@@ -1,3 +1,9 @@
+export enum APIServer {
+  IdentityServer = 0,
+  RootApiServer = 1,
+  Other = 3
+}
+
 export enum APIStatus {
   SUCCESS = 200,
   CREATED = 201,

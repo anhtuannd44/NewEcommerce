@@ -22,12 +22,11 @@ export const defaultOrderItem: IProductItemRequestBody = {
 }
 
 export const defaultOrderRequest: IOrderRequestBody = {
-  customerId: null,
+  customerId: '',
   orderCode: '',
   deliveryAddress: '',
   billingAddress: '',
   picStaffId: '',
-  dateDelivery: null,
   dateActualDelivery: null,
   dateAcceptance: null,
   dateAppointedDelivery: null,
@@ -42,7 +41,6 @@ export const defaultOrderRequest: IOrderRequestBody = {
   discountValue: 0,
   discountNote: '',
   note: '',
-  isComplain: false,
   problem: '',
   rootCause: '',
   solution: '',
@@ -53,7 +51,7 @@ export const defaultOrderRequest: IOrderRequestBody = {
 }
 
 export const productItemSchema = Yup.object().shape({
-  productId: Yup.string().required(),
+  productId: Yup.string().required().default('123123123'),
   price: Yup.number().nullable().default(null),
   quantity: Yup.number().required(),
   discountType: Yup.mixed<DiscountType>()
@@ -73,37 +71,44 @@ export const productItemSchema = Yup.object().shape({
   isShowNote: Yup.boolean().optional()
 })
 
-export const orderRequestSchema = Yup.object().shape({
-  customerId: Yup.string().required().nullable(),
-  orderCode: Yup.string().required(),
-  deliveryAddress: Yup.string().required(),
-  billingAddress: Yup.string().required(),
-  picStaffId: Yup.string().required(),
-  dateDelivery: Yup.date().nullable().default(null),
+export const orderRequestSchema = Yup.object<IOrderRequestBody>().shape({
+  customerId: Yup.string().required('Vui lòng chọn khách hàng'),
+  orderCode: Yup.string(),
+  deliveryAddress: Yup.string().required('Vui lòng chọn địa chỉ giao hàng'),
+  billingAddress: Yup.string(),
+  picStaffId: Yup.string().required('Vui lòng chọn người phụ trách'),
+  dateDelivery: Yup.date().nullable().default(null).required('Vui lòng nhập ngày hẹn giao hàng'),
   dateActualDelivery: Yup.date().nullable().default(null),
   dateAcceptance: Yup.date().nullable().default(null),
   dateAppointedDelivery: Yup.date().nullable().default(null),
   constructionStaffIds: Yup.array().of(Yup.string().required()).required(),
   preTotal: Yup.number().required(),
   totalPriceAfterDiscount: Yup.number().required(),
-  shippingFee: Yup.number().required(),
-  deposit: Yup.number().required(),
-  orderAttributeId: Yup.string().required(),
-  orderOriginId: Yup.string().required(),
+  shippingFee: Yup.number().nullable().default(0).min(0, 'Số tiền phải lớn hơn hoặc bằng 0'),
+  deposit: Yup.number().nullable().default(0).min(0, 'Số tiền phải lớn hơn hoặc bằng 0'),
+  orderAttributeId: Yup.string(),
+  orderOriginId: Yup.string().required('Vui lòng chọn nguồn đơn hàng'),
   discountType: Yup.mixed<DiscountType>()
     .oneOf(Object.values(DiscountType) as DiscountType[])
+    .default(DiscountType.Value)
     .required(),
-  discountValue: Yup.number().required(),
-  discountNote: Yup.string().required(),
-  note: Yup.string().required(),
-  isComplain: Yup.boolean().required(),
-  problem: Yup.string().required(),
-  rootCause: Yup.string().required(),
-  solution: Yup.string().required(),
+  discountValue: Yup.number()
+    .min(0, 'Số phải lớn hơn hoặc bằng 0')
+    .when('discountType', (discountType: any) =>
+      discountType === DiscountType.Percent
+        ? Yup.number().max(100, 'Giá trị phần trăm phải nhỏ hơn hoặc bằng 100').required('Giá trị chiết khấu là bắt buộc')
+        : Yup.number().required('Giá trị chiết khấu là bắt buộc')
+    ),
+  discountNote: Yup.string(),
+  note: Yup.string(),
+  problem: Yup.string(),
+  rootCause: Yup.string(),
+  solution: Yup.string(),
   responsibleStaffIds: Yup.array().of(Yup.string().required()).required(),
-  tags: Yup.array().of(Yup.string().required()).required(),
+  tags: Yup.array(),
   status: Yup.mixed<OrderStatus>()
     .oneOf(Object.values(OrderStatus) as OrderStatus[])
-    .required().default(OrderStatus.Processing),
+    .required()
+    .default(OrderStatus.Processing),
   items: Yup.array().of(productItemSchema).required()
 })

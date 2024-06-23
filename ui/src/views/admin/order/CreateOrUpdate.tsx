@@ -1,7 +1,7 @@
 'use client'
-import { useEffect } from 'react'
+import { FormEvent, FormEventHandler, useEffect } from 'react'
 import { connect } from 'react-redux'
-import { useForm, Controller, FormProvider } from 'react-hook-form'
+import { useForm, Controller, FormProvider, SubmitHandler, FieldErrors } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Alert, createFilterOptions, Grid, Snackbar } from '@mui/material'
 import 'react-datepicker/dist/react-datepicker.css'
@@ -80,14 +80,26 @@ const CreateOrUpdateOrderAdmin = (props: ICreateOrUpdateOrderAdminProps) => {
   }, [])
 
   const methods = useForm<IOrderRequestBody>({
-    defaultValues: defaultOrderRequest,
     resolver: yupResolver<IOrderRequestBody>(orderRequestSchema),
-		mode: "onChange"
+    mode: 'onChange',
+    reValidateMode: 'onChange',
+    progressive: true
   })
+
+  const handleSubmitCreateOrder = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+
+		console.log(methods.control._fields)
+
+    methods.handleSubmit(onSubmit, onError)
+  }
 
   const filterUserOptions = createFilterOptions({ ignoreAccents: false, stringify: (option: IUser) => `${option.fullName} ${option.phoneNumber}` })
 
-  const onSubmit = () => {
+  const onSubmit = (data: IOrderRequestBody) => {
+    // console.log('data', data)
+    createOrUpdateOrder(data)
+
     setSubmitted()
     const currentOrderState = _.cloneDeep(orderAdmin)
 
@@ -113,21 +125,25 @@ const CreateOrUpdateOrderAdmin = (props: ICreateOrUpdateOrderAdminProps) => {
     }
   }
 
+  const onError = (errors: FieldErrors<IOrderRequestBody>) => {
+    console.log('Validation Errors:', errors)
+  }
+
   const handleCloseSnackbar = () => {
     resetMessage()
   }
 
-  if (!(userList && productList && orderAttributeList)) {
+  if (!(userList.users && productList.products && orderAttributeList.orderAttributes)) {
     return <CreateOrEditLoadingBox />
   }
 
   return (
     <>
       <FormProvider {...methods}>
-        <form onSubmit={methods.handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmitCreateOrder}>
           <Grid container spacing={6}>
             <Grid item xs={9}>
-              <CustomerSelectBox handleSubmit={onSubmit} filterUserOptions={filterUserOptions} />
+              <CustomerSelectBox filterUserOptions={filterUserOptions} />
             </Grid>
             <Grid item xs={3}>
               <AdditionalInfoBox filterUserOptions={filterUserOptions} />

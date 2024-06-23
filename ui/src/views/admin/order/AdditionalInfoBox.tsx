@@ -70,6 +70,8 @@ const AdditionalInfoBox = (props: IAdditionalInfoBoxProps) => {
     setIsOpenOrderOriginDialog(false)
   }
 
+	console.log("sss")
+
   return (
     <Paper>
       <PaperHeader leftHeader={<Typography variant='h6'>Thông tin bổ sung</Typography>} />
@@ -80,19 +82,28 @@ const AdditionalInfoBox = (props: IAdditionalInfoBoxProps) => {
         }}>
         <Grid container spacing={5}>
           <Grid item xs={12}>
-            <TextField
-              fullWidth
-              value={orderRequestBody.orderCode}
-              size='small'
-              type='text'
-              label='Mã đơn'
-              placeholder='VD: 2024xxxxxx'
-              helperText='Tự sinh nếu để trống'
-              sx={{
-                fontSize: '0.4rem !important'
-              }}
-              onChange={event => {
-                updateGeneralField('orderCode', event.target?.value)
+            <Controller
+              name='orderCode'
+              control={control}
+              render={({ field: { onChange } }) => {
+                return (
+                  <TextField
+                    name='orderCode'
+                    id='orderCode'
+                    fullWidth
+                    size='small'
+                    type='text'
+                    label='Mã đơn'
+                    placeholder='VD: 2024xxxxxx'
+                    helperText='Tự sinh nếu để trống'
+                    sx={{
+                      fontSize: '0.4rem !important'
+                    }}
+                    onChange={event => {
+                      onChange(event.target?.value)
+                    }}
+                  />
+                )
               }}
             />
           </Grid>
@@ -114,7 +125,7 @@ const AdditionalInfoBox = (props: IAdditionalInfoBoxProps) => {
                         <FormHelperText>{fieldState.error?.message}</FormHelperText>
                       </FormControl>
                     )}
-                    onChange={(event, newValue, reason) => {
+                    onChange={(event, newValue) => {
                       onChange(newValue)
                     }}
                     getOptionLabel={option => users.find(x => x.id === option)?.fullName || ''}
@@ -159,7 +170,7 @@ const AdditionalInfoBox = (props: IAdditionalInfoBoxProps) => {
                   <Autocomplete
                     fullWidth
                     size='small'
-                    id='≈å'
+                    id='orderOriginId'
                     options={orderOriginIds}
                     renderInput={params => (
                       <FormControl error={!!fieldState.error} variant='standard' fullWidth>
@@ -228,119 +239,156 @@ const AdditionalInfoBox = (props: IAdditionalInfoBoxProps) => {
             />
           </Grid>
           <Grid item xs={12}>
-            <DatePickerWrapper>
-              <DatePicker
-                selected={orderRequestBody.dateDelivery}
-                showTimeInput
-                timeFormat='HH:MM'
-                showYearDropdown
-                showMonthDropdown
-                placeholderText='DD-MM-YYYY hh:mm:aa'
-                customInput={<CustomInputs />}
-                dateFormat='dd-MM-yyyy hh:mm:aa'
-                onChange={(date: Date | null | undefined) => updateDateDelivery(date || null)}
-              />
-            </DatePickerWrapper>
-          </Grid>
-          <Grid item xs={12}>
-            <Autocomplete
-              fullWidth
-              size='small'
-              id='ConstructionStaff'
-              multiple
-              options={userList || []}
-              renderInput={params => (
-                <FormControl error={!orderRequestBodyControls.constructionStaffIds.result.isValid} variant='standard' fullWidth>
-                  <TextField {...params} error={!orderRequestBodyControls.constructionStaffIds.result.isValid} label='Người thi công' />
-                  <FormHelperText>{orderRequestBodyControls.constructionStaffIds.result.errorMessage}</FormHelperText>
-                </FormControl>
-              )}
-              onChange={(event, newValue, reason) => {
-                if (event.type === 'keydown' && ((event as React.KeyboardEvent).key === 'Backspace' || (event as React.KeyboardEvent).key === 'Delete') && reason === 'removeOption') {
-                  return
-                }
-                handleConstructionStaffsChange(newValue)
-              }}
-              filterOptions={filterUserOptions}
-              getOptionLabel={option => option.fullName}
-              renderOption={(props, option) => (
-                <li key={option.id} {...props}>
-                  <Badge
-                    overlap='circular'
-                    badgeContent={<BadgeContentSpan />}
-                    anchorOrigin={{
-                      vertical: 'bottom',
-                      horizontal: 'right'
-                    }}>
-                    <Avatar alt='John Doe' src='/images/avatars/1.png' sx={{ width: '2.5rem', height: '2.5rem' }} />
-                  </Badge>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      marginLeft: 3,
-                      alignItems: 'flex-start',
-                      flexDirection: 'column'
-                    }}>
-                    <Typography sx={{ fontWeight: 600 }}>{option.fullName}</Typography>
-                  </Box>
-                </li>
+            <Controller
+              name='dateDelivery'
+              control={control}
+              render={({ field: { onChange, value }, fieldState }) => (
+                <DatePickerWrapper>
+                  <DatePicker
+                    selected={value}
+                    showTimeInput
+										showPopperArrow
+                    timeFormat='HH:MM'
+                    showYearDropdown
+                    showMonthDropdown
+                    placeholderText='DD-MM-YYYY hh:mm:aa'
+                    customInput={<CustomInputs />}
+                    dateFormat='dd-MM-yyyy hh:mm:aa'
+                    onChange={(date) => onChange(date)}
+                  />
+                </DatePickerWrapper>
               )}
             />
           </Grid>
           <Grid item xs={12}>
-            <Autocomplete
-              fullWidth
-              size='small'
-              id='orderAttribute'
-              options={orderAttributeList || []}
-              renderInput={params => <TextField {...params} label='Loại đơn hàng' />}
-              noOptionsText='Chưa có dữ liệu'
-              onChange={(event, newValue, reason) => {
-                handleOnChangeOrderAttribute(newValue)
-              }}
-              renderOption={(props, option) => (
-                <li key={option.id} {...props}>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      marginLeft: 3,
-                      alignItems: 'flex-start',
-                      flexDirection: 'column'
-                    }}>
-                    <Typography sx={{ fontWeight: 400, py: 1 }}>{option.name}</Typography>
-                  </Box>
-                </li>
-              )}
-              getOptionLabel={option => option.name}
-              PaperComponent={({ children }) => {
+            <Controller
+              name='constructionStaffIds'
+              control={control}
+              render={({ field: { onChange }, fieldState }) => {
+                const users = [...(userList || [])]
+                const userIds = users.map(item => item.id)
                 return (
-                  <Paper>
-                    <Button
-                      fullWidth
-                      startIcon={
-                        <Plus
-                          sx={{
-                            border: '1px solid',
-                            borderRadius: '99px'
-                          }}
-                        />
+                  <Autocomplete
+                    fullWidth
+                    size='small'
+                    id='constructionStaffIds'
+                    multiple
+                    options={userIds}
+                    renderInput={params => (
+                      <FormControl error={!!fieldState.error} variant='standard' fullWidth>
+                        <TextField {...params} error={!!fieldState.error} label='Người thi công' />
+                        <FormHelperText>{fieldState.error?.message}</FormHelperText>
+                      </FormControl>
+                    )}
+                    onChange={(event, newValue, reason) => {
+                      if (event.type === 'keydown' && ((event as React.KeyboardEvent).key === 'Backspace' || (event as React.KeyboardEvent).key === 'Delete') && reason === 'removeOption') {
+                        return
                       }
-                      sx={{
-                        fontSize: '.85rem',
-                        fontWeight: 400,
-                        px: 7,
-                        py: 2,
-                        m: 0
-                      }}
-                      onMouseDown={() => {
-                        setIsOpenOrderOriginDialog(true)
-                      }}
-                      style={{ justifyContent: 'flex-start' }}>
-                      Quản lý loại đơn hàng
-                    </Button>
-                    <Divider sx={{ margin: 0 }} />
-                    {children}
-                  </Paper>
+                      onChange(newValue)
+                    }}
+                    getOptionLabel={option => users.find(x => x.id === option)?.fullName || ''}
+                    renderOption={(props, option) => {
+                      const user = users.find(x => x.id === option)
+                      return (
+                        <li key={option} {...props}>
+                          <Badge
+                            overlap='circular'
+                            badgeContent={<BadgeContentSpan />}
+                            anchorOrigin={{
+                              vertical: 'bottom',
+                              horizontal: 'right'
+                            }}>
+                            <Avatar alt='John Doe' src='/images/avatars/1.png' sx={{ width: '2.5rem', height: '2.5rem' }} />
+                          </Badge>
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              marginLeft: 3,
+                              alignItems: 'flex-start',
+                              flexDirection: 'column'
+                            }}>
+                            <Typography sx={{ fontWeight: 600 }}>{user?.fullName}</Typography>
+                          </Box>
+                        </li>
+                      )
+                    }}
+                  />
+                )
+              }}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Controller
+              name='orderAttributeId'
+              control={control}
+              render={({ field: { onChange }, fieldState }) => {
+                const orderAttributes = _.clone(orderAttributeList || [])
+                const orderAttributueIds = orderAttributes.map(item => item.id)
+                return (
+                  <Autocomplete
+                    fullWidth
+                    size='small'
+                    id='orderAttribute'
+                    options={orderAttributueIds}
+                    renderInput={params => (
+                      <FormControl error={!!fieldState.error} variant='standard' fullWidth>
+                        <TextField {...params} error={!!fieldState.error} label='Loại đơn hàng' />
+                        <FormHelperText>{fieldState.error?.message}</FormHelperText>
+                      </FormControl>
+                    )}
+                    noOptionsText='Chưa có dữ liệu'
+                    onChange={(event, newValue) => {
+                      onChange(newValue)
+                    }}
+                    renderOption={(props, option) => {
+                      const orderAttribute = orderAttributes.find(x => x.id === option)
+                      return (
+                        <li key={option} {...props}>
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              marginLeft: 3,
+                              alignItems: 'flex-start',
+                              flexDirection: 'column'
+                            }}>
+                            <Typography sx={{ fontWeight: 400, py: 1 }}>{orderAttribute?.name}</Typography>
+                          </Box>
+                        </li>
+                      )
+                    }}
+                    getOptionLabel={option => orderAttributes.find(x => x.id === option)?.name || ''}
+                    PaperComponent={({ children }) => {
+                      return (
+                        <Paper>
+                          <Button
+                            fullWidth
+                            startIcon={
+                              <Plus
+                                sx={{
+                                  border: '1px solid',
+                                  borderRadius: '99px'
+                                }}
+                              />
+                            }
+                            sx={{
+                              fontSize: '.85rem',
+                              fontWeight: 400,
+                              px: 7,
+                              py: 2,
+                              m: 0
+                            }}
+                            onMouseDown={() => {
+                              setIsOpenOrderOriginDialog(true)
+                            }}
+                            style={{ justifyContent: 'flex-start' }}>
+                            Quản lý loại đơn hàng
+                          </Button>
+                          <Divider sx={{ margin: 0 }} />
+                          {children}
+                        </Paper>
+                      )
+                    }}
+                  />
                 )
               }}
             />

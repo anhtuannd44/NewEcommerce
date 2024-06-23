@@ -1,11 +1,11 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import http from 'src/api/apiService'
 import { ERROR_MESSAGE_COMMON, ERROR_MESSAGE_NETWORK } from 'src/common/constants'
+import { IOrderRequestBody } from 'src/form/admin/interface/IOrderRequest'
 import { IOrderOrigin } from 'src/redux/admin/interface/IAdminGeneralState'
-import { IOrderRequestBody } from 'src/redux/admin/interface/IOrderAdmin'
 
 export const getProductList = createAsyncThunk('getProductList', async (_, { rejectWithValue }) => {
-  const response = await http.get('/product')
+  const response = await http.getWithAuth('/product')
   if (response.data) {
     return response.data
   }
@@ -14,7 +14,7 @@ export const getProductList = createAsyncThunk('getProductList', async (_, { rej
 })
 
 export const getUserList = createAsyncThunk('getUserList', async (_, { rejectWithValue }) => {
-  const response = await http.get('/user')
+  const response = await http.getWithAuth('/user')
   if (response.data) {
     return response.data
   }
@@ -23,7 +23,7 @@ export const getUserList = createAsyncThunk('getUserList', async (_, { rejectWit
 })
 
 export const getOrderAttributeList = createAsyncThunk('getOrderAttributeList', async (_, { rejectWithValue }) => {
-  const response = await http.get('order/attribute')
+  const response = await http.getWithAuth('order/attribute')
   if (response.data) {
     return response.data
   }
@@ -32,7 +32,7 @@ export const getOrderAttributeList = createAsyncThunk('getOrderAttributeList', a
 })
 
 export const getOrderOriginList = createAsyncThunk('getOrderOriginList', async (_, { rejectWithValue }) => {
-  const response = await http.get('order/orderOrigin')
+  const response = await http.getWithAuth('order/orderOrigin')
 
   if (response.data) {
     return response.data
@@ -42,7 +42,7 @@ export const getOrderOriginList = createAsyncThunk('getOrderOriginList', async (
 })
 
 export const getOrderTagList = createAsyncThunk('getOrderTagList', async (_, { rejectWithValue }) => {
-  const response = await http.get('order/tags')
+  const response = await http.getWithAuth('order/tags')
 
   if (response.data) {
     return response.data
@@ -52,7 +52,7 @@ export const getOrderTagList = createAsyncThunk('getOrderTagList', async (_, { r
 })
 
 export const createOrUpdateOrder = createAsyncThunk('createOrUpdateOrder', async (order: IOrderRequestBody, { rejectWithValue }) => {
-  const response = await http.post('order/create', order)
+  const response = await http.postWithAuth('order/create', order)
   if (response.data) {
     return response.data
   }
@@ -62,7 +62,7 @@ export const createOrUpdateOrder = createAsyncThunk('createOrUpdateOrder', async
 
 export const createOrUpdateOrigin = async (item: IOrderOrigin) => {
   try {
-    const response = await http.post('order/orderOrigin/createOrUpdate', item)
+    const response = await http.postWithAuth('order/orderOrigin/createOrUpdate', item)
     return { isSuccess: true, data: response.data }
   } catch (error: any) {
     if (!error.response) {

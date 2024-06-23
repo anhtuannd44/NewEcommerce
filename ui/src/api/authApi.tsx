@@ -1,42 +1,36 @@
-import axios, { AxiosInstance, AxiosResponse } from 'axios'
-import apiConfig from 'src/apiConfig.json'
-import { CONTENT_TYPE_APPLICATION_JSON } from 'src/api/constants/apiContants'
+import { setStoredAuthState } from 'src/auth/service/storedAuthState'
 import { ILoginData, ITokenInfo, IGetTokenResponse, IUserInfo } from './IAuthApi'
+import http from './apiService'
+import { FetchDataResult } from './interface/IApiService'
+import { APIServer } from './enums/apiEnums'
 
-const domain: string = apiConfig.apiIdentity
-
-const requestIdentity: AxiosInstance = axios.create({
-  baseURL: domain,
-  headers: {
-    'Content-Type': CONTENT_TYPE_APPLICATION_JSON
-  }
-})
-
-export const getToken = async (loginData: ILoginData) => {
-  try {
-    const response = await requestIdentity.post('/login', {
+export const getToken = async (loginData: ILoginData): Promise<FetchDataResult<IGetTokenResponse>> => {
+  const response = await http.post<IGetTokenResponse>(
+    '/login',
+    {
       grantType: 'password',
       email: loginData.email,
       password: loginData.password
-    })
-    return response.data
-  } catch (error) {
-    location.href = '/login'
-    return
+    },
+    APIServer.IdentityServer
+  )
+  if (response.data) {
+    const newInfo = parseAuthResponse(response.data)
+    setStoredAuthState(newInfo.tokenInfo, newInfo.userInfo)
   }
+  return response
 }
 
-export const refreshAccessToken = async (refreshToken: string): Promise<IGetTokenResponse | null> => {
-  try {
-    const response = await requestIdentity.post('/login', {
+export const refreshAccessToken = async (refreshToken: string): Promise<FetchDataResult<IGetTokenResponse>> => {
+  const response = await http.post<IGetTokenResponse>(
+    '/login',
+    {
       grantType: 'refresh_token',
       refreshToken: refreshToken
-    })
-    return response.data
-  } catch (error) {
-    location.href = '/login'
-    return null
-  }
+    },
+    APIServer.IdentityServer
+  )
+  return response
 }
 
 export const parseAuthResponse = (response: IGetTokenResponse): { tokenInfo: ITokenInfo; userInfo: IUserInfo } => {
