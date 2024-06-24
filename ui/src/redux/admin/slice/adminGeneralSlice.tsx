@@ -24,9 +24,9 @@ const initialState: IAdminGeneralState = {
   orderAttributeList: {
     status: initRequestStatus
   },
-	orderTagList: {
-		status: initRequestStatus
-	},
+  orderTagList: {
+    status: initRequestStatus
+  },
   message: { type: MessageType.Success, text: '' }
 }
 
@@ -134,7 +134,7 @@ const adminGeneralSlice = createSlice({
         state.message.type = MessageType.Success
         state.message.text = action.payload as string
       })
-			// Get origin list
+      // Get origin list
       .addCase(getOrderTagList.pending, state => {
         state.orderTagList.status.isLoading = true
         state.orderTagList.status.isSentRequest = true
@@ -152,6 +152,27 @@ const adminGeneralSlice = createSlice({
         state.orderTagList.status.isLoading = false
         state.orderTagList.status.isSentRequest = false
         state.orderTagList.status.isSuccess = false
+        state.message.type = MessageType.Success
+        state.message.text = action.payload as string
+      })
+			// create or update order origin
+      .addCase(createOrUpdateOrigin.pending, state => {
+        state.orderOriginList.status.isLoading = true
+        state.orderOriginList.status.isSentRequest = true
+        state.orderOriginList.status.isSuccess = false
+      })
+      .addCase(createOrUpdateOrigin.fulfilled, (state, action) => {
+        state.orderOriginList.status.isLoading = false
+        state.orderOriginList.status.isSentRequest = false
+        state.orderOriginList.status.isSuccess = true
+        state.orderOriginList.orderOrigins?.push(action.payload)
+        state.message.type = MessageType.Success
+        state.message.text = action.payload.message || SUCCESS_MESSAGE_CREATE_UPDATE_DEFAULT
+      })
+      .addCase(createOrUpdateOrigin.rejected, (state, action) => {
+        state.orderOriginList.status.isLoading = false
+        state.orderOriginList.status.isSentRequest = false
+        state.orderOriginList.status.isSuccess = false
         state.message.type = MessageType.Success
         state.message.text = action.payload as string
       })

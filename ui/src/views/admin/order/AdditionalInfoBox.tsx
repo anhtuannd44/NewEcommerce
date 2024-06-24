@@ -3,8 +3,7 @@ import { forwardRef, useState } from 'react'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import DatePicker from 'react-datepicker'
 import { IOrderAdminState, IOrderRequestBody, IOrderRequestBodyControl } from 'src/redux/admin/interface/IOrderAdmin'
-import { AppDispatch, RootState } from 'src/redux/store'
-import { updateDateDelivery, updateOrderAttribute, updateGeneralField } from 'src/redux/admin/slice/orderAdminSlice'
+import { RootState } from 'src/redux/store'
 import { connect } from 'react-redux'
 import { Plus } from 'mdi-material-ui'
 import OrderOriginDialog from './order-origin/OrderOriginDialog'
@@ -23,9 +22,7 @@ export interface IAdditionalInfoBoxProps {
   orderRequestBody: IOrderRequestBody
   orderRequestBodyControls: IOrderRequestBodyControl
   filterUserOptions: (options: IUser[], state: FilterOptionsState<IUser>) => IUser[]
-  updateGeneralField: (field: keyof IOrderRequestBody, value: string | string[]) => void
-  updateDateDelivery: (value: Date | null | undefined) => void
-  updateOrderAttribute: (id: string, isComplain: boolean) => void
+  setIsOpenOrderOriginDialog: (isOpen: boolean) => void
 }
 const CustomInputs = forwardRef((props, ref) => {
   return <TextField inputRef={ref} label='Ngày hẹn giao' fullWidth size='small' {...props} />
@@ -40,37 +37,13 @@ const BadgeContentSpan = styled('span')(({ theme }) => ({
 }))
 
 const AdditionalInfoBox = (props: IAdditionalInfoBoxProps) => {
-  const { userList, orderRequest, orderRequestBody, orderRequestBodyControls, orderAttributeList, orderOriginList, filterUserOptions, updateDateDelivery, updateOrderAttribute, updateGeneralField } =
-    props
+  const { userList, orderAttributeList, orderOriginList, setIsOpenOrderOriginDialog } = props
 
   const { control } = useFormContext()
-
-  const [isOpenOrderOriginDialog, setIsOpenOrderOriginDialog] = useState<boolean>(false)
-
-  const handleOnChangeOrderAttribute = (value: IOrderAttribute | null | undefined) => {
-    let isComplain = false
-    if (value && value.name === 'Đơn khiếu nại') {
-      isComplain = true
-    }
-    updateOrderAttribute(value?.id || '', isComplain)
-  }
-
-  const handleConstructionStaffsChange = (values: IUser[]) => {
-    const idList = values.map(item => {
-      return item.id
-    })
-    updateGeneralField('constructionStaffIds', idList)
-  }
 
   const handleOpenOrderOriginDialog = () => {
     setIsOpenOrderOriginDialog(true)
   }
-
-  const handleCloseOrderOriginDialog = () => {
-    setIsOpenOrderOriginDialog(false)
-  }
-
-	console.log("sss")
 
   return (
     <Paper>
@@ -100,7 +73,7 @@ const AdditionalInfoBox = (props: IAdditionalInfoBoxProps) => {
                       fontSize: '0.4rem !important'
                     }}
                     onChange={event => {
-                      onChange(event.target?.value)
+                      onChange(event.target.value)
                     }}
                   />
                 )
@@ -247,14 +220,14 @@ const AdditionalInfoBox = (props: IAdditionalInfoBoxProps) => {
                   <DatePicker
                     selected={value}
                     showTimeInput
-										showPopperArrow
+                    showPopperArrow
                     timeFormat='HH:MM'
                     showYearDropdown
                     showMonthDropdown
                     placeholderText='DD-MM-YYYY hh:mm:aa'
                     customInput={<CustomInputs />}
                     dateFormat='dd-MM-yyyy hh:mm:aa'
-                    onChange={(date) => onChange(date)}
+                    onChange={date => onChange(date)}
                   />
                 </DatePickerWrapper>
               )}
@@ -394,8 +367,8 @@ const AdditionalInfoBox = (props: IAdditionalInfoBoxProps) => {
             />
           </Grid>
         </Grid>
-        <OrderOriginDialog open={isOpenOrderOriginDialog} setIsOpenOrderOriginDialog={setIsOpenOrderOriginDialog} />
-        <OrderAttributeDialog open={isOpenOrderOriginDialog} handleClose={handleCloseOrderOriginDialog} />
+
+        {/* <OrderAttributeDialog open={isOpenOrderOriginDialog} handleClose={handleCloseOrderOriginDialog} /> */}
       </PaperContent>
     </Paper>
   )
@@ -410,10 +383,4 @@ const mapStateToProps = (state: RootState) => ({
   orderRequestBodyControls: state.orderAdmin.controls.order
 })
 
-const mapDispatchToProps = (dispatch: AppDispatch) => ({
-  updateGeneralField: (field: keyof IOrderRequestBody, value: string | string[]) => dispatch(updateGeneralField({ field, value })),
-  updateDateDelivery: (value: Date | null | undefined) => dispatch(updateDateDelivery(value)),
-  updateOrderAttribute: (id: string, isComplain: boolean) => dispatch(updateOrderAttribute({ id, isComplain }))
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(AdditionalInfoBox)
+export default connect(mapStateToProps)(AdditionalInfoBox)

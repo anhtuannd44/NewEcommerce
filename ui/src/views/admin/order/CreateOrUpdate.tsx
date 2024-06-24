@@ -1,7 +1,7 @@
 'use client'
-import { FormEvent, FormEventHandler, useEffect } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import { connect } from 'react-redux'
-import { useForm, Controller, FormProvider, SubmitHandler, FieldErrors } from 'react-hook-form'
+import { useForm, FormProvider, FieldErrors } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Alert, createFilterOptions, Grid, Snackbar } from '@mui/material'
 import 'react-datepicker/dist/react-datepicker.css'
@@ -19,6 +19,7 @@ import { MessageType } from 'src/common/enums'
 import _ from 'lodash'
 import { defaultOrderRequest, orderRequestSchema } from 'src/form/admin/order/orderRequest'
 import { IOrderRequestBody } from 'src/form/admin/interface/IOrderRequest'
+import OrderOriginDialog from './order-origin/OrderOriginDialog'
 
 interface ICreateOrUpdateOrderAdminProps {
   userList: IUserList
@@ -79,20 +80,17 @@ const CreateOrUpdateOrderAdmin = (props: ICreateOrUpdateOrderAdminProps) => {
     }
   }, [])
 
-  const methods = useForm<IOrderRequestBody>({
+  const [isOpenOrderOriginDialog, setIsOpenOrderOriginDialog] = useState<boolean>(false)
+  const handleCloseOrderOriginDialog = () => {
+    setIsOpenOrderOriginDialog(false)
+  }
+
+  const createOrderForm = useForm<IOrderRequestBody>({
     resolver: yupResolver<IOrderRequestBody>(orderRequestSchema),
     mode: 'onChange',
     reValidateMode: 'onChange',
     progressive: true
   })
-
-  const handleSubmitCreateOrder = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-
-		console.log(methods.control._fields)
-
-    methods.handleSubmit(onSubmit, onError)
-  }
 
   const filterUserOptions = createFilterOptions({ ignoreAccents: false, stringify: (option: IUser) => `${option.fullName} ${option.phoneNumber}` })
 
@@ -139,14 +137,14 @@ const CreateOrUpdateOrderAdmin = (props: ICreateOrUpdateOrderAdminProps) => {
 
   return (
     <>
-      <FormProvider {...methods}>
-        <form onSubmit={handleSubmitCreateOrder}>
+      <FormProvider {...createOrderForm}>
+        <form onSubmit={createOrderForm.handleSubmit(onSubmit, onError)}>
           <Grid container spacing={6}>
             <Grid item xs={9}>
               <CustomerSelectBox filterUserOptions={filterUserOptions} />
             </Grid>
             <Grid item xs={3}>
-              <AdditionalInfoBox filterUserOptions={filterUserOptions} />
+              <AdditionalInfoBox filterUserOptions={filterUserOptions} setIsOpenOrderOriginDialog={setIsOpenOrderOriginDialog} />
             </Grid>
           </Grid>
           <Grid container>
@@ -177,6 +175,7 @@ const CreateOrUpdateOrderAdmin = (props: ICreateOrUpdateOrderAdminProps) => {
           </Snackbar>
         </form>
       </FormProvider>
+      <OrderOriginDialog open={isOpenOrderOriginDialog} setIsOpenOrderOriginDialog={setIsOpenOrderOriginDialog} />
     </>
   )
 }
