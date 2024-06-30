@@ -3,7 +3,7 @@ import { AppDispatch, RootState } from 'src/redux/store'
 import { connect } from 'react-redux'
 import { ICreateOrUpdateProductCategoryRequest, IProductCategoryAdminCreateBody } from 'src/redux/admin/interface/IProductAdmin'
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
-import { createProductCategory } from 'src/api/product'
+import { createProductCategory } from 'src/api/services/product'
 import { IValidationRequest, checkValidity } from 'src/utils/utility'
 import { handleSubmitCreateProductCategory, resetCreateProductCategoryState, updateProductCategoryBody } from 'src/redux/admin/slice/productAdminSlice'
 

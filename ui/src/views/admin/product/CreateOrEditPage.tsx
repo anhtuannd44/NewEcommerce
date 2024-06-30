@@ -1,7 +1,7 @@
 import { Alert, Backdrop, CircularProgress, Grid, Snackbar } from '@mui/material'
 import { useEffect } from 'react'
 import { connect } from 'react-redux'
-import { getBrandList, getProductAdmin, getProductCategoryListAdmin, getProductTagsAdmin, createProductAdmin } from 'src/api/product'
+import { getBrandList, getProductAdmin, getProductCategoryListAdmin, getProductTagsAdmin, createProductAdmin } from 'src/api/services/product'
 import {
   IcreateOrUpdateProductAdminRequest,
   IProductAdmin,

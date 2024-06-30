@@ -1,4 +1,4 @@
-import { APIServer } from './enums/apiEnums'
+import { APIServer } from './apiEnums'
 import { FetchDataResult, IApiServices } from './interface/IApiService'
 import { isTokenExpired } from '../auth/service/authServices'
 import { logout } from 'src/auth/service/authServices'
@@ -102,11 +102,12 @@ const fetchData = async <T>(configs: RequestInit, url: string, server: APIServer
       if (response.status === 401) {
         logout(currentHref)
       }
+      const error = response as FetchDataResult<T>
       return {
         error: {
           status: response.status,
           statusText: response.statusText,
-          message: await response.text(),
+          message: (await response.json())?.message?.toString(),
           title: response.statusText
         }
       }

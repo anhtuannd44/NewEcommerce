@@ -1,4 +1,4 @@
-import { APIServer } from '../enums/apiEnums'
+import { APIServer } from '../apiEnums'
 
 export interface APIError {
   status?: number

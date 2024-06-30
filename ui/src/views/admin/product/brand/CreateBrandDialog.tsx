@@ -3,7 +3,7 @@ import { AppDispatch, RootState } from 'src/redux/store'
 import { connect } from 'react-redux'
 import { IBrand, ICreateOrUpdateBrandRequest } from 'src/redux/admin/interface/IProductAdmin'
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
-import { createOrUpdateBrand } from 'src/api/product'
+import { createOrUpdateBrand } from 'src/api/services/product'
 import { IValidationRequest, checkValidity } from 'src/utils/utility'
 import { handleSubmitCreateOrUpdateBrand, updateCreateOrUpdateBrandRequest } from 'src/redux/admin/slice/productAdminSlice'
 

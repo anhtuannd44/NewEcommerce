@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useEffect, useState } from 'react'
 
 import * as actions from 'src/redux/client/actions/productAction'
-import { productApiRequest } from 'src/api/product'
+import { productApiRequest } from 'src/api/services/product'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next/types'
 import FormLayoutsIcons from 'src/views/form-layouts/FormLayoutsIcons'
 import { Button, CardContent, FormControl, InputAdornment, InputLabel, MenuItem, OutlinedInput, Select, TextField } from '@mui/material'

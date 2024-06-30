@@ -1,7 +1,7 @@
 import { DiscountType, OrderStatus } from 'src/common/enums'
 
 export interface IOrderRequestBody {
-  customerId: string
+  customerId: string | null
   orderCode?: string
   deliveryAddress: string
   billingAddress?: string
@@ -38,7 +38,7 @@ export interface IProductItemRequestBody {
   discountValue: number
   preTotal: number
   totalPriceAfterDiscount: number
-  note: string
+  note?: string
   isVat: boolean
   vatValue: number
   discountPercent: number

@@ -1,9 +1,5 @@
-export interface ICreateOrderOrigin {
-  name: string
-}
-
-export interface IUpdaterderOrigin {
-  id?: string | null
+export interface IOrderOriginRequest {
+  id?: string
   name: string
   isActive: boolean
 }

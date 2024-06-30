@@ -24,11 +24,11 @@ import {
 
 import { Magnify, OilTemperature } from 'mdi-material-ui'
 
-import ProductBorrowInfo, { IProductBorrowProps } from 'src/views/admin/order/ProductBorrowInfo'
+import ProductBorrowInfo, { IProductBorrowProps } from 'src/views/admin/order/create-order/ProductBorrowInfo'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
-import OrderDetailsBox from 'src/views/admin/order/OrderDetailsBox'
+import OrderDetailsBox from 'src/views/admin/order/create-order/OrderDetailsBox'
 import EmptyBox from 'src/views/shared/EmptyBox'
 import {
 	IOrderAdminState,
@@ -55,7 +55,7 @@ import {
 } from 'src/redux/admin/actions/orderAdminAction'
 import { IRootState } from 'src/redux/reducer'
 import { currencyVNDFormatter } from 'src/utils/formatCurrency'
-import TotalBoxDetail from 'src/views/admin/order/TotalBoxDetail'
+import TotalBoxDetail from 'src/views/admin/order/create-order/TotalBoxDetail'
 import { IValidationRules, checkValidity } from 'src/utils/utility'
 import { Dispatch } from 'redux'
 import { redirect, useParams } from 'next/navigation'

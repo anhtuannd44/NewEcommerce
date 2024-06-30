@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { isTokenExpired } from './auth/service/authServices'
-import { ITokenInfo } from './api/IAuthApi'
+import { ITokenInfo } from './api/interface/IAuthApi'
 import { parseAuthResponse, refreshAccessToken } from './api/authApi'
 
 const privatePaths = ['/admin']

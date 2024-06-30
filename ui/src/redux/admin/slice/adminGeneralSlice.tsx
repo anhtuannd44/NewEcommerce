@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { getOrderAttributeList, getOrderOriginList, getProductList, getUserList, createOrUpdateOrigin, getOrderTagList } from 'src/api/order'
+import { getOrderAttributeList, getOrderOriginList, getProductList, getUserList, createOrUpdateOrigin, getOrderTagList } from 'src/services/order'
 import { MessageType } from 'src/common/enums'
 import { SUCCESS_MESSAGE_CREATE_UPDATE_DEFAULT } from 'src/common/constants'
 import { IAdminGeneralState, IRequestStatus } from '../interface/IAdminGeneralState'
@@ -34,14 +34,14 @@ const adminGeneralSlice = createSlice({
   name: 'adminGeneralSlice',
   initialState,
   reducers: {
-    createOrUpdateOriginList: (state, action) => {
+    updateOriginList: (state, action) => {
       if (state.orderOriginList.orderOrigins) {
         const index = state.orderOriginList.orderOrigins.findIndex(x => x.id === action.payload.id)
-        console.log(index)
         if (index !== -1) {
           state.orderOriginList.orderOrigins[index] = action.payload
         } else {
-          state.orderOriginList.orderOrigins.push(action.payload)
+          state.orderOriginList.orderOrigins.unshift(action.payload)
+          state.orderOriginList.total = state.orderOriginList.total ? state.orderOriginList.total + 1 : 1
         }
       }
     }
@@ -59,15 +59,11 @@ const adminGeneralSlice = createSlice({
         state.userList.status.isSentRequest = false
         state.userList.status.isSuccess = true
         state.userList.users = action.payload.data
-        state.message.type = MessageType.Success
-        state.message.text = action.payload.message || SUCCESS_MESSAGE_CREATE_UPDATE_DEFAULT
       })
       .addCase(getUserList.rejected, (state, action) => {
         state.userList.status.isLoading = false
         state.userList.status.isSentRequest = false
         state.userList.status.isSuccess = false
-        state.message.type = MessageType.Success
-        state.message.text = action.payload as string
       })
       // get Product List
       .addCase(getProductList.pending, state => {
@@ -80,15 +76,11 @@ const adminGeneralSlice = createSlice({
         state.productList.status.isSentRequest = false
         state.productList.status.isSuccess = true
         state.productList.products = action.payload.data
-        state.message.type = MessageType.Success
-        state.message.text = action.payload.message || SUCCESS_MESSAGE_CREATE_UPDATE_DEFAULT
       })
       .addCase(getProductList.rejected, (state, action) => {
         state.productList.status.isLoading = false
         state.productList.status.isSentRequest = false
         state.productList.status.isSuccess = false
-        state.message.type = MessageType.Success
-        state.message.text = action.payload as string
       })
       // Get product attribute list
       .addCase(getOrderAttributeList.pending, state => {
@@ -102,15 +94,11 @@ const adminGeneralSlice = createSlice({
         state.orderAttributeList.status.isSuccess = true
         state.orderAttributeList.orderAttributes = action.payload.data
         state.orderAttributeList.total = action.payload.total
-        state.message.type = MessageType.Success
-        state.message.text = action.payload.message || SUCCESS_MESSAGE_CREATE_UPDATE_DEFAULT
       })
       .addCase(getOrderAttributeList.rejected, (state, action) => {
         state.orderAttributeList.status.isLoading = false
         state.orderAttributeList.status.isSentRequest = false
         state.orderAttributeList.status.isSuccess = false
-        state.message.type = MessageType.Success
-        state.message.text = action.payload as string
       })
       // Get origin list
       .addCase(getOrderOriginList.pending, state => {
@@ -124,15 +112,11 @@ const adminGeneralSlice = createSlice({
         state.orderOriginList.status.isSuccess = true
         state.orderOriginList.orderOrigins = action.payload.data
         state.orderOriginList.total = action.payload.total
-        state.message.type = MessageType.Success
-        state.message.text = action.payload.message || SUCCESS_MESSAGE_CREATE_UPDATE_DEFAULT
       })
       .addCase(getOrderOriginList.rejected, (state, action) => {
         state.orderOriginList.status.isLoading = false
         state.orderOriginList.status.isSentRequest = false
         state.orderOriginList.status.isSuccess = false
-        state.message.type = MessageType.Success
-        state.message.text = action.payload as string
       })
       // Get origin list
       .addCase(getOrderTagList.pending, state => {
@@ -145,41 +129,16 @@ const adminGeneralSlice = createSlice({
         state.orderTagList.status.isSentRequest = false
         state.orderTagList.status.isSuccess = true
         state.orderTagList.orderTags = action.payload.data
-        state.message.type = MessageType.Success
-        state.message.text = action.payload.message || SUCCESS_MESSAGE_CREATE_UPDATE_DEFAULT
       })
       .addCase(getOrderTagList.rejected, (state, action) => {
         state.orderTagList.status.isLoading = false
         state.orderTagList.status.isSentRequest = false
         state.orderTagList.status.isSuccess = false
-        state.message.type = MessageType.Success
-        state.message.text = action.payload as string
-      })
-			// create or update order origin
-      .addCase(createOrUpdateOrigin.pending, state => {
-        state.orderOriginList.status.isLoading = true
-        state.orderOriginList.status.isSentRequest = true
-        state.orderOriginList.status.isSuccess = false
-      })
-      .addCase(createOrUpdateOrigin.fulfilled, (state, action) => {
-        state.orderOriginList.status.isLoading = false
-        state.orderOriginList.status.isSentRequest = false
-        state.orderOriginList.status.isSuccess = true
-        state.orderOriginList.orderOrigins?.push(action.payload)
-        state.message.type = MessageType.Success
-        state.message.text = action.payload.message || SUCCESS_MESSAGE_CREATE_UPDATE_DEFAULT
-      })
-      .addCase(createOrUpdateOrigin.rejected, (state, action) => {
-        state.orderOriginList.status.isLoading = false
-        state.orderOriginList.status.isSentRequest = false
-        state.orderOriginList.status.isSuccess = false
-        state.message.type = MessageType.Success
-        state.message.text = action.payload as string
       })
   }
 })
 
-export const { createOrUpdateOriginList } = adminGeneralSlice.actions
+export const { updateOriginList } = adminGeneralSlice.actions
 
 const adminGeneralReducer = adminGeneralSlice.reducer
 

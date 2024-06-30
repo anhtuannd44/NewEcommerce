@@ -31,7 +31,6 @@ import 'react-perfect-scrollbar/dist/css/styles.css'
 // ** Global css styles
 import '../../styles/globals.css'
 import store from 'src/redux/store'
-import { PersistGate } from 'redux-persist/integration/react'
 
 // ** Extend App Props with Emotion
 type ExtendedAppProps = AppProps & {

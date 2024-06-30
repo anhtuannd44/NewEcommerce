@@ -4,8 +4,8 @@ import * as Yup from 'yup'
 
 export const defaultOrderItem: IProductItemRequestBody = {
   productId: '',
-  price: null,
   quantity: 1,
+	price: null,
   discountType: DiscountType.Value,
   discountValue: 0,
   preTotal: 0,
@@ -52,15 +52,15 @@ export const defaultOrderRequest: IOrderRequestBody = {
 
 export const productItemSchema = Yup.object().shape({
   productId: Yup.string().required().default('123123123'),
-  price: Yup.number().nullable().default(null),
-  quantity: Yup.number().required(),
+  price: Yup.number().nullable().required('Vui lòng nhập giá sản phẩm').min(0, 'Giá không được bé hơn 0'),
+  quantity: Yup.number().required('Vui lòng nhập số lượng').min(1, 'Số lượng phải lớn hơn 0'),
   discountType: Yup.mixed<DiscountType>()
     .oneOf(Object.values(DiscountType) as DiscountType[])
     .required(),
   discountValue: Yup.number().required(),
   preTotal: Yup.number().required(),
   totalPriceAfterDiscount: Yup.number().required(),
-  note: Yup.string().required(),
+  note: Yup.string().optional(),
   isVat: Yup.boolean().required(),
   vatValue: Yup.number().required(),
   discountPercent: Yup.number().required(),

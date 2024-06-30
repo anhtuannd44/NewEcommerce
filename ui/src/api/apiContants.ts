@@ -1,4 +1,4 @@
-import { APIStatus } from "../enums/apiEnums"
+import { APIStatus } from './apiEnums'
 
 export const CONTENT_TYPE_APPLICATION_JSON = 'application/json'
 

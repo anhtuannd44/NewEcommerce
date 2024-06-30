@@ -15,7 +15,7 @@ export interface IOrderAttribute {
 }
 
 export interface IOrderOrigin {
-  id: string | null
+  id: string
   name: string
   isActive: boolean
 }
@@ -50,6 +50,10 @@ export interface IOrderAttributeList {
 export interface IOrderTagList {
 	orderTags?: string[]
 	status: IRequestStatus
+}
+
+export interface IUsersResponse {
+	
 }
 
 export interface IUserList {

@@ -19,7 +19,10 @@ const GeneralInfoProduct = (props: IGeneralInfoProductProps) => {
   const { updateGeneralField, createOrUpdateProductAdminRequest, productControl, handleCreateProductAdminSubmit } = props
   const { isSubmitted, product } = createOrUpdateProductAdminRequest
 
-  const updateGeneralFieldDebounce = useCallback(_.debounce((field: keyof IProductAdmin, value: string) => updateGeneralField(field, value), 1000), [])
+  const updateGeneralFieldDebounce = useCallback(
+    _.debounce((field: keyof IProductAdmin, value: string) => updateGeneralField(field, value), 1000),
+    []
+  )
 
   return (
     <Paper>
@@ -29,7 +32,7 @@ const GeneralInfoProduct = (props: IGeneralInfoProductProps) => {
           <Button
             type='button'
             variant='contained'
-						color='success'
+            color='success'
             onClick={() => {
               handleCreateProductAdminSubmit()
             }}>
@@ -48,7 +51,7 @@ const GeneralInfoProduct = (props: IGeneralInfoProductProps) => {
                 placeholder='VD: Tủ áo Decor 3 tầng'
                 helperText={isSubmitted && !productControl.name.result.isValid ? '' : 'Tên sản phẩm thường KHÔNG bao gồm các thuộc tính như màu sắc, kích cỡ, ...'}
                 onChange={event => {
-					updateGeneralFieldDebounce('name', event.target?.value)
+                  updateGeneralFieldDebounce('name', event.target?.value)
                 }}
                 error={isSubmitted && !productControl.name.result.isValid}
               />
@@ -82,7 +85,7 @@ const GeneralInfoProduct = (props: IGeneralInfoProductProps) => {
                   fontSize: '0.4rem !important'
                 }}
                 onChange={event => {
-					updateGeneralFieldDebounce('sku', event.target?.value)
+                  updateGeneralFieldDebounce('sku', event.target?.value)
                 }}
                 error={isSubmitted && !productControl.sku.result.isValid}
               />
@@ -101,7 +104,7 @@ const GeneralInfoProduct = (props: IGeneralInfoProductProps) => {
                   fontSize: '0.4rem !important'
                 }}
                 onChange={event => {
-					updateGeneralFieldDebounce('unit', event.target?.value)
+                  updateGeneralFieldDebounce('unit', event.target?.value)
                 }}
                 error={isSubmitted && !productControl.unit.result.isValid}
               />

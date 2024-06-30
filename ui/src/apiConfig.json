@@ -1,6 +1,0 @@
-{
-  "apiRoot": "http://localhost:44321/api/admin",
-  "apiIdentity": "http://localhost:44397/api/identity",
-  "sessionTimeout": "#{Application.SessionTimeout}",
-  "enableSignUp": "#{Application.Feature.SignUp.Enabled}"
-}

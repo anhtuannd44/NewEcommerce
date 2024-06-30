@@ -21,6 +21,7 @@ import themeOptions from './ThemeOptions'
 
 // ** Global Styles
 import GlobalStyling from './globalStyles'
+import GlobalSnackbar from 'src/views/shared/snackbar/SnackbarGlobal'
 
 interface Props {
   settings: Settings
@@ -52,6 +53,7 @@ const ThemeComponent = (props: Props) => {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <GlobalStyles styles={() => GlobalStyling(theme) as any} />
+      <GlobalSnackbar />
       {children}
     </ThemeProvider>
   )

@@ -1,4 +1,4 @@
-import CreateOrUpdateOrderAdmin from 'src/views/admin/order/CreateOrUpdate'
+import CreateOrUpdateOrderAdmin from 'src/views/admin/order/create-order/CreateOrUpdate'
 const OrderAdminPage = () => {
   return <CreateOrUpdateOrderAdmin />
 }

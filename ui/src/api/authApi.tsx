@@ -1,8 +1,8 @@
 import { setStoredAuthState } from 'src/auth/service/storedAuthState'
-import { ILoginData, ITokenInfo, IGetTokenResponse, IUserInfo } from './IAuthApi'
+import { ILoginData, ITokenInfo, IGetTokenResponse, IUserInfo } from './interface/IAuthApi'
 import http from './apiService'
 import { FetchDataResult } from './interface/IApiService'
-import { APIServer } from './enums/apiEnums'
+import { APIServer } from './apiEnums'
 
 export const getToken = async (loginData: ILoginData): Promise<FetchDataResult<IGetTokenResponse>> => {
   const response = await http.post<IGetTokenResponse>(

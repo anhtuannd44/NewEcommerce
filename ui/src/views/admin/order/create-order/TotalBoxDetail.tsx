@@ -4,7 +4,7 @@ import { IProductItemRequestBody, IOrderRequestBody } from 'src/redux/admin/inte
 import { useEffect, useState } from 'react'
 import { NumberFormatValues, NumericFormat } from 'react-number-format'
 import { currencyWithoutVNDFormatter } from 'src/utils/formatCurrency'
-import DiscountOrderPopover from './DiscountOrderPopover'
+import DiscountOrderPopover from './order-details-box/DiscountOrderPopover'
 import { AppDispatch, RootState } from 'src/redux/store'
 import { updateGeneralField } from 'src/redux/admin/slice/orderAdminSlice'
 import { DiscountType } from 'src/common/enums'

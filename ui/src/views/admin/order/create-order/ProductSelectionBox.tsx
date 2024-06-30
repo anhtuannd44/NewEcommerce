@@ -1,105 +1,38 @@
 import { Autocomplete, Divider, Grid, Paper, TextField, Typography, createFilterOptions } from '@mui/material'
-
-import { IOrderRequestBody, IOrderRequestBodyItemControls, IProductItemRequestBody } from 'src/redux/admin/interface/IOrderAdmin'
-import { AppDispatch, RootState } from 'src/redux/store'
+import { RootState } from 'src/redux/store'
 import { initOrderRequestItemControls, updateGeneralField, updateOrderItemControls, updateRequestItems } from 'src/redux/admin/slice/orderAdminSlice'
 import { connect } from 'react-redux'
 import { currencyVNDFormatter } from 'src/utils/formatCurrency'
 import { Box, Magnify } from 'mdi-material-ui'
 import OrderComplainBox from './OrderComplainBox'
-import OrderDetailsBox from './OrderDetailsBox'
-import { DiscountType } from 'src/common/enums'
+import OrderDetailsBox, { IOrderDetailsRef } from './order-details-box/OrderDetailsBox'
 import TotalBoxDetail from './TotalBoxDetail'
 import { IProduct } from 'src/redux/admin/interface/IAdminGeneralState'
 import PaperHeader from 'src/views/shared/paper/PaperHeader'
 import PaperContent from 'src/views/shared/paper/PaperContent'
 import { v4 as uuidv4 } from 'uuid'
+import { useFieldArray, useFormContext } from 'react-hook-form'
+import { IOrderRequestBody, IProductItemRequestBody } from 'src/form/admin/interface/IOrderRequest'
+import { useRef } from 'react'
 
 export interface IProductSelectionBoxProps {
-  orderRequest: IOrderRequestBody
-  orderRequestItemControl: IOrderRequestBodyItemControls[]
   productList: IProduct[] | undefined
-  orderTags: string[] | []
-  updateGeneralField: (field: keyof IOrderRequestBody, value: string | string[]) => void
-  updateRequestItems: (items: IProductItemRequestBody[]) => void
-  updateOrderItemControls: (controls: IOrderRequestBodyItemControls[]) => void
+  orderTags: string[] | undefined
 }
 
 const ProductSelectionBox = (props: IProductSelectionBoxProps) => {
-  const { orderRequest, productList, orderRequestItemControl, orderTags, updateOrderItemControls, updateGeneralField, updateRequestItems } = props
+  const { productList, orderTags } = props
 
   const filterProductOption = createFilterOptions({
     stringify: (option: IProduct) => `${option.name} ${option.sku}`
   })
 
-  const handleOnChangeSelectProduct = (value: IProduct | null) => {
-    if (value) {
-      const newProductDataDetails = [...(orderRequest.items || [])]
+  const childRef = useRef<IOrderDetailsRef>(null)
 
-      let isExistedInList = false
-
-      let newOrderItemsRequestState: IProductItemRequestBody[] = []
-
-      if (newProductDataDetails.length > 0) {
-        newOrderItemsRequestState = newProductDataDetails.map(item => {
-          if (item.productId == value.id) {
-            isExistedInList = true
-            return {
-              ...item,
-              quantity: item.quantity + 1
-            }
-          }
-          return item
-        })
-      }
-
-      if (!isExistedInList) {
-        const valueInputToList: IProductItemRequestBody = {
-          imgUrl: undefined,
-          name: value.name,
-          productCode: value.sku,
-          productUrl: '/',
-          isShowNote: false,
-          discountPercent: 0,
-          note: '',
-          discountType: DiscountType.Value,
-          discountValue: 0,
-          quantity: 1,
-          isVat: false,
-          vatValue: 0,
-          productId: value.id,
-          price: value.price,
-          preTotal: value.price,
-          totalPriceAfterDiscount: value.price
-        }
-        newOrderItemsRequestState.push(valueInputToList)
-        const currentControl = [...orderRequestItemControl]
-        currentControl.push({
-          productId: valueInputToList.productId,
-          controls: initOrderRequestItemControls
-        })
-        updateOrderItemControls(currentControl)
-      }
-      newOrderItemsRequestState = handleCalculateTotalItems(newOrderItemsRequestState)
-      updateRequestItems(newOrderItemsRequestState)
+  const handleSelectProduct = (value: IProduct) => {
+    if (childRef.current) {
+      childRef.current.handleOnChangeSelectProduct(value)
     }
-  }
-
-  const handleCalculateTotalItems = (list: IProductItemRequestBody[]) => {
-    return list.map(item => {
-      const preTotal = (item.price ?? 0) * item.quantity
-
-      let totalPriceAfterDiscount = preTotal - (item.discountType === DiscountType.Value ? item.discountValue : (preTotal / 100) * item.discountValue)
-
-      const discountPercent = item.discountType === DiscountType.Percent ? item.discountValue : (item.discountValue / preTotal) * 100
-      console.log(item.quantity)
-      return {
-        ...item,
-        discountPercent,
-        preTotal,
-        totalPriceAfterDiscount
-      }
-    })
   }
 
   return (
@@ -107,11 +40,11 @@ const ProductSelectionBox = (props: IProductSelectionBoxProps) => {
       <PaperHeader leftHeader={<Typography variant='h6'>Thông tin sản phẩm</Typography>} />
       <PaperContent sx={{ paddingX: 0 }}>
         <Grid container px={5}>
-          <Grid item xs={8}>
+          <Grid item xs={9}>
             {productList && (
               <Autocomplete
                 id='productSelectList'
-                options={productList || []}
+                options={productList}
                 renderInput={params => (
                   <TextField
                     {...params}
@@ -129,7 +62,7 @@ const ProductSelectionBox = (props: IProductSelectionBoxProps) => {
                     key={uuidv4()}
                     {...props}
                     onMouseDown={() => {
-                      handleOnChangeSelectProduct(option)
+                      handleSelectProduct(option)
                     }}>
                     <Grid container justifyContent='center' alignItems='center'>
                       <Grid item xs={1}>
@@ -153,13 +86,11 @@ const ProductSelectionBox = (props: IProductSelectionBoxProps) => {
               />
             )}
           </Grid>
-          <Grid item xs={2}></Grid>
-          <Grid item xs={2}></Grid>
         </Grid>
         <Divider sx={{ mt: 5, mb: 0 }} />
-        <OrderDetailsBox handleCalculateTotalItems={handleCalculateTotalItems} />
+        <OrderDetailsBox ref={childRef} />
         <Divider sx={{ mt: 5, mb: 0 }} />
-        <Grid container p={4} spacing={5}>
+        {/* <Grid container p={4} spacing={5}>
           <Grid item xs={8}>
             {orderRequest.isComplain && <OrderComplainBox />}
             <Grid container spacing={5}>
@@ -215,7 +146,7 @@ const ProductSelectionBox = (props: IProductSelectionBoxProps) => {
           <Grid item xs={4}>
             <TotalBoxDetail />
           </Grid>
-        </Grid>
+        </Grid> */}
       </PaperContent>
     </Paper>
   )
@@ -223,15 +154,9 @@ const ProductSelectionBox = (props: IProductSelectionBoxProps) => {
 
 const mapStateToProps = (state: RootState) => ({
   orderRequest: state.orderAdmin.orderRequest,
-  orderRequestItemControl: state.orderAdmin.controls.product || [],
+  orderRequestItemControl: state.orderAdmin.controls.product,
   productList: state.adminGeneral.productList.products,
-  orderTags: state.adminGeneral.orderTagList.orderTags || []
+  orderTags: state.adminGeneral.orderTagList.orderTags
 })
 
-const mapDispatchToProps = (dispatch: AppDispatch) => ({
-  updateGeneralField: (field: keyof IOrderRequestBody, value: string | string[]) => dispatch(updateGeneralField({ field, value })),
-  updateRequestItems: (items: IProductItemRequestBody[]) => dispatch(updateRequestItems(items)),
-  updateOrderItemControls: (controls: IOrderRequestBodyItemControls[]) => dispatch(updateOrderItemControls(controls))
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(ProductSelectionBox)
+export default connect(mapStateToProps)(ProductSelectionBox)

@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-import { getFileList, uploadFile } from 'src/api/file'
+import { getFileList, uploadFile } from 'src/services/file'
 import { IFileManagerState } from '../interface/IFile'
 
 const initialState: IFileManagerState = {
@@ -27,7 +27,7 @@ const fileManagerSlice = createSlice({
         state.loading = true
       })
       .addCase(getFileList.fulfilled, (state, action) => {
-        state.fileLibraryList = action.payload.data
+        state.fileLibraryList = action.payload
         state.loading = false
       })
       .addCase(getFileList.rejected, state => {

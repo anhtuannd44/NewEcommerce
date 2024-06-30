@@ -3,26 +3,21 @@ import { forwardRef, useState } from 'react'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import DatePicker from 'react-datepicker'
 import { IOrderAdminState, IOrderRequestBody, IOrderRequestBodyControl } from 'src/redux/admin/interface/IOrderAdmin'
-import { RootState } from 'src/redux/store'
+import { AppDispatch, RootState } from 'src/redux/store'
 import { connect } from 'react-redux'
 import { Plus } from 'mdi-material-ui'
-import OrderOriginDialog from './order-origin/OrderOriginDialog'
+import OrderOriginDialog from 'src/views/admin/order/create-order/order-origin-dialog/OrderOriginDialog'
 import { IOrderAttribute, IOrderOrigin, IUser } from 'src/redux/admin/interface/IAdminGeneralState'
 import PaperHeader from 'src/views/shared/paper/PaperHeader'
 import PaperContent from 'src/views/shared/paper/PaperContent'
-import OrderAttributeDialog from './order-attribute/OrderAttributeDialog'
-import { Controller, Control, FieldValues, useFormContext } from 'react-hook-form'
+import { Controller, useFormContext } from 'react-hook-form'
 import _ from 'lodash'
 
 export interface IAdditionalInfoBoxProps {
   userList: IUser[] | undefined
-  orderRequest: IOrderAdminState
   orderAttributeList: IOrderAttribute[] | undefined
   orderOriginList: IOrderOrigin[] | undefined
-  orderRequestBody: IOrderRequestBody
-  orderRequestBodyControls: IOrderRequestBodyControl
   filterUserOptions: (options: IUser[], state: FilterOptionsState<IUser>) => IUser[]
-  setIsOpenOrderOriginDialog: (isOpen: boolean) => void
 }
 const CustomInputs = forwardRef((props, ref) => {
   return <TextField inputRef={ref} label='Ngày hẹn giao' fullWidth size='small' {...props} />
@@ -37,13 +32,15 @@ const BadgeContentSpan = styled('span')(({ theme }) => ({
 }))
 
 const AdditionalInfoBox = (props: IAdditionalInfoBoxProps) => {
-  const { userList, orderAttributeList, orderOriginList, setIsOpenOrderOriginDialog } = props
-
-  const { control } = useFormContext()
+  const { userList, orderAttributeList, orderOriginList } = props
+  const [isOpenOrderOriginDialog, setIsOpenOrderOriginDialog] = useState<boolean>(false)
+  const { control } = useFormContext<IOrderRequestBody>()
 
   const handleOpenOrderOriginDialog = () => {
     setIsOpenOrderOriginDialog(true)
   }
+
+  console.log('re-render')
 
   return (
     <Paper>
@@ -80,58 +77,57 @@ const AdditionalInfoBox = (props: IAdditionalInfoBoxProps) => {
               }}
             />
           </Grid>
-          <Grid item xs={12}>
-            <Controller
-              name='picStaffId'
-              control={control}
-              render={({ field: { onChange, value }, fieldState }) => {
-                const users = [...(userList || [])]
-                const userIds = users.map(item => item.id)
-                return (
-                  <Autocomplete
-                    fullWidth
-                    size='small'
-                    options={userIds}
-                    renderInput={params => (
-                      <FormControl error={!!fieldState.error} variant='standard' fullWidth>
-                        <TextField {...params} error={!!fieldState.error} label='Người phụ trách' />
-                        <FormHelperText>{fieldState.error?.message}</FormHelperText>
-                      </FormControl>
-                    )}
-                    onChange={(event, newValue) => {
-                      onChange(newValue)
-                    }}
-                    getOptionLabel={option => users.find(x => x.id === option)?.fullName || ''}
-                    renderOption={(props, option) => {
-                      const user = users.find(x => x.id === option)
-                      return (
-                        <li key={option} {...props}>
-                          <Badge
-                            overlap='circular'
-                            badgeContent={<BadgeContentSpan />}
-                            anchorOrigin={{
-                              vertical: 'bottom',
-                              horizontal: 'right'
-                            }}>
-                            <Avatar alt='John Doe' src='/images/avatars/1.png' sx={{ width: '2.5rem', height: '2.5rem' }} />
-                          </Badge>
-                          <Box
-                            sx={{
-                              display: 'flex',
-                              marginLeft: 3,
-                              alignItems: 'flex-start',
-                              flexDirection: 'column'
-                            }}>
-                            <Typography sx={{ fontWeight: 600 }}>{user?.fullName}</Typography>
-                          </Box>
-                        </li>
-                      )
-                    }}
-                  />
-                )
-              }}
-            />
-          </Grid>
+          {userList && (
+            <Grid item xs={12}>
+              <Controller
+                name='picStaffId'
+                control={control}
+                render={({ field: { onChange, value }, fieldState }) => {
+                  return (
+                    <Autocomplete
+                      fullWidth
+                      size='small'
+                      options={userList}
+                      renderInput={params => (
+                        <FormControl error={!!fieldState.error} variant='standard' fullWidth>
+                          <TextField {...params} error={!!fieldState.error} label='Người phụ trách' />
+                          <FormHelperText>{fieldState.error?.message}</FormHelperText>
+                        </FormControl>
+                      )}
+                      onChange={(event, newValue) => {
+                        onChange(newValue?.id)
+                      }}
+                      getOptionLabel={option => option.fullName}
+                      renderOption={(props, option) => {
+                        return (
+                          <li key={option.id} {...props}>
+                            <Badge
+                              overlap='circular'
+                              badgeContent={<BadgeContentSpan />}
+                              anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'right'
+                              }}>
+                              <Avatar alt='John Doe' src='/images/avatars/1.png' sx={{ width: '2.5rem', height: '2.5rem' }} />
+                            </Badge>
+                            <Box
+                              sx={{
+                                display: 'flex',
+                                marginLeft: 3,
+                                alignItems: 'flex-start',
+                                flexDirection: 'column'
+                              }}>
+                              <Typography sx={{ fontWeight: 600 }}>{option?.fullName}</Typography>
+                            </Box>
+                          </li>
+                        )
+                      }}
+                    />
+                  )
+                }}
+              />
+            </Grid>
+          )}
           <Grid item xs={12}>
             <Controller
               name='orderOriginId'
@@ -160,7 +156,7 @@ const AdditionalInfoBox = (props: IAdditionalInfoBoxProps) => {
                     renderOption={(props, option) => {
                       const item = orderOrigins.find(x => x.id === option)
                       return (
-                        <li key={option} {...props}>
+                        <li key={item?.id} {...props}>
                           <Box
                             sx={{
                               display: 'flex',
@@ -175,7 +171,6 @@ const AdditionalInfoBox = (props: IAdditionalInfoBoxProps) => {
                     }}
                     getOptionLabel={option => orderOrigins.find(x => x.id === option)?.name || ''}
                     PaperComponent={({ children }) => {
-                      const a = 1
                       return (
                         <Paper>
                           <Button
@@ -233,20 +228,18 @@ const AdditionalInfoBox = (props: IAdditionalInfoBoxProps) => {
               )}
             />
           </Grid>
-          <Grid item xs={12}>
-            <Controller
-              name='constructionStaffIds'
-              control={control}
-              render={({ field: { onChange }, fieldState }) => {
-                const users = [...(userList || [])]
-                const userIds = users.map(item => item.id)
-                return (
+          {userList && (
+            <Grid item xs={12}>
+              <Controller
+                name='constructionStaffIds'
+                control={control}
+                render={({ field: { onChange }, fieldState }) => (
                   <Autocomplete
                     fullWidth
                     size='small'
                     id='constructionStaffIds'
                     multiple
-                    options={userIds}
+                    options={userList}
                     renderInput={params => (
                       <FormControl error={!!fieldState.error} variant='standard' fullWidth>
                         <TextField {...params} error={!!fieldState.error} label='Người thi công' />
@@ -257,39 +250,36 @@ const AdditionalInfoBox = (props: IAdditionalInfoBoxProps) => {
                       if (event.type === 'keydown' && ((event as React.KeyboardEvent).key === 'Backspace' || (event as React.KeyboardEvent).key === 'Delete') && reason === 'removeOption') {
                         return
                       }
-                      onChange(newValue)
+                      onChange(newValue.map(x => x.id))
                     }}
-                    getOptionLabel={option => users.find(x => x.id === option)?.fullName || ''}
-                    renderOption={(props, option) => {
-                      const user = users.find(x => x.id === option)
-                      return (
-                        <li key={option} {...props}>
-                          <Badge
-                            overlap='circular'
-                            badgeContent={<BadgeContentSpan />}
-                            anchorOrigin={{
-                              vertical: 'bottom',
-                              horizontal: 'right'
-                            }}>
-                            <Avatar alt='John Doe' src='/images/avatars/1.png' sx={{ width: '2.5rem', height: '2.5rem' }} />
-                          </Badge>
-                          <Box
-                            sx={{
-                              display: 'flex',
-                              marginLeft: 3,
-                              alignItems: 'flex-start',
-                              flexDirection: 'column'
-                            }}>
-                            <Typography sx={{ fontWeight: 600 }}>{user?.fullName}</Typography>
-                          </Box>
-                        </li>
-                      )
-                    }}
+                    getOptionLabel={option => option.fullName}
+                    renderOption={(props, option) => (
+                      <li key={option.id} {...props}>
+                        <Badge
+                          overlap='circular'
+                          badgeContent={<BadgeContentSpan />}
+                          anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'right'
+                          }}>
+                          <Avatar alt='John Doe' src='/images/avatars/1.png' sx={{ width: '2.5rem', height: '2.5rem' }} />
+                        </Badge>
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            marginLeft: 3,
+                            alignItems: 'flex-start',
+                            flexDirection: 'column'
+                          }}>
+                          <Typography sx={{ fontWeight: 600 }}>{option.fullName}</Typography>
+                        </Box>
+                      </li>
+                    )}
                   />
-                )
-              }}
-            />
-          </Grid>
+                )}
+              />
+            </Grid>
+          )}
           <Grid item xs={12}>
             <Controller
               name='orderAttributeId'
@@ -367,7 +357,7 @@ const AdditionalInfoBox = (props: IAdditionalInfoBoxProps) => {
             />
           </Grid>
         </Grid>
-
+        <OrderOriginDialog open={isOpenOrderOriginDialog} setIsOpenOrderOriginDialog={setIsOpenOrderOriginDialog} />
         {/* <OrderAttributeDialog open={isOpenOrderOriginDialog} handleClose={handleCloseOrderOriginDialog} /> */}
       </PaperContent>
     </Paper>
@@ -377,10 +367,9 @@ const AdditionalInfoBox = (props: IAdditionalInfoBoxProps) => {
 const mapStateToProps = (state: RootState) => ({
   userList: state.adminGeneral.userList.users,
   orderOriginList: state.adminGeneral.orderOriginList.orderOrigins,
-  orderAttributeList: state.adminGeneral.orderAttributeList.orderAttributes,
-  orderRequest: state.orderAdmin,
-  orderRequestBody: state.orderAdmin.orderRequest,
-  orderRequestBodyControls: state.orderAdmin.controls.order
+  orderAttributeList: state.adminGeneral.orderAttributeList.orderAttributes
 })
 
-export default connect(mapStateToProps)(AdditionalInfoBox)
+const mapDispatchToProps = (dispatch: AppDispatch) => ({})
+
+export default connect(mapStateToProps, mapDispatchToProps)(AdditionalInfoBox)

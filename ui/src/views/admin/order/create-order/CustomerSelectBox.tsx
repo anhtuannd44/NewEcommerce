@@ -1,8 +1,8 @@
 import { Autocomplete, Avatar, Badge, Box, Button, FilterOptionsState, FormControl, FormHelperText, Grid, Link, Paper, TextField, Typography, styled } from '@mui/material'
-import { IOrderRequestBody, IOrderRequestBodyControl } from 'src/redux/admin/interface/IOrderAdmin'
+import { IOrderRequestBody } from 'src/form/admin/interface/IOrderRequest'
 import { RootState } from 'src/redux/store'
 import { connect } from 'react-redux'
-import EmptyBox from '../../shared/EmptyBox'
+import EmptyBox from '../../../shared/EmptyBox'
 import ProductBorrowInfo, { IProductBorrowProps } from './ProductBorrowInfo'
 import { Magnify } from 'mdi-material-ui'
 import { IUser } from 'src/redux/admin/interface/IAdminGeneralState'
@@ -25,9 +25,9 @@ const BadgeContentSpan = styled('span')(({ theme }) => ({
 }))
 
 const CustomerSelectBox = (props: ICustomerSelectBoxProps) => {
-  const { userList } = props
+  const { userList, filterUserOptions } = props
 
-  const { control, setValue } = useFormContext()
+  const { control, setValue } = useFormContext<IOrderRequestBody>()
 
   const productBorrowInfo: IProductBorrowProps = {
     borrow: '1',
@@ -66,9 +66,8 @@ const CustomerSelectBox = (props: ICustomerSelectBoxProps) => {
                 name='customerId'
                 control={control}
                 render={({ field: { onChange, value }, fieldState }) => {
-                  const users = _.clone(userList || [])
-                  const userIds = users.map(item => item.id)
-                  const user = users.find(x => x.id === value)
+                  const user = userList.find(x => x.id === value)
+									setValue('deliveryAddress', user?.address || '', { shouldValidate: true })
                   return user ? (
                     <>
                       <Box mb={4}>
@@ -132,7 +131,7 @@ const CustomerSelectBox = (props: ICustomerSelectBoxProps) => {
                       <Autocomplete
                         fullWidth
                         id='customerId'
-                        options={userIds}
+                        options={userList}
                         renderInput={params => (
                           <FormControl error={!!fieldState.error} variant='standard' fullWidth>
                             <TextField
@@ -151,38 +150,35 @@ const CustomerSelectBox = (props: ICustomerSelectBoxProps) => {
                           if (event.type === 'keydown' && ((event as React.KeyboardEvent).key === 'Backspace' || (event as React.KeyboardEvent).key === 'Delete') && reason === 'removeOption') {
                             return
                           }
-                          onChange(newValue)
+                          onChange(newValue?.id)
                         }}
-                        // filterOptions={filterUserOptions}
-                        getOptionLabel={option => users.find(x => x.id === option)?.fullName || ''}
-                        renderOption={(props, option) => {
-                          const item = users.find(x => x.id === option)
-                          return (
-                            <li key={option} {...props}>
-                              <Badge
-                                overlap='circular'
-                                badgeContent={<BadgeContentSpan />}
-                                anchorOrigin={{
-                                  vertical: 'bottom',
-                                  horizontal: 'right'
-                                }}>
-                                <Avatar alt='John Doe' src='/images/avatars/1.png' sx={{ width: '2.5rem', height: '2.5rem' }} />
-                              </Badge>
-                              <Box
-                                sx={{
-                                  display: 'flex',
-                                  marginLeft: 3,
-                                  alignItems: 'flex-start',
-                                  flexDirection: 'column'
-                                }}>
-                                <Typography sx={{ fontWeight: 600 }}>{item?.fullName}</Typography>
-                                <Typography variant='body2' sx={{ fontSize: '0.8rem', color: 'text.disabled' }}>
-                                  {item?.phoneNumber} - {item?.email} - {item?.address}
-                                </Typography>
-                              </Box>
-                            </li>
-                          )
-                        }}
+                        filterOptions={filterUserOptions}
+                        getOptionLabel={option => option.fullName || ''}
+                        renderOption={(props, option) => (
+                          <li key={option.id} {...props}>
+                            <Badge
+                              overlap='circular'
+                              badgeContent={<BadgeContentSpan />}
+                              anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'right'
+                              }}>
+                              <Avatar alt='John Doe' src='/images/avatars/1.png' sx={{ width: '2.5rem', height: '2.5rem' }} />
+                            </Badge>
+                            <Box
+                              sx={{
+                                display: 'flex',
+                                marginLeft: 3,
+                                alignItems: 'flex-start',
+                                flexDirection: 'column'
+                              }}>
+                              <Typography sx={{ fontWeight: 600 }}>{option.fullName}</Typography>
+                              <Typography variant='body2' sx={{ fontSize: '0.8rem', color: 'text.disabled' }}>
+                                {option.phoneNumber} - {option.email} - {option.address}
+                              </Typography>
+                            </Box>
+                          </li>
+                        )}
                       />
                       <Box pt={5} textAlign='center'>
                         <EmptyBox />

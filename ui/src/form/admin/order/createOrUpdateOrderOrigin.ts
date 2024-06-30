@@ -1,12 +1,7 @@
 import * as Yup from 'yup'
-import { ICreateOrderOrigin, IUpdaterderOrigin } from '../interface/ICreateOrEditOrderOrigin'
+import { IOrderOriginRequest } from '../interface/ICreateOrEditOrderOrigin'
 
-export const createOriginSchema = Yup.object<ICreateOrderOrigin>().shape({
-  name: Yup.string().required('Vui lòng nhập tên nguồn')
-})
-
-export const updateOriginSchema = Yup.object<ICreateOrderOrigin>().shape({
-  id: Yup.string().required(),
+export const orderOriginSchema = Yup.object<IOrderOriginRequest>().shape({
   name: Yup.string().required('Vui lòng nhập tên nguồn'),
-  isActive: Yup.bool().required().default(true)
+  isActive: Yup.bool().default(true)
 })

@@ -13,7 +13,7 @@ import {
   IProductAdmin,
   ICreateOrUpdateBrandRequest
 } from '../interface/IProductAdmin'
-import { createOrUpdateBrand, createProductAdmin, createProductCategory, getBrandList, getProductAdmin, getProductCategoryListAdmin, getProductTagsAdmin } from 'src/api/product'
+import { createOrUpdateBrand, createProductAdmin, createProductCategory, getBrandList, getProductAdmin, getProductCategoryListAdmin, getProductTagsAdmin } from 'src/services/product'
 import { MessageType, ProductStatus, ProductType } from 'src/common/enums'
 import { IValidationResult, checkValidity } from 'src/utils/utility'
 import { SUCCESS_MESSAGE_CREATE_UPDATE_DEFAULT } from 'src/common/constants'
