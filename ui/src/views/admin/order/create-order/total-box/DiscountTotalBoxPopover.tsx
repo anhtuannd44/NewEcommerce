@@ -11,7 +11,7 @@ export interface IDiscountOrderPopover {
   handleUpdateItem: (index: number, newValue: Partial<IProductItemRequestBody>) => void
 }
 
-const DiscountOrderPopover = (props: IDiscountOrderPopover) => {
+const DiscountTotalBoxPopover = (props: IDiscountOrderPopover) => {
   const { index, handleUpdateItem } = props
   const { control, watch } = useFormContext()
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
@@ -160,4 +160,4 @@ const DiscountOrderPopover = (props: IDiscountOrderPopover) => {
   )
 }
 
-export default DiscountOrderPopover
+export default DiscountTotalBoxPopover

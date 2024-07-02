@@ -1,18 +1,17 @@
-import { Autocomplete, Divider, Grid, Paper, TextField, Typography, createFilterOptions } from '@mui/material'
+import { Autocomplete, Box, Divider, FormControl, FormHelperText, Grid, Paper, TextField, Typography, createFilterOptions } from '@mui/material'
 import { RootState } from 'src/redux/store'
-import { initOrderRequestItemControls, updateGeneralField, updateOrderItemControls, updateRequestItems } from 'src/redux/admin/slice/orderAdminSlice'
 import { connect } from 'react-redux'
 import { currencyVNDFormatter } from 'src/utils/formatCurrency'
-import { Box, Magnify } from 'mdi-material-ui'
+import { Magnify } from 'mdi-material-ui'
 import OrderComplainBox from './OrderComplainBox'
 import OrderDetailsBox, { IOrderDetailsRef } from './order-details-box/OrderDetailsBox'
-import TotalBoxDetail from './TotalBoxDetail'
+import TotalBoxDetail from './total-box/TotalBoxDetail'
 import { IProduct } from 'src/redux/admin/interface/IAdminGeneralState'
 import PaperHeader from 'src/views/shared/paper/PaperHeader'
 import PaperContent from 'src/views/shared/paper/PaperContent'
 import { v4 as uuidv4 } from 'uuid'
-import { useFieldArray, useFormContext } from 'react-hook-form'
-import { IOrderRequestBody, IProductItemRequestBody } from 'src/form/admin/interface/IOrderRequest'
+import { Controller, useFormContext } from 'react-hook-form'
+import { IOrderRequestBody } from 'src/form/admin/interface/IOrderRequest'
 import { useRef } from 'react'
 
 export interface IProductSelectionBoxProps {
@@ -22,6 +21,10 @@ export interface IProductSelectionBoxProps {
 
 const ProductSelectionBox = (props: IProductSelectionBoxProps) => {
   const { productList, orderTags } = props
+
+  const { control, watch } = useFormContext<IOrderRequestBody>()
+
+  const isComplainWatch = watch('isComplain')
 
   const filterProductOption = createFilterOptions({
     stringify: (option: IProduct) => `${option.name} ${option.sku}`
@@ -90,9 +93,9 @@ const ProductSelectionBox = (props: IProductSelectionBoxProps) => {
         <Divider sx={{ mt: 5, mb: 0 }} />
         <OrderDetailsBox ref={childRef} />
         <Divider sx={{ mt: 5, mb: 0 }} />
-        {/* <Grid container p={4} spacing={5}>
+        <Grid container p={4} spacing={5}>
           <Grid item xs={8}>
-            {orderRequest.isComplain && <OrderComplainBox />}
+            {isComplainWatch && <OrderComplainBox />}
             <Grid container spacing={5}>
               <Grid item xs={6}>
                 <TextField
@@ -109,44 +112,55 @@ const ProductSelectionBox = (props: IProductSelectionBoxProps) => {
                   }}
                 />
               </Grid>
-
-              <Grid item xs={6}>
-                <Autocomplete
-                  fullWidth
-                  multiple
-                  size='small'
-                  options={orderTags}
-                  value={orderRequest.tags}
-                  freeSolo
-                  renderInput={params => <TextField {...params} label='Tags' />}
-                  onChange={(event, newValue, reason) => {
-                    if (event.type === 'keydown' && ((event as React.KeyboardEvent).key === 'Backspace' || (event as React.KeyboardEvent).key === 'Delete') && reason === 'removeOption') {
-                      return
-                    }
-                    updateGeneralField('tags', newValue)
-                  }}
-                  getOptionLabel={option => option}
-                  renderOption={(props, option) => (
-                    <li key={option} {...props}>
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          marginLeft: 3,
-                          alignItems: 'flex-start',
-                          flexDirection: 'column'
-                        }}>
-                        <Typography sx={{ fontWeight: 400, py: 1 }}>{option}</Typography>
-                      </Box>
-                    </li>
-                  )}
-                />
-              </Grid>
+              {orderTags && (
+                <Grid item xs={6}>
+                  <Controller
+                    name='tags'
+                    control={control}
+                    render={({ field: { onChange }, fieldState }) => (
+                      <Autocomplete
+                        fullWidth
+                        size='small'
+                        multiple
+                        freeSolo
+                        options={orderTags}
+                        renderInput={params => (
+                          <FormControl error={!!fieldState.error} variant='standard' fullWidth>
+                            <TextField {...params} error={!!fieldState.error} label='Tags' />
+                            <FormHelperText>{fieldState.error?.message}</FormHelperText>
+                          </FormControl>
+                        )}
+                        onChange={(event, newValue, reason) => {
+                          if (event.type === 'keydown' && ((event as React.KeyboardEvent).key === 'Backspace' || (event as React.KeyboardEvent).key === 'Delete') && reason === 'removeOption') {
+                            return
+                          }
+                          onChange(newValue)
+                        }}
+                        getOptionLabel={option => option}
+                        renderOption={(props, option) => (
+                          <li key={option} {...props}>
+                            <Box
+                              sx={{
+                                display: 'flex',
+                                marginLeft: 3,
+                                alignItems: 'flex-start',
+                                flexDirection: 'column'
+                              }}>
+                              <Typography sx={{ fontWeight: 400, py: 1 }}>{option}</Typography>
+                            </Box>
+                          </li>
+                        )}
+                      />
+                    )}
+                  />
+                </Grid>
+              )}
             </Grid>
           </Grid>
           <Grid item xs={4}>
             <TotalBoxDetail />
           </Grid>
-        </Grid> */}
+        </Grid>
       </PaperContent>
     </Paper>
   )

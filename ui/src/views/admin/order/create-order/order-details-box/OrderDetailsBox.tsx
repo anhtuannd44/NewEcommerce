@@ -26,8 +26,7 @@ export interface IOrderDetailsRef {
 }
 
 const OrderDetailsBox = forwardRef<IOrderDetailsRef, IOrderDetailsBoxProps>((props, ref) => {
-  // const { handleCalculateTotalItem, handleRemoveItem, items, onUpdate } = props
-  const { control, setValue, getValues, watch, register } = useFormContext<IOrderRequestBody>()
+  const { control, setValue, getValues, watch } = useFormContext<IOrderRequestBody>()
 
   const { append, update, remove } = useFieldArray({
     control,
@@ -46,8 +45,10 @@ const OrderDetailsBox = forwardRef<IOrderDetailsRef, IOrderDetailsBoxProps>((pro
         const newProduct = {
           ...defaultOrderItem,
           productId: value.id,
+          productCode: value.sku,
           name: value.name,
-          price: value.price
+          price: value.price,
+					productUrl: value.seoUrl || '/'
         }
         const finalUpdatedProducts = handleCalculateTotalItem(newProduct)
         append(finalUpdatedProducts)
@@ -72,13 +73,13 @@ const OrderDetailsBox = forwardRef<IOrderDetailsRef, IOrderDetailsBoxProps>((pro
       ...newValue
     }
     const finalItemUpdate = handleCalculateTotalItem(updateItem)
-    setValue(`items.${index}`, finalItemUpdate, { shouldDirty: true, shouldTouch: true, shouldValidate: true })
+    setValue(`items.${index}`, finalItemUpdate)
   }
 
   const handleCalculateTotalItem = (item: IProductItemRequestBody) => {
     const price = item.price ?? 0
     const preTotal = price * item.quantity
-    const finalPriceAfterDiscount = price - (item.discountType === DiscountType.Value ? item.discountValue : price * (1 - item.discountValue / 100))
+    const finalPriceAfterDiscount = price - (item.discountType === DiscountType.Value ? item.discountValue : (price * item.discountValue) / 100)
     const totalPriceAfterDiscount = finalPriceAfterDiscount * item.quantity
     const discountPercent = item.discountType === DiscountType.Percent ? item.discountValue : (item.discountValue / price) * 100
     return {
@@ -125,143 +126,132 @@ const OrderDetailsBox = forwardRef<IOrderDetailsRef, IOrderDetailsBoxProps>((pro
               <Grid item xs={1} p={2} py={3}></Grid>
             </Grid>
           </Box>
-          {watchItems.map((ordPrDt, index) => {
-            const fieldWatch = watch(`items.${index}`)
-            console.log(ordPrDt.totalPriceAfterDiscount)
-            return (
-              <CustomBoxStyled className='box-item' key={index}>
-                <Grid container>
-                  <Grid item xs={0.5} textAlign='center' px={2} py={3}>
-                    {index + 1}
-                  </Grid>
-                  <Grid item xs={1} textAlign='center' p={2} py={3}>
-                    <img src={ordPrDt.imgUrl ? ordPrDt.imgUrl : 'https://sapo.dktcdn.net/100/689/126/variants/dinh-am-tuong-1675674468493.jpg'} width={40} height={40} />
-                  </Grid>
-                  <Grid item xs={4} p={2} py={3}>
-                    <Box>
-                      <Typography variant='h6'>{ordPrDt.name}</Typography>
-                      <Typography variant='body1'>
-                        Mã: <Link href={ordPrDt.productUrl}>{ordPrDt.productCode}</Link>
-                      </Typography>
-                      <Typography
-                        variant='body2'
-                        onClick={() => {
-                          handleShowHideNote(index, ordPrDt, !ordPrDt.isShowNote)
-                        }}
-                        sx={{ cursor: 'pointer' }}>{`${ordPrDt.isShowNote ? 'Ẩn' : 'Hiện'} ghi chú`}</Typography>
-                      {ordPrDt.isShowNote && (
-                        <Controller
-                          name={`items.${index}.note`}
-                          control={control}
-                          render={({ field: { onChange, value } }) => (
-                            <TextField
-                              size='small'
-                              variant='standard'
-                              sx={{ minWidth: 400 }}
-                              placeholder='Ghi chú'
-                              type='text'
-                              value={value}
-                              onChange={event => {
-                                onChange(event.target.value)
-                              }}
-                              inputProps={{ style: { fontSize: '0.75rem' } }}
-                            />
-                          )}
-                        />
-                      )}
-                    </Box>
-                  </Grid>
-                  <Grid item xs={1} textAlign='center' p={2} py={3}>
-                    <Controller
-                      name={`items.${index}.quantity`}
-                      control={control}
-                      render={({ field: { onChange, value }, fieldState }) => {
-                        return (
-                          <FormControl error={!!fieldState.error} variant='standard' fullWidth>
-                            <TextField
-                              error={!!fieldState.error}
-                              variant='standard'
-                              type='number'
-                              value={value}
-                              onChange={event => {
-                                onChange(Number(event.target.value))
-                              }}
-                              inputProps={{ style: { textAlign: 'center' } }}
-                            />
-                            <FormHelperText>{fieldState.error?.message}</FormHelperText>
-                          </FormControl>
-                        )
-                      }}
-                    />
-                  </Grid>
-
-                  <Grid item xs={1} textAlign='right' p={2} py={3}>
-                    <Controller
-                      name={`items.${index}.price`}
-                      control={control}
-                      render={({ field: { onChange, value }, fieldState }) => {
-                        return (
-                          <FormControl error={!!fieldState.error} variant='standard' fullWidth>
-                            <NumericFormat
-                              variant='standard'
-                              type='text'
-                              inputProps={{ min: 0, style: { textAlign: 'right' } }}
-                              valueIsNumericString={true}
-                              onValueChange={value => {
-                                onChange(value.floatValue ?? null)
-                              }}
-                              min={0}
-                              value={value}
-                              customInput={TextField}
-                              decimalScale={2}
-                              thousandSeparator=','
-                              allowLeadingZeros={false}
-                              allowNegative={false}
-                              error={!!fieldState.error}
-                            />
-                            <FormHelperText>{fieldState.error?.message}</FormHelperText>
-                          </FormControl>
-                        )
-                      }}
-                    />
-                  </Grid>
-                  <Grid item xs={1.5} textAlign='right' p={2} py={3} aria-describedby={''}>
-                    <DiscountOrderPopover index={index} />
-                  </Grid>
-
-                  <Grid item xs={1} textAlign='right' p={2} py={3}>
-                    <TextField value={currencyVNDFormatter(fieldWatch.totalPriceAfterDiscount || 0)} variant='standard' type='text' inputProps={{ min: 0, style: { textAlign: 'right' } }} />
-                  </Grid>
-
-                  <Grid item xs={1} textAlign='center' p={2} py={3}>
-                    <Controller
-                      name={`items.${index}.isVat`}
-                      control={control}
-                      render={({ field: { onChange, value }, fieldState }) => {
-                        return (
-                          <Checkbox
-                            checked={ordPrDt.isVat}
-                            onChange={event => {
-                              onChange(event.target.checked)
-                            }}
-                          />
-                        )
-                      }}
-                    />
-                  </Grid>
-                  <Grid item xs={1} p={2} py={3} textAlign='center'>
-                    <IconButton
-                      aria-label='delete'
-                      onClick={() => {
-                        handleRemoveItem(index)
-                      }}>
-                      <Close />
-                    </IconButton>
-                  </Grid>
+          {watchItems.map((ordPrDt, index) => (
+            <CustomBoxStyled className='box-item' key={index}>
+              <Grid container>
+                <Grid item xs={0.5} textAlign='center' px={2} py={3}>
+                  {index + 1}
                 </Grid>
-              </CustomBoxStyled>
-            )
-          })}
+                <Grid item xs={1} textAlign='center' p={2} py={3}>
+                  <img src={ordPrDt.imgUrl ? ordPrDt.imgUrl : 'https://sapo.dktcdn.net/100/689/126/variants/dinh-am-tuong-1675674468493.jpg'} width={40} height={40} />
+                </Grid>
+                <Grid item xs={4} p={2} py={3}>
+                  <Box>
+                    <Typography variant='h6'>{ordPrDt.name}</Typography>
+                    <Typography variant='body1'>
+                      Mã: <Link href={ordPrDt.productUrl}>{ordPrDt.productCode}</Link>
+                    </Typography>
+                    <Typography
+                      variant='body2'
+                      onClick={() => {
+                        handleShowHideNote(index, ordPrDt, !ordPrDt.isShowNote)
+                      }}
+                      sx={{ cursor: 'pointer' }}>{`${ordPrDt.isShowNote ? 'Ẩn' : 'Hiện'} ghi chú`}</Typography>
+                    {ordPrDt.isShowNote && (
+                      <Controller
+                        name={`items.${index}.note`}
+                        control={control}
+                        render={({ field: { onChange, value } }) => (
+                          <TextField
+                            size='small'
+                            variant='standard'
+                            sx={{ minWidth: 400 }}
+                            placeholder='Ghi chú'
+                            type='text'
+                            value={value}
+                            onChange={event => {
+                              onChange(event.target.value)
+                            }}
+                            inputProps={{ style: { fontSize: '0.75rem' } }}
+                          />
+                        )}
+                      />
+                    )}
+                  </Box>
+                </Grid>
+                <Grid item xs={1} textAlign='center' p={2} py={3}>
+                  <Controller
+                    name={`items.${index}.quantity`}
+                    control={control}
+                    render={({ field: { value }, fieldState }) => (
+                      <FormControl error={!!fieldState.error} variant='standard' fullWidth>
+                        <TextField
+                          error={!!fieldState.error}
+                          variant='standard'
+                          type='number'
+                          value={value}
+                          onChange={event => {
+                            handleUpdateItem(index, { quantity: Number(event.target.value) })
+                          }}
+                          inputProps={{ min: 0, style: { textAlign: 'center' } }}
+                        />
+                        <FormHelperText>{fieldState.error?.message}</FormHelperText>
+                      </FormControl>
+                    )}
+                  />
+                </Grid>
+                <Grid item xs={1} textAlign='right' p={2} py={3}>
+                  <Controller
+                    name={`items.${index}.price`}
+                    control={control}
+                    render={({ field: { value }, fieldState }) => (
+                      <FormControl error={!!fieldState.error} variant='standard' fullWidth>
+                        <NumericFormat
+                          variant='standard'
+                          type='text'
+                          inputProps={{ min: 0, style: { textAlign: 'right' } }}
+                          valueIsNumericString={true}
+                          onValueChange={value => {
+                            handleUpdateItem(index, { price: value.floatValue })
+                          }}
+                          min={0}
+                          value={value}
+                          customInput={TextField}
+                          decimalScale={2}
+                          thousandSeparator=','
+                          allowLeadingZeros={false}
+                          allowNegative={false}
+                          error={!!fieldState.error}
+                        />
+                        <FormHelperText>{fieldState.error?.message}</FormHelperText>
+                      </FormControl>
+                    )}
+                  />
+                </Grid>
+                <Grid item xs={1.5} textAlign='right' p={2} py={3} aria-describedby={''}>
+                  <DiscountOrderPopover handleUpdateItem={handleUpdateItem} index={index} />
+                </Grid>
+
+                <Grid item xs={1} textAlign='right' p={2} py={3}>
+                  <TextField value={currencyVNDFormatter(ordPrDt.totalPriceAfterDiscount || 0)} variant='standard' type='text' inputProps={{ min: 0, style: { textAlign: 'right' } }} />
+                </Grid>
+
+                <Grid item xs={1} textAlign='center' p={2} py={3}>
+                  <Controller
+                    name={`items.${index}.isVat`}
+                    control={control}
+                    render={({ field: { onChange } }) => (
+                      <Checkbox
+                        checked={ordPrDt.isVat}
+                        onChange={event => {
+                          handleUpdateItem(index, { isVat: event.target.checked })
+                        }}
+                      />
+                    )}
+                  />
+                </Grid>
+                <Grid item xs={1} p={2} py={3} textAlign='center'>
+                  <IconButton
+                    aria-label='delete'
+                    onClick={() => {
+                      handleRemoveItem(index)
+                    }}>
+                    <Close />
+                  </IconButton>
+                </Grid>
+              </Grid>
+            </CustomBoxStyled>
+          ))}
         </>
       ) : (
         <>

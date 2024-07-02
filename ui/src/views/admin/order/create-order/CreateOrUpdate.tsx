@@ -24,14 +24,11 @@ interface ICreateOrUpdateOrderAdminProps {
   orderAttributeList: IOrderAttributeList
   orderOriginList: IOrderOriginList
   orderTagList: IOrderTagList
-  orderAdmin: IOrderAdminState
   getProductList: () => void
   getUserList: () => void
   getOrderAttributeList: () => void
   getOrderOriginList: () => void
   getOrderTagList: () => void
-  updateOrderItemControls: (controls: IOrderRequestBodyItemControls[]) => void
-  updateOrderBodyControls: (control: IOrderRequestBodyControl) => void
   createOrUpdateOrder: (order: IOrderRequestBody) => void
 }
 
@@ -42,11 +39,8 @@ const CreateOrUpdateOrderAdmin = (props: ICreateOrUpdateOrderAdminProps) => {
     orderAttributeList,
     orderOriginList,
     orderTagList,
-    orderAdmin,
     getProductList,
     getUserList,
-    updateOrderItemControls,
-    updateOrderBodyControls,
     getOrderAttributeList,
     getOrderOriginList,
     getOrderTagList,
@@ -83,34 +77,14 @@ const CreateOrUpdateOrderAdmin = (props: ICreateOrUpdateOrderAdminProps) => {
   const onSubmit = (data: IOrderRequestBody) => {
     // console.log('data', data)
     createOrUpdateOrder(data)
-    const currentOrderState = _.cloneDeep(orderAdmin)
-
-    let isAllValid = true
-
-    const validateOrderBody = handleValidateOrderBody(currentOrderState.orderRequest, currentOrderState.controls.order)
-
-    isAllValid = validateOrderBody.isValid
-    updateOrderBodyControls(validateOrderBody.controlReturn)
-
-    if (currentOrderState.orderRequest.items && currentOrderState.orderRequest.items.length > 0) {
-      const validateOrderItems = handleValidateOrderItems(currentOrderState.orderRequest.items, currentOrderState.controls.product)
-      isAllValid = validateOrderItems.isValid
-      if (validateOrderItems.itemsControls) {
-        updateOrderItemControls(validateOrderItems.itemsControls)
-      }
-    } else {
-      isAllValid = false
-    }
-
-    if (isAllValid) {
-      // createOrUpdateOrder(currentOrderState.orderRequest)
-    }
   }
 
   const onError = (errors: FieldErrors<IOrderRequestBody>) => {
     console.log(createOrderForm.getValues())
     console.log('Validation Errors:', errors)
   }
+
+  console.log('sssssacasjkbcas')
 
   if (!(userList.users && productList.products && orderAttributeList.orderAttributes)) {
     return <CreateOrEditLoadingBox />
@@ -138,7 +112,6 @@ const CreateOrUpdateOrderAdmin = (props: ICreateOrUpdateOrderAdminProps) => {
 }
 
 const mapStateToProps = (state: RootState) => ({
-  orderAdmin: state.orderAdmin,
   userList: state.adminGeneral.userList,
   productList: state.adminGeneral.productList,
   orderOriginList: state.adminGeneral.orderOriginList,
@@ -152,8 +125,6 @@ const mapDispatchToProps = (dispatch: AppDispatch) => ({
   getOrderAttributeList: () => dispatch(getOrderAttributeList()),
   getOrderOriginList: () => dispatch(getOrderOriginList()),
   getOrderTagList: () => dispatch(getOrderTagList()),
-  updateOrderItemControls: (controls: IOrderRequestBodyItemControls[]) => dispatch(updateOrderItemControls(controls)),
-  updateOrderBodyControls: (control: IOrderRequestBodyControl) => dispatch(updateOrderBodyControls(control)),
   createOrUpdateOrder: (order: IOrderRequestBody) => dispatch(createOrUpdateOrder(order))
 })
 

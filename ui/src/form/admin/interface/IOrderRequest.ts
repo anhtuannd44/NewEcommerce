@@ -21,6 +21,7 @@ export interface IOrderRequestBody {
   discountValue?: number
   discountNote?: string
   note?: string
+  isComplain: boolean
   problem?: string
   rootCause?: string
   solution?: string
