@@ -2,7 +2,7 @@ import { Alert, Box, CircularProgress, Snackbar, circularProgressClasses } from 
 import { useEffect, useState } from 'react'
 import { FileLibraryListItem, FileUploadListItem, ReactMediaLibrary } from 'react-media-library'
 import { connect } from 'react-redux'
-import { getFileList, uploadFile } from 'src/api/file'
+import { getFileList, uploadFile } from 'src/services/file'
 import { setLoading } from 'src/redux/admin/slice/fileSlice'
 import { AppDispatch, RootState } from 'src/redux/store'
 

@@ -2,6 +2,7 @@ import { MessageType, ProductStatus, ProductType } from 'src/common/enums'
 import { IValidationRequest } from 'src/utils/utility'
 import { IMessageCommon } from './ICommon'
 import { v4 as uuidv4 } from 'uuid'
+import { IBrand } from 'src/form/admin/product/interface/IBrand'
 
 export interface IProductAdmin {
   id?: string
@@ -75,11 +76,6 @@ export interface IProductGeneralControl {
   price: IValidationRequest
   unit: IValidationRequest
   stockQuantity: IValidationRequest
-}
-
-export interface IBrand {
-  id?: string | null
-  name: string
 }
 
 export interface IProductCategoryAdmin {

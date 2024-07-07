@@ -1,23 +1,13 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import http from 'src/api/apiService'
 import { ERROR_MESSAGE_COMMON, SUCCESS_MESSAGE_CREATE_UPDATE_DEFAULT } from 'src/common/constants'
-import { IOrderRequestBody } from 'src/form/admin/interface/IOrderRequest'
-import { IOrderAttribute, IOrderOrigin, IProduct, IUser } from 'src/redux/admin/interface/IAdminGeneralState'
+import { IOrderRequestBody } from 'src/form/admin/order/interface/IOrderRequest'
+import { IOrderAttribute, IOrderOrigin, IUser } from 'src/redux/admin/interface/IAdminGeneralState'
 import { IManyResult } from 'src/api/response-interface/IManyResult'
 import { showSnackbar } from 'src/redux/admin/slice/snackbarSlice'
-import { IOrderOriginRequest } from 'src/form/admin/interface/ICreateOrEditOrderOrigin'
+import { IOrderOriginRequest } from 'src/form/admin/order/interface/ICreateOrEditOrderOrigin'
 import { ISingleResult } from 'src/api/response-interface/ISingleResult'
 import { FetchDataResult } from 'src/api/interface/IApiService'
-
-export const getProductList = createAsyncThunk('getProductList', async (_, { dispatch, rejectWithValue }) => {
-  const response = await http.getWithAuth<IManyResult<IProduct>>('/product')
-  if (response.data) {
-    return response.data
-  }
-  const error = response.error?.message || ERROR_MESSAGE_COMMON
-  dispatch(showSnackbar({ message: error, severity: 'error' }))
-  return rejectWithValue(error)
-})
 
 export const getUserList = createAsyncThunk('getUserList', async (_, { dispatch, rejectWithValue }) => {
   const response = await http.getWithAuth<IManyResult<IUser>>('/user')

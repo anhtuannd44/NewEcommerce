@@ -6,16 +6,16 @@ import { Magnify } from 'mdi-material-ui'
 import OrderComplainBox from './OrderComplainBox'
 import OrderDetailsBox, { IOrderDetailsRef } from './order-details-box/OrderDetailsBox'
 import TotalBoxDetail from './total-box/TotalBoxDetail'
-import { IProduct } from 'src/redux/admin/interface/IAdminGeneralState'
 import PaperHeader from 'src/views/shared/paper/PaperHeader'
 import PaperContent from 'src/views/shared/paper/PaperContent'
 import { v4 as uuidv4 } from 'uuid'
 import { Controller, useFormContext } from 'react-hook-form'
-import { IOrderRequestBody } from 'src/form/admin/interface/IOrderRequest'
+import { IOrderRequestBody } from 'src/form/admin/order/interface/IOrderRequest'
 import { useRef } from 'react'
+import { IProductInList } from 'src/form/admin/product/interface/IProductInList'
 
 export interface IProductSelectionBoxProps {
-  productList: IProduct[] | undefined
+  productList: IProductInList[] | undefined
   orderTags: string[] | undefined
 }
 
@@ -27,12 +27,12 @@ const ProductSelectionBox = (props: IProductSelectionBoxProps) => {
   const isComplainWatch = watch('isComplain')
 
   const filterProductOption = createFilterOptions({
-    stringify: (option: IProduct) => `${option.name} ${option.sku}`
+    stringify: (option: IProductInList) => `${option.name} ${option.sku}`
   })
 
   const childRef = useRef<IOrderDetailsRef>(null)
 
-  const handleSelectProduct = (value: IProduct) => {
+  const handleSelectProduct = (value: IProductInList) => {
     if (childRef.current) {
       childRef.current.handleOnChangeSelectProduct(value)
     }
@@ -69,7 +69,7 @@ const ProductSelectionBox = (props: IProductSelectionBoxProps) => {
                     }}>
                     <Grid container justifyContent='center' alignItems='center'>
                       <Grid item xs={1}>
-                        <img src={option.imgUrl ? option.imgUrl : 'https://sapo.dktcdn.net/100/689/126/variants/dinh-am-tuong-1675674468493.jpg'} width={40} height={40} />
+                        <img src={option.imgUrl ?? 'https://sapo.dktcdn.net/100/689/126/variants/dinh-am-tuong-1675674468493.jpg'} width={40} height={40} />
                       </Grid>
                       <Grid item xs={7}>
                         <Typography sx={{ fontWeight: 600 }}>{option.name}</Typography>
@@ -98,18 +98,29 @@ const ProductSelectionBox = (props: IProductSelectionBoxProps) => {
             {isComplainWatch && <OrderComplainBox />}
             <Grid container spacing={5}>
               <Grid item xs={6}>
-                <TextField
-                  rows={6}
-                  fullWidth
-                  multiline
-                  size='small'
-                  type='text'
-                  label='Ghi chú đơn hàng'
-                  placeholder='Ghi chú đơn hàng'
-                  helperText='Ghi chú cho tổng đơn hàng. Bạn cũng có thể ghi chú cho từng đơn hàng ở mỗi sản phẩm phía trên'
-                  sx={{
-                    fontSize: '0.4rem !important'
-                  }}
+                <Controller
+                  name='note'
+                  control={control}
+                  render={({ field: { onChange }, fieldState }) => (
+                    <FormControl error={!!fieldState.error} variant='standard' fullWidth>
+                      <TextField
+                        rows={6}
+                        fullWidth
+                        multiline
+                        size='small'
+                        type='text'
+                        label='Ghi chú đơn hàng'
+                        placeholder='Ghi chú đơn hàng'
+                        helperText='Ghi chú cho tổng đơn hàng. Bạn cũng có thể ghi chú cho từng đơn hàng ở mỗi sản phẩm phía trên'
+                        sx={{
+                          fontSize: '0.4rem !important'
+                        }}
+                        error={!!fieldState.error}
+                        onChange={onChange}
+                      />
+                      <FormHelperText>{fieldState.error?.message}</FormHelperText>
+                    </FormControl>
+                  )}
                 />
               </Grid>
               {orderTags && (
@@ -167,8 +178,6 @@ const ProductSelectionBox = (props: IProductSelectionBoxProps) => {
 }
 
 const mapStateToProps = (state: RootState) => ({
-  orderRequest: state.orderAdmin.orderRequest,
-  orderRequestItemControl: state.orderAdmin.controls.product,
   productList: state.adminGeneral.productList.products,
   orderTags: state.adminGeneral.orderTagList.orderTags
 })

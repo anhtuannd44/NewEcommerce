@@ -1,4 +1,4 @@
-import { ITokenInfo, IUserInfo } from 'src/api/IAuthApi'
+import { ITokenInfo, IUserInfo } from 'src/api/interface/IAuthApi'
 import Cookies, { CookieAttributes } from 'js-cookie'
 
 export const setStoredAuthState = (tokenInfo: ITokenInfo, userInfo: IUserInfo) => {

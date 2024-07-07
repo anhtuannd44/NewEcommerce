@@ -2,6 +2,7 @@ namespace ECommerce.Shop.Domain;
 
 public static class ShopDomainConstants
 {
+    public const char TagSplitCharacter = ',';
     //Area Constant
     public const string AdminAreaName = "Admin";
     

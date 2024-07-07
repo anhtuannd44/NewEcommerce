@@ -7,10 +7,10 @@ import { currencyVNDFormatter } from 'src/utils/formatCurrency'
 import { DiscountType } from 'src/common/enums'
 import _ from 'lodash'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
-import { IOrderRequestBody, IProductItemRequestBody } from 'src/form/admin/interface/IOrderRequest'
-import { IProduct } from 'src/redux/admin/interface/IAdminGeneralState'
-import { defaultOrderItem } from 'src/form/admin/order/orderRequest'
+import { IOrderRequestBody, IProductItemRequestBody } from 'src/form/admin/order/interface/IOrderRequest'
+import { defaultOrderItem } from 'src/form/admin/order/scheme/orderRequestSchema'
 import DiscountOrderPopover from './DiscountOrderPopover'
+import { IProductInList } from 'src/form/admin/product/interface/IProductInList'
 
 export interface IOrderDetailsBoxProps {}
 
@@ -22,7 +22,7 @@ const CustomBoxStyled = styled(Box)(({ theme }) => ({
 }))
 
 export interface IOrderDetailsRef {
-  handleOnChangeSelectProduct: (value: IProduct) => void
+  handleOnChangeSelectProduct: (value: IProductInList) => void
 }
 
 const OrderDetailsBox = forwardRef<IOrderDetailsRef, IOrderDetailsBoxProps>((props, ref) => {
@@ -36,7 +36,7 @@ const OrderDetailsBox = forwardRef<IOrderDetailsRef, IOrderDetailsBoxProps>((pro
   const watchItems = watch('items')
 
   useImperativeHandle(ref, () => ({
-    handleOnChangeSelectProduct: (value: IProduct) => {
+    handleOnChangeSelectProduct: (value: IProductInList) => {
       const existingProductIndex = watchItems.findIndex(item => item.productId === value.id)
 
       if (existingProductIndex !== -1) {
@@ -48,7 +48,7 @@ const OrderDetailsBox = forwardRef<IOrderDetailsRef, IOrderDetailsBoxProps>((pro
           productCode: value.sku,
           name: value.name,
           price: value.price,
-					productUrl: value.seoUrl || '/'
+          productUrl: value.seoUrl || '/'
         }
         const finalUpdatedProducts = handleCalculateTotalItem(newProduct)
         append(finalUpdatedProducts)

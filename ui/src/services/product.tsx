@@ -1,26 +1,58 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import http from 'src/api/apiService'
+import { FetchDataResult } from 'src/api/interface/IApiService'
+import { IManyResult } from 'src/api/response-interface/IManyResult'
+import { ISingleResult } from 'src/api/response-interface/ISingleResult'
 import { ERROR_MESSAGE_COMMON, ERROR_MESSAGE_NETWORK } from 'src/common/constants'
-import { IBrand, IProductAdmin, IProductCategoryAdminCreateBody } from 'src/redux/admin/interface/IProductAdmin'
+import { IBrand } from 'src/form/admin/product/interface/IBrand'
+import { IProduct } from 'src/form/admin/product/interface/IProduct'
+import { IProductCategory } from 'src/form/admin/product/interface/IProductCategory'
+import { IProductInList } from 'src/form/admin/product/interface/IProductInList'
+import { IProductAdmin, IProductCategoryAdminCreateBody } from 'src/redux/admin/interface/IProductAdmin'
+import { showSnackbar } from 'src/redux/admin/slice/snackbarSlice'
 
-export const getProductAdmin = createAsyncThunk('getProductAdmin', async (id: string) => {
-  const response = await http.get(`/product/${id}`)
-  return response
+export const getProductList = createAsyncThunk('getProductList', async (_, { dispatch, rejectWithValue }) => {
+  const response = await http.getWithAuth<IManyResult<IProductInList>>('/product')
+  if (response.data) {
+    return response.data
+  }
+  const error = response.error?.message || ERROR_MESSAGE_COMMON
+  dispatch(showSnackbar({ message: error, severity: 'error' }))
+  return rejectWithValue(error)
 })
 
-export const getProductCategoryListAdmin = createAsyncThunk('getProductCategoryListAdmin', async () => {
-  const response = await http.get('/product/category')
-  return response
+export const getProduct = async (id: string): Promise<FetchDataResult<IProduct>> => {
+  return await http.getWithAuth<IProduct>(`/product/${id}`)
+}
+
+export const getProductCategoryList = createAsyncThunk('getProductCategoryList', async (_, { dispatch, rejectWithValue }) => {
+  const response = await http.getWithAuth<IManyResult<IProductCategory>>('/product/category')
+  if (response.data) {
+    return response.data
+  }
+  const error = response.error?.message || ERROR_MESSAGE_COMMON
+  dispatch(showSnackbar({ message: error, severity: 'error' }))
+  return rejectWithValue(error)
 })
 
-export const getProductTagsAdmin = createAsyncThunk('getProductTagsAdmin', async () => {
-  const response = await http.get('/product/tags')
-  return response
+export const getProductTags = createAsyncThunk('getProductTags', async (_, { dispatch, rejectWithValue }) => {
+  const response = await http.getWithAuth<IManyResult<string>>('/product/tags')
+  if (response.data) {
+    return response.data
+  }
+  const error = response.error?.message || ERROR_MESSAGE_COMMON
+  dispatch(showSnackbar({ message: error, severity: 'error' }))
+  return rejectWithValue(error)
 })
 
-export const getBrandList = createAsyncThunk('getBrandList', async () => {
-  const response = await http.get('/product/brand')
-  return response
+export const getBrandList = createAsyncThunk('getBrandList', async (_, { dispatch, rejectWithValue }) => {
+  const response = await http.getWithAuth<IManyResult<IBrand>>('/product/brand')
+  if (response.data) {
+    return response.data
+  }
+  const error = response.error?.message || ERROR_MESSAGE_COMMON
+  dispatch(showSnackbar({ message: error, severity: 'error' }))
+  return rejectWithValue(error)
 })
 
 export const createProductCategory = createAsyncThunk('createProductCategory', async (category: IProductCategoryAdminCreateBody, { rejectWithValue }) => {

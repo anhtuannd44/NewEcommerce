@@ -19,13 +19,14 @@ export interface IOrderRequestBody {
   orderOriginId: string
   discountType?: DiscountType
   discountValue?: number
+  discountPercent?: number
   discountNote?: string
   note?: string
   isComplain: boolean
   problem?: string
   rootCause?: string
   solution?: string
-  responsibleStaffIds: string[]
+  responsibleStaffIds?: string[] | null
   tags?: string[]
   status: OrderStatus
   items: IProductItemRequestBody[]

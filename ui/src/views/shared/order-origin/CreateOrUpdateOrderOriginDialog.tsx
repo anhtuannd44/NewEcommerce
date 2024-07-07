@@ -3,7 +3,7 @@ import { WindowClose } from 'mdi-material-ui'
 import PaperHeader from 'src/views/shared/paper/PaperHeader'
 import PaperContent from 'src/views/shared/paper/PaperContent'
 import { FieldErrors, SubmitHandler, useForm } from 'react-hook-form'
-import { IOrderOriginRequest } from 'src/form/admin/interface/ICreateOrEditOrderOrigin'
+import { IOrderOriginRequest } from 'src/form/admin/order/interface/ICreateOrEditOrderOrigin'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { orderOriginSchema } from 'src/form/admin/order/createOrUpdateOrderOrigin'
 import { useEffect, useState } from 'react'
@@ -25,7 +25,7 @@ interface ICreateOrUpdateOrderOriginDialogProps {
 
 const CreateOrUpdateOrderOriginDialog = (props: ICreateOrUpdateOrderOriginDialogProps) => {
   const { open, onClose, onSubmit, orderOrigin, mode } = props
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState<boolean>(false)
   const [isActive, setIsActive] = useState<boolean>(orderOrigin ? orderOrigin.isActive : true)
 
   const defaultValue: IOrderOriginRequest = {

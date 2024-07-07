@@ -1,22 +1,20 @@
 'use client'
-import { useEffect, useMemo } from 'react'
+import { useEffect } from 'react'
 import { connect } from 'react-redux'
 import { useForm, FormProvider, FieldErrors } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { createFilterOptions, Grid } from '@mui/material'
 import 'react-datepicker/dist/react-datepicker.css'
-import { IOrderAdminState, IOrderRequestBodyControl, IOrderRequestBodyItemControls } from 'src/redux/admin/interface/IOrderAdmin'
-import { createOrUpdateOrder, getOrderAttributeList, getOrderOriginList, getOrderTagList, getProductList, getUserList } from 'src/services/order'
+import { createOrUpdateOrder, getOrderAttributeList, getOrderOriginList, getOrderTagList, getUserList } from 'src/services/order'
 import { AppDispatch, RootState } from 'src/redux/store'
-import { handleValidateOrderBody, handleValidateOrderItems, updateOrderBodyControls, updateOrderItemControls } from 'src/redux/admin/slice/orderAdminSlice'
 import AdditionalInfoBox from 'src/views/admin/order/create-order/AdditionalInfoBox'
 import CustomerSelectBox from 'src/views/admin/order/create-order/CustomerSelectBox'
 import ProductSelectionBox from 'src/views/admin/order/create-order/ProductSelectionBox'
 import CreateOrEditLoadingBox from 'src/views/admin/loading-box/CreateOrEditLoadingBox'
 import { IOrderAttributeList, IOrderOriginList, IOrderTagList, IProductList, IUser, IUserList } from 'src/redux/admin/interface/IAdminGeneralState'
-import _ from 'lodash'
-import { orderRequestSchema } from 'src/form/admin/order/orderRequest'
-import { IOrderRequestBody } from 'src/form/admin/interface/IOrderRequest'
+import { IOrderRequestBody } from 'src/form/admin/order/interface/IOrderRequest'
+import { getProductList } from 'src/services/product'
+import { orderRequestSchema } from 'src/form/admin/order/scheme/orderRequestSchema'
 
 interface ICreateOrUpdateOrderAdminProps {
   userList: IUserList
@@ -33,19 +31,8 @@ interface ICreateOrUpdateOrderAdminProps {
 }
 
 const CreateOrUpdateOrderAdmin = (props: ICreateOrUpdateOrderAdminProps) => {
-  const {
-    userList,
-    productList,
-    orderAttributeList,
-    orderOriginList,
-    orderTagList,
-    getProductList,
-    getUserList,
-    getOrderAttributeList,
-    getOrderOriginList,
-    getOrderTagList,
-    createOrUpdateOrder
-  } = props
+  const { userList, productList, orderAttributeList, orderOriginList, orderTagList, getProductList, getUserList, getOrderAttributeList, getOrderOriginList, getOrderTagList, createOrUpdateOrder } =
+    props
 
   useEffect(() => {
     if (!userList.users) {

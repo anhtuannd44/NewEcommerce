@@ -1,5 +1,5 @@
 import { Autocomplete, Avatar, Badge, Box, Button, FilterOptionsState, FormControl, FormHelperText, Grid, Link, Paper, TextField, Typography, styled } from '@mui/material'
-import { IOrderRequestBody } from 'src/form/admin/interface/IOrderRequest'
+import { IOrderRequestBody } from 'src/form/admin/order/interface/IOrderRequest'
 import { RootState } from 'src/redux/store'
 import { connect } from 'react-redux'
 import EmptyBox from '../../../shared/EmptyBox'
@@ -9,7 +9,6 @@ import { IUser } from 'src/redux/admin/interface/IAdminGeneralState'
 import PaperHeader from 'src/views/shared/paper/PaperHeader'
 import PaperContent from 'src/views/shared/paper/PaperContent'
 import { Controller, useFormContext } from 'react-hook-form'
-import _ from 'lodash'
 
 export interface ICustomerSelectBoxProps {
   filterUserOptions: (options: IUser[], state: FilterOptionsState<IUser>) => IUser[]
@@ -26,7 +25,7 @@ const BadgeContentSpan = styled('span')(({ theme }) => ({
 
 const CustomerSelectBox = (props: ICustomerSelectBoxProps) => {
   const { userList, filterUserOptions } = props
-console.log('sssss')
+  console.log('sssss')
   const { control, setValue } = useFormContext<IOrderRequestBody>()
 
   const productBorrowInfo: IProductBorrowProps = {
@@ -67,7 +66,7 @@ console.log('sssss')
                 control={control}
                 render={({ field: { onChange, value }, fieldState }) => {
                   const user = userList.find(x => x.id === value)
-									setValue('deliveryAddress', user?.address || '', { shouldValidate: true })
+                  setValue('deliveryAddress', user?.address || '', { shouldValidate: true })
                   return user ? (
                     <>
                       <Box mb={4}>

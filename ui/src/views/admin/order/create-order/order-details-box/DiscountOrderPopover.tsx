@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { NumericFormat } from 'react-number-format'
 import { DiscountType } from 'src/common/enums'
-import { IProductItemRequestBody } from 'src/form/admin/interface/IOrderRequest'
+import { IProductItemRequestBody } from 'src/form/admin/order/interface/IOrderRequest'
 
 export interface IDiscountOrderPopover {
   index: number
@@ -52,7 +52,7 @@ const DiscountOrderPopover = (props: IDiscountOrderPopover) => {
         }}
         valueIsNumericString={true}
         min={0}
-        value={fieldWatch.discountType === DiscountType.Value ? fieldWatch.discountValue : ((fieldWatch.price || 0) / 100) * (fieldWatch.discountValue || 0)}
+        value={fieldWatch.discountType === DiscountType.Value ? fieldWatch.discountValue : ((fieldWatch.price ?? 0) / 100) * (fieldWatch.discountValue ?? 0)}
         customInput={TextField}
         onClick={handleClick}
         decimalScale={2}
@@ -60,7 +60,7 @@ const DiscountOrderPopover = (props: IDiscountOrderPopover) => {
         allowLeadingZeros={false}
         allowNegative={false}
       />
-      {(fieldWatch.discountValue || 0) > 0 && (fieldWatch.quantity || 0) > 0 && (
+      {(fieldWatch.discountValue ?? 0) > 0 && (fieldWatch.quantity ?? 0) > 0 && (
         <Typography color={(fieldWatch.totalPriceAfterDiscount || 0) < 0 ? 'error' : 'success'} fontSize='0.725rem'>
           {`${fieldWatch.discountPercent?.toFixed(2)} %`}
         </Typography>
@@ -121,6 +121,7 @@ const DiscountOrderPopover = (props: IDiscountOrderPopover) => {
                   <NumericFormat
                     value={value}
                     variant='standard'
+                    type='text'
                     customInput={TextField}
                     sx={{
                       verticalAlign: 'baseline'
@@ -138,12 +139,11 @@ const DiscountOrderPopover = (props: IDiscountOrderPopover) => {
                         } else {
                           valueNumber = valueNumber < 0 ? 0 : valueNumber
                         }
-
                         event.target.value = String(valueNumber)
                       }
                     }}
                     onValueChange={value => {
-                      handleUpdateItem(index, { discountValue: value.floatValue })
+                      handleUpdateItem(index, { discountValue: value.floatValue ?? 0 })
                     }}
                     decimalScale={2}
                     thousandSeparator=','

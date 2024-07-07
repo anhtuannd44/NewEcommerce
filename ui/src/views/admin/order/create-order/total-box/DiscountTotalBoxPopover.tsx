@@ -1,22 +1,25 @@
 import { Box, Button, Grid, FormControl, Popover, TextField, Typography } from '@mui/material'
-import _ from 'lodash'
 import { useState } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
-import { NumericFormat } from 'react-number-format'
+import { Controller, useFormContext, useWatch } from 'react-hook-form'
+import { NumberFormatValues, NumericFormat } from 'react-number-format'
 import { DiscountType } from 'src/common/enums'
-import { IProductItemRequestBody } from 'src/form/admin/interface/IOrderRequest'
+import { IOrderRequestBody } from 'src/form/admin/order/interface/IOrderRequest'
 
 export interface IDiscountOrderPopover {
-  index: number
-  handleUpdateItem: (index: number, newValue: Partial<IProductItemRequestBody>) => void
+  handleCalculateTotal: (calVat?: number) => void
 }
 
 const DiscountTotalBoxPopover = (props: IDiscountOrderPopover) => {
-  const { index, handleUpdateItem } = props
-  const { control, watch } = useFormContext()
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const { handleCalculateTotal } = props
+  const { control, watch, setValue } = useFormContext()
 
-  const fieldWatch = watch(`items.${index}`) as IProductItemRequestBody
+  const discountType = (useWatch<IOrderRequestBody>({ name: 'discountType' }) as DiscountType) ?? DiscountType.Value
+  const discountValue = (useWatch<IOrderRequestBody>({ name: 'discountValue' }) as number) ?? 0
+  const preTotal = watch('preTotal') as number
+  const discountPercent = watch('discountPercent') as number
+  const totalPriceAfterDiscount = watch('totalPriceAfterDiscount') as number
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     setAnchorEl(event.currentTarget)
@@ -27,17 +30,24 @@ const DiscountTotalBoxPopover = (props: IDiscountOrderPopover) => {
   }
 
   const open = Boolean(anchorEl)
-  const id = open ? `discount-popover-${index}` : undefined
+  const id = open ? `discount-popover` : undefined
+
+  const handleDiscountValueChange = (values: NumberFormatValues) => {
+    const valueNumber = values.floatValue ?? 0
+    setValue('discountValue', valueNumber)
+    handleCalculateTotal()
+  }
 
   const handleDiscountTypeChange = (type: DiscountType) => {
-    const fieldUpdate = _.clone(fieldWatch)
+    setValue('discountType', type)
     let newDiscountValue = 0
     if (type === DiscountType.Percent) {
-      newDiscountValue = fieldUpdate.discountValue > 100 ? 100 : fieldUpdate.discountValue < 0 ? 0 : fieldUpdate.discountValue
+      newDiscountValue = discountValue > 100 ? 100 : discountValue < 0 ? 0 : discountValue
     } else {
-      newDiscountValue = fieldUpdate.discountValue < 0 ? 0 : fieldUpdate.discountValue
+      newDiscountValue = discountValue < 0 ? 0 : discountValue
     }
-    handleUpdateItem(index, { discountValue: newDiscountValue, discountType: type })
+    setValue('discountValue', newDiscountValue)
+    handleCalculateTotal()
   }
 
   return (
@@ -52,7 +62,7 @@ const DiscountTotalBoxPopover = (props: IDiscountOrderPopover) => {
         }}
         valueIsNumericString={true}
         min={0}
-        value={fieldWatch.discountType === DiscountType.Value ? fieldWatch.discountValue : ((fieldWatch.price || 0) / 100) * (fieldWatch.discountValue || 0)}
+        value={discountType === DiscountType.Value ? discountValue : ((preTotal ?? 0) / 100) * (discountValue ?? 0)}
         customInput={TextField}
         onClick={handleClick}
         decimalScale={2}
@@ -60,9 +70,9 @@ const DiscountTotalBoxPopover = (props: IDiscountOrderPopover) => {
         allowLeadingZeros={false}
         allowNegative={false}
       />
-      {(fieldWatch.discountValue || 0) > 0 && (fieldWatch.quantity || 0) > 0 && (
-        <Typography color={(fieldWatch.totalPriceAfterDiscount || 0) < 0 ? 'error' : 'success'} fontSize='0.725rem'>
-          {`${fieldWatch.discountPercent?.toFixed(2)} %`}
+      {discountValue > 0 && preTotal > 0 && (
+        <Typography textAlign='right' color={totalPriceAfterDiscount < 0 ? 'error' : 'success'} fontSize='0.725rem'>
+          {`${discountPercent?.toFixed(2)} %`}
         </Typography>
       )}
       <Popover
@@ -79,13 +89,13 @@ const DiscountTotalBoxPopover = (props: IDiscountOrderPopover) => {
         }}>
         <Box p={3} boxShadow={[2]} borderRadius={'4px'}>
           <Controller
-            name={`items.${index}.discountType`}
+            name={'discountType'}
             control={control}
             render={({ field }) => (
               <Grid container>
                 <Grid item xs={6}>
                   <Button
-                    variant={field.value == DiscountType.Value ? 'contained' : 'outlined'}
+                    variant={discountType == DiscountType.Value ? 'contained' : 'outlined'}
                     onClick={() => handleDiscountTypeChange(DiscountType.Value)}
                     size='small'
                     fullWidth
@@ -98,7 +108,7 @@ const DiscountTotalBoxPopover = (props: IDiscountOrderPopover) => {
                 </Grid>
                 <Grid item xs={6}>
                   <Button
-                    variant={field.value == DiscountType.Percent ? 'contained' : 'outlined'}
+                    variant={discountType == DiscountType.Percent ? 'contained' : 'outlined'}
                     onClick={() => handleDiscountTypeChange(DiscountType.Percent)}
                     size='small'
                     fullWidth
@@ -113,13 +123,13 @@ const DiscountTotalBoxPopover = (props: IDiscountOrderPopover) => {
             )}
           />
           <Controller
-            name={`items.${index}.discountValue`}
+            name={'discountValue'}
             control={control}
-            render={({ field: { onChange, value }, fieldState }) => {
+            render={({ fieldState }) => {
               return (
                 <FormControl error={!!fieldState.error} variant='standard' fullWidth>
                   <NumericFormat
-                    value={value}
+                    value={discountValue}
                     variant='standard'
                     customInput={TextField}
                     sx={{
@@ -133,7 +143,7 @@ const DiscountTotalBoxPopover = (props: IDiscountOrderPopover) => {
                       },
                       onChange: (event: any) => {
                         let valueNumber = parseFloat(event.target.value.replace(/,/g, ''))
-                        if (fieldWatch.discountType === DiscountType.Percent) {
+                        if (discountType === DiscountType.Percent) {
                           valueNumber = valueNumber > 100 ? 100 : valueNumber < 0 ? 0 : valueNumber
                         } else {
                           valueNumber = valueNumber < 0 ? 0 : valueNumber
@@ -143,7 +153,7 @@ const DiscountTotalBoxPopover = (props: IDiscountOrderPopover) => {
                       }
                     }}
                     onValueChange={value => {
-                      handleUpdateItem(index, { discountValue: value.floatValue })
+                      handleDiscountValueChange(value)
                     }}
                     decimalScale={2}
                     thousandSeparator=','

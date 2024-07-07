@@ -2,7 +2,7 @@
 
 namespace ECommerce.Shop.Domain.DTOs.Products;
 
-public class BrandListResponseDto : ActionEntityStatusDto
+public class ProductTagListResponseDto : ActionEntityStatusDto
 {
-    public List<BrandDto> Data { get; set; }
+    public List<string> Data { get; set; }
 }

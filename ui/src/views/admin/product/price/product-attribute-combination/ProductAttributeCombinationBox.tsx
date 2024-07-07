@@ -17,8 +17,6 @@ import {
   FormControl,
   FormHelperText
 } from '@mui/material'
-import { AppDispatch, RootState } from 'src/redux/store'
-import { connect } from 'react-redux'
 import { IProductAdmin, IProductAttribute, IProductAttributeCombination, IProductAttributeCombinationControls } from 'src/redux/admin/interface/IProductAdmin'
 import { handlePushMessageSnackbar, updateProductAttributeCombinationField, updateProductAttributes, updateGeneralField } from 'src/redux/admin/slice/productAdminSlice'
 import { Delete } from 'mdi-material-ui'
@@ -334,17 +332,4 @@ const ProductAttributeCombinationBox = (props: IProductAttributeCombinationBoxPr
   )
 }
 
-const mapStateToProps = (state: RootState) => ({
-  product: state.productAdmin.createOrUpdateProductAdminRequest.product,
-  isSubmitted: state.productAdmin.createOrUpdateProductAdminRequest.isSubmitted,
-  controls: state.productAdmin.controls.createEditProductAdminControls.productAttributeCombinationControls || []
-})
-
-const mapDispatchToProps = (dispatch: AppDispatch) => ({
-  updateGeneralField: (field: keyof IProductAdmin, value: string | number) => dispatch(updateGeneralField({ field, value })),
-  updateProductAttributes: (values: IProductAttribute[]) => dispatch(updateProductAttributes(values)),
-  handlePushMessageSnackbar: (message: IMessageCommon) => dispatch(handlePushMessageSnackbar(message)),
-  updateProductAttributeCombinationField: (field: keyof IProductAttributeCombination, rowId: string, value: any) => dispatch(updateProductAttributeCombinationField({ field, rowId, value }))
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(ProductAttributeCombinationBox)
+export default ProductAttributeCombinationBox

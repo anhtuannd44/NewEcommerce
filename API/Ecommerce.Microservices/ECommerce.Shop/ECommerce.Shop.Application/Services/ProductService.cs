@@ -163,7 +163,7 @@ public class ProductService : BaseService, IProductService
                 Unit = product.Unit,
                 BrandId = product.BrandId,
                 ProductCategoryId = product.ProductCategoryId,
-                Tags = string.IsNullOrEmpty(product.Tags) ? [] : product.Tags.Split(','),
+                Tags = string.IsNullOrEmpty(product.Tags) ? [] : product.Tags.Split(ShopDomainConstants.TagSplitCharacter),
                 MainPicture = product.MainPicture != null
                     ? new ProductPictureDto
                     {
@@ -275,7 +275,7 @@ public class ProductService : BaseService, IProductService
             entity.AllowCustomerReviews = productDto.AllowCustomerReviews;
             entity.Sku = productDto.Sku;
             entity.BarCode = productDto.BarCode;
-            entity.Tags = productDto.Tags.Length == 0 ? null : string.Join('-', productDto.Tags);
+            entity.Tags = productDto.Tags.Length == 0 ? null : string.Join(ShopDomainConstants.TagSplitCharacter, productDto.Tags);
             entity.Status = (ProductStatus)productDto.Status;
             entity.BrandId = productDto.BrandId;
             entity.FileId = productDto.MainPicture.FileId;
@@ -453,49 +453,88 @@ public class ProductService : BaseService, IProductService
         return result;
     }
 
-    public async Task<List<string>> GetProductTagsAsync()
+    public async Task<ProductTagListResponseDto> GetProductTagsAsync()
     {
-        var result = new List<string>();
-        var productTags = await _unitOfWork.Repository<Product>()
-            .AsNoTracking()
-            .Select(x => x.Tags)
-            .ToListAsync();
-        if (productTags.Count == 0)
+        _logger.LogInformation(string.Format(ShopDomainConstants.MessageInformationStart, nameof(GetProductTagsAsync), string.Empty));
+        var result = new ProductTagListResponseDto()
         {
-            return result;
-        }
+            Data = [],
+            IsSuccess = false,
+            Message = string.Empty
+        };
+        try
+        {
+            _logger.LogInformation(string.Format(ShopDomainConstants.MessageInformationStart, nameof(GetProductTagsAsync), "Get Product Tags in Database"));
+            var productTags = await _unitOfWork.Repository<Product>()
+                .AsNoTracking()
+                .Select(x => x.Tags)
+                .ToListAsync();
+            _logger.LogInformation(string.Format(ShopDomainConstants.MessageInformationEnd, nameof(GetProductTagsAsync), "Get Product Tags in Database Successfully"));
 
-        productTags.ForEach(x =>
-        {
-            if (!string.IsNullOrEmpty(x))
+            if (productTags.Count == 0)
             {
-                var tagArray = x.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                result.IsSuccess = true;
+                return result;
+            }
+
+            _logger.LogInformation(string.Format(ShopDomainConstants.MessageInformationStart, nameof(GetProductTagsAsync), "Split tag to array"));
+
+            productTags.ForEach(x =>
+            {
+                if (string.IsNullOrEmpty(x)) return;
+                var tagArray = x.Split(ShopDomainConstants.TagSplitCharacter, StringSplitOptions.RemoveEmptyEntries);
                 if (tagArray.Length > 0)
                 {
-                    result.AddRange((tagArray));
+                    result.Data.AddRange(tagArray);
                 }
-            }
-        });
-
-        return result.Distinct().ToList();
-    }
-
-    public async Task<List<BrandDto>> GetBrandListAsync()
-    {
-        var result = new List<BrandDto>();
-        var brands = await _unitOfWork.Repository<Brand>()
-            .AsNoTracking()
-            .ToListAsync();
-        if (brands.Count == 0)
+            });
+            result.IsSuccess = true;
+            result.Data = result.Data.Distinct().ToList();
+        }
+        catch (Exception ex)
         {
+            _logger.LogError(ex, $"{nameof(GetProductTagsAsync)} failed: ");
+            result.Message = ShopDomainConstants.MessageErrorSaveDbVi;
             return result;
         }
 
-        result = brands.Select(x => new BrandDto
+        _logger.LogInformation(string.Format(ShopDomainConstants.MessageInformationEnd, nameof(GetProductTagsAsync), "Successfully"));
+
+        return result;
+    }
+
+    public async Task<BrandListResponseDto> GetBrandListAsync()
+    {
+        _logger.LogInformation(string.Format(ShopDomainConstants.MessageInformationStart, nameof(GetProductTagsAsync), string.Empty));
+        var result = new BrandListResponseDto()
         {
-            Id = x.Id,
-            Name = x.Name
-        }).ToList();
+            IsSuccess = false,
+            Message = string.Empty
+        };
+        try
+        {
+            var brands = await _unitOfWork.Repository<Brand>()
+                .AsNoTracking()
+                .ToListAsync();
+            if (brands.Count == 0)
+            {
+                return result;
+            }
+
+            result.Data = brands.Select(x => new BrandDto
+            {
+                Id = x.Id,
+                Name = x.Name
+            }).ToList();
+            result.IsSuccess = true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"{nameof(CreateOrUpdateBrandAsync)} failed: ");
+            result.Message = ShopDomainConstants.MessageErrorSaveDbVi;
+            return result;
+        }
+
         return result;
     }
 

@@ -2,16 +2,15 @@ import { Autocomplete, Avatar, Badge, Box, Button, Divider, FilterOptionsState, 
 import { forwardRef, useState } from 'react'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import DatePicker from 'react-datepicker'
-import { AppDispatch, RootState } from 'src/redux/store'
 import { connect } from 'react-redux'
 import { Plus } from 'mdi-material-ui'
 import OrderOriginDialog from 'src/views/admin/order/create-order/order-origin-dialog/OrderOriginDialog'
 import { IOrderAttribute, IOrderOrigin, IUser } from 'src/redux/admin/interface/IAdminGeneralState'
 import PaperHeader from 'src/views/shared/paper/PaperHeader'
 import PaperContent from 'src/views/shared/paper/PaperContent'
-import { Controller, useFormContext } from 'react-hook-form'
-import _ from 'lodash'
-import { IOrderRequestBody } from 'src/form/admin/interface/IOrderRequest'
+import { Controller, ControllerFieldState, useFormContext } from 'react-hook-form'
+import { IOrderRequestBody } from 'src/form/admin/order/interface/IOrderRequest'
+import { RootState } from 'src/redux/store'
 
 export interface IAdditionalInfoBoxProps {
   userList: IUser[] | undefined
@@ -19,9 +18,6 @@ export interface IAdditionalInfoBoxProps {
   orderOriginList: IOrderOrigin[] | undefined
   filterUserOptions: (options: IUser[], state: FilterOptionsState<IUser>) => IUser[]
 }
-const CustomInputs = forwardRef((props, ref) => {
-  return <TextField inputRef={ref} label='Ngày hẹn giao' fullWidth size='small' {...props} />
-})
 
 const BadgeContentSpan = styled('span')(({ theme }) => ({
   width: 8,
@@ -197,20 +193,23 @@ const AdditionalInfoBox = (props: IAdditionalInfoBoxProps) => {
             <Controller
               name='dateDelivery'
               control={control}
-              render={({ field: { onChange, value }, fieldState }) => (
+              render={({ field: { onChange, value, ref }, fieldState }) => (
                 <DatePickerWrapper>
-                  <DatePicker
-                    selected={value}
-                    showTimeInput
-                    showPopperArrow
-                    timeFormat='HH:MM'
-                    showYearDropdown
-                    showMonthDropdown
-                    placeholderText='DD-MM-YYYY hh:mm:aa'
-                    customInput={<CustomInputs />}
-                    dateFormat='dd-MM-yyyy hh:mm:aa'
-                    onChange={date => onChange(date)}
-                  />
+                  <FormControl error={!!fieldState.error} variant='standard' fullWidth>
+                    <DatePicker
+                      selected={value}
+                      showTimeInput
+                      showPopperArrow
+                      timeFormat='HH:MM'
+                      showYearDropdown
+                      showMonthDropdown
+                      placeholderText='DD-MM-YYYY hh:mm:aa'
+                      customInput={<TextField error={!!fieldState.error} label='Ngày và giờ' fullWidth size='small' inputProps={{ ref }} />}
+                      dateFormat='dd-MM-yyyy hh:mm:aa'
+                      onChange={date => onChange(date)}
+                    />
+                    <FormHelperText>{fieldState.error?.message}</FormHelperText>
+                  </FormControl>
                 </DatePickerWrapper>
               )}
             />
@@ -350,6 +349,4 @@ const mapStateToProps = (state: RootState) => ({
   orderAttributeList: state.adminGeneral.orderAttributeList.orderAttributes
 })
 
-const mapDispatchToProps = (dispatch: AppDispatch) => ({})
-
-export default connect(mapStateToProps, mapDispatchToProps)(AdditionalInfoBox)
+export default connect(mapStateToProps)(AdditionalInfoBox)

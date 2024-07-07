@@ -1,8 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { getOrderAttributeList, getOrderOriginList, getProductList, getUserList, createOrUpdateOrigin, getOrderTagList } from 'src/services/order'
-import { MessageType } from 'src/common/enums'
-import { SUCCESS_MESSAGE_CREATE_UPDATE_DEFAULT } from 'src/common/constants'
+import { getOrderAttributeList, getOrderOriginList, getUserList, getOrderTagList } from 'src/services/order'
 import { IAdminGeneralState, IRequestStatus } from '../interface/IAdminGeneralState'
+import { getBrandList, getProductCategoryList, getProductList, getProductTags } from 'src/services/product'
 
 const initRequestStatus: IRequestStatus = {
   isLoading: false,
@@ -18,6 +17,9 @@ const initialState: IAdminGeneralState = {
   productList: {
     status: initRequestStatus
   },
+  productCategoryList: {
+    status: initRequestStatus
+  },
   orderOriginList: {
     status: initRequestStatus
   },
@@ -27,7 +29,12 @@ const initialState: IAdminGeneralState = {
   orderTagList: {
     status: initRequestStatus
   },
-  message: { type: MessageType.Success, text: '' }
+  productTagList: {
+    status: initRequestStatus
+  },
+  productBrandList: {
+    status: initRequestStatus
+  }
 }
 
 const adminGeneralSlice = createSlice({
@@ -81,6 +88,58 @@ const adminGeneralSlice = createSlice({
         state.productList.status.isLoading = false
         state.productList.status.isSentRequest = false
         state.productList.status.isSuccess = false
+      })
+      // get Product Category List
+      .addCase(getProductCategoryList.pending, state => {
+        state.productCategoryList.status.isLoading = true
+        state.productCategoryList.status.isSentRequest = true
+        state.productCategoryList.status.isSuccess = false
+      })
+      .addCase(getProductCategoryList.fulfilled, (state, action) => {
+        state.productCategoryList.status.isLoading = false
+        state.productCategoryList.status.isSentRequest = false
+        state.productCategoryList.status.isSuccess = true
+        state.productCategoryList.productCategories = action.payload.data
+      })
+      .addCase(getProductCategoryList.rejected, (state, action) => {
+        state.productCategoryList.status.isLoading = false
+        state.productCategoryList.status.isSentRequest = false
+        state.productCategoryList.status.isSuccess = false
+      })
+      // get Product Tag List
+      .addCase(getProductTags.pending, state => {
+        state.productTagList.status.isLoading = true
+        state.productTagList.status.isSentRequest = true
+        state.productTagList.status.isSuccess = false
+      })
+      .addCase(getProductTags.fulfilled, (state, action) => {
+        state.productTagList.status.isLoading = false
+        state.productTagList.status.isSentRequest = false
+        state.productTagList.status.isSuccess = true
+        state.productTagList.productTags = action.payload.data
+      })
+      .addCase(getProductTags.rejected, (state, action) => {
+        state.productTagList.status.isLoading = false
+        state.productTagList.status.isSentRequest = false
+        state.productTagList.status.isSuccess = false
+      })
+      // get Brand List
+      .addCase(getBrandList.pending, state => {
+        state.productBrandList.status.isLoading = true
+        state.productBrandList.status.isSentRequest = true
+        state.productBrandList.status.isSuccess = false
+      })
+      .addCase(getBrandList.fulfilled, (state, action) => {
+        state.productBrandList.status.isLoading = false
+        state.productBrandList.status.isSentRequest = false
+        state.productBrandList.status.isSuccess = true
+        console.log(action.payload)
+        state.productBrandList.brands = action.payload.data
+      })
+      .addCase(getBrandList.rejected, (state, action) => {
+        state.productBrandList.status.isLoading = false
+        state.productBrandList.status.isSentRequest = false
+        state.productBrandList.status.isSuccess = false
       })
       // Get product attribute list
       .addCase(getOrderAttributeList.pending, state => {

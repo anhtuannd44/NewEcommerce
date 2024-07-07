@@ -1,4 +1,5 @@
 import { Box, Button, Popover, TextField } from '@mui/material'
+import { ChangeEvent } from 'react'
 import { NumberFormatValues, NumericFormat, SourceInfo } from 'react-number-format'
 import { DiscountType } from 'src/common/enums'
 
@@ -13,30 +14,22 @@ export interface IDiscountItemPopover {
   handleDiscountValueChange: (id: string, value: number) => void
 }
 
-const DiscountItemPopover = ({
-  open,
-  productId,
-  discountType,
-  value,
-  anchorEl,
-  handleCloseDiscountTypeModule,
-  handleChangeDiscountType,
-  handleDiscountValueChange
-}: IDiscountItemPopover) => {
-  const onDiscountValueChange = (values: NumberFormatValues, source: SourceInfo) => {
-    let valueNumber = values.floatValue
+const DiscountItemPopover = (props: IDiscountItemPopover) => {
+  const { open, productId, discountType, value, anchorEl, handleCloseDiscountTypeModule, handleChangeDiscountType, handleDiscountValueChange } = props
 
-    if (valueNumber !== undefined) {
-      if (discountType === DiscountType.Percent) {
-        valueNumber = valueNumber > 100 ? 100 : valueNumber < 0 ? 0 : valueNumber
-      } else {
-        valueNumber = valueNumber < 0 ? 0 : valueNumber
-      }
+  const onDiscountValueChange = (values: NumberFormatValues) => {
+    const discountValue = typeof values.floatValue === 'number' ? Math.min(Math.max(values.floatValue, 0), discountType === DiscountType.Percent ? 100 : Infinity) : 0
+    handleDiscountValueChange(productId, discountValue)
+  }
 
-      handleDiscountValueChange(productId, valueNumber)
+  const onDiscountInputTextChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const inputValue = event.target.value?.replace(/,/g, '') ?? '0'
+    const discountValue = parseFloat(inputValue)
+
+    if (discountType === DiscountType.Percent) {
+      event.target.value = Math.min(Math.max(discountValue, 0), 100).toString()
     } else {
-      valueNumber = 0
-      handleDiscountValueChange(productId, valueNumber)
+      event.target.value = Math.max(discountValue, 0).toString()
     }
   }
 
@@ -89,19 +82,10 @@ const DiscountItemPopover = ({
               maxWidth: 90,
               verticalAlign: 'baseline'
             },
-            onChange: (event: any) => {
-              let valueNumber = parseFloat(event.target.value.replace(/,/g, ''))
-              if (discountType == DiscountType.Percent) {
-                valueNumber = valueNumber > 100 ? 100 : valueNumber < 0 ? 0 : valueNumber
-              } else {
-                valueNumber = valueNumber < 0 ? 0 : valueNumber
-              }
-
-              event.target.value = String(valueNumber)
-            }
+            onChange: onDiscountInputTextChange
           }}
-          onValueChange={(value, source) => {
-            onDiscountValueChange(value, source)
+          onValueChange={value => {
+            onDiscountValueChange(value)
           }}
           decimalScale={2}
           thousandSeparator=','

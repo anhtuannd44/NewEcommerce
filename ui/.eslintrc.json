@@ -3,9 +3,9 @@
 	"rules": {
 		"react/display-name": "off",
 		"@next/next/no-img-element": "off",
-		"react/no-unescaped-entities": "off",
-		"import/no-anonymous-default-export": "off",
-		"@typescript-eslint/no-unused-vars": "off",
+		"react/no-unescaped-entities": "on",
+		"import/no-anonymous-default-export": "on",
+		"@typescript-eslint/no-unused-vars": "on",
 		"@typescript-eslint/ban-ts-comment": "off",
 		"@typescript-eslint/no-explicit-any": "off",
 		"@typescript-eslint/no-non-null-assertion": "off",

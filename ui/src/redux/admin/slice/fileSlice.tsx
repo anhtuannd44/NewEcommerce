@@ -27,7 +27,7 @@ const fileManagerSlice = createSlice({
         state.loading = true
       })
       .addCase(getFileList.fulfilled, (state, action) => {
-        state.fileLibraryList = action.payload
+        state.fileLibraryList = action.payload.data
         state.loading = false
       })
       .addCase(getFileList.rejected, state => {

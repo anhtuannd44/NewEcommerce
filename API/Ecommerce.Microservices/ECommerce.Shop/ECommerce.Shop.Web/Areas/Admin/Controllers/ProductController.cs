@@ -22,7 +22,7 @@ public class ProductController : AdminBaseController
         _productService = productService;
         _productCategoryService = productCategoryService;
     }
-    
+
     [HttpGet]
     [Route("")]
     public async Task<IActionResult> GetProductListAsync([FromQuery] ProductFilterParamsDto searchDto)
@@ -40,7 +40,7 @@ public class ProductController : AdminBaseController
             return BadRequest();
         }
     }
-    
+
     [HttpGet]
     [Route("{id}")]
     public async Task<IActionResult> GetProductByIdAsync(Guid id)
@@ -58,7 +58,7 @@ public class ProductController : AdminBaseController
             return BadRequest();
         }
     }
-    
+
     [HttpPost]
     [Route("createorupdate")]
     //[RequiredClaimAuthorize(PermissionClaimTypes.CanCreateProduct)]
@@ -69,10 +69,10 @@ public class ProductController : AdminBaseController
         {
             return BadRequest(result);
         }
-        
+
         return Ok();
     }
-    
+
     [HttpDelete]
     [Route("delete")]
     //[RequiredClaimAuthorize(PermissionClaimTypes.CanCreateProduct)]
@@ -82,17 +82,17 @@ public class ProductController : AdminBaseController
         {
             return BadRequest(string.Format(ShopDomainConstants.MessageErrorRequiredVi, "ProductId"));
         }
-        
+
         var result = await _productService.DeleteProductAsync(id.Value);
-        
+
         if (!result.IsSuccess)
         {
             return BadRequest(result.Message);
         }
-        
+
         return Ok();
     }
-    
+
     [HttpPost]
     [Route("updatestatus")]
     //[RequiredClaimAuthorize(PermissionClaimTypes.CanCreateProduct)]
@@ -103,10 +103,10 @@ public class ProductController : AdminBaseController
         {
             return BadRequest(result.Message);
         }
-        
+
         return Ok();
     }
-    
+
     [HttpGet]
     [Route("category")]
     public async Task<IActionResult> GetProductCategoryListAsync()
@@ -122,7 +122,7 @@ public class ProductController : AdminBaseController
             return BadRequest();
         }
     }
-    
+
     [HttpGet]
     [Route("category/{id}")]
     public async Task<IActionResult> GetProductCategoryByIdAsync(Guid? id)
@@ -140,21 +140,21 @@ public class ProductController : AdminBaseController
 
         return Ok(result);
     }
-    
+
     [HttpPost]
     [Route("category/createorupdate")]
     public async Task<IActionResult> CreateOrUpdateProductCategoryAsync(ProductCategoryDto dto)
     {
         var result = await _productCategoryService.CreateOrUpdateProductCategoryAsync(dto);
-        
+
         if (!result.IsSuccess)
         {
             return BadRequest(result);
         }
-        
+
         return Ok(result);
     }
-    
+
     [HttpDelete]
     [Route("category/delete")]
     //[RequiredClaimAuthorize(PermissionClaimTypes.CanCreateProduct)]
@@ -164,17 +164,17 @@ public class ProductController : AdminBaseController
         {
             return BadRequest(string.Format(ShopDomainConstants.MessageErrorRequiredVi, "ProductCategoryId"));
         }
-        
+
         var result = await _productCategoryService.DeleteProductCategoryAsync(id.Value);
-        
+
         if (!result.IsSuccess)
         {
             return BadRequest(result.Message);
         }
-        
+
         return Ok();
     }
-    
+
     [HttpGet]
     [Route("tags")]
     public async Task<IActionResult> GetProductTagsAsync()
@@ -182,6 +182,11 @@ public class ProductController : AdminBaseController
         try
         {
             var result = await _productService.GetProductTagsAsync();
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result);
+            }
+
             return Ok(result);
         }
         catch (Exception ex)
@@ -190,7 +195,7 @@ public class ProductController : AdminBaseController
             return BadRequest();
         }
     }
-    
+
     [HttpGet]
     [Route("brand")]
     public async Task<IActionResult> GetBrandListAsync()
@@ -198,6 +203,11 @@ public class ProductController : AdminBaseController
         try
         {
             var result = await _productService.GetBrandListAsync();
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result);
+            }
+
             return Ok(result);
         }
         catch (Exception ex)
@@ -206,18 +216,18 @@ public class ProductController : AdminBaseController
             return BadRequest();
         }
     }
-    
+
     [HttpPost]
     [Route("brand/createorupdate")]
     public async Task<IActionResult> CreateOrUpdateProductBrandAsync(BrandDto dto)
     {
         var result = await _productService.CreateOrUpdateBrandAsync(dto);
-        
+
         if (!result.IsSuccess)
         {
             return BadRequest(result);
         }
-        
+
         return Ok(result);
     }
 }

@@ -3,7 +3,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { connect } from 'react-redux'
 import { IUser } from 'src/redux/admin/interface/IAdminGeneralState'
 import { RootState } from 'src/redux/store'
-import { IOrderRequestBody } from 'src/form/admin/interface/IOrderRequest'
+import { IOrderRequestBody } from 'src/form/admin/order/interface/IOrderRequest'
 
 export interface IOrderComplainBoxProps {
   userList: IUser[] | undefined

@@ -1,8 +1,4 @@
 import { Box, Grid, IconButton, Paper, Typography } from '@mui/material'
-import { AppDispatch, RootState } from 'src/redux/store'
-import { connect } from 'react-redux'
-import { IProductFile } from 'src/redux/admin/interface/IProductAdmin'
-import { updateAlbum, updateMainPicture } from 'src/redux/admin/slice/productAdminSlice'
 import { CloudUpload, Delete } from '@mui/icons-material'
 import { useState } from 'react'
 import { Plus } from 'mdi-material-ui'
@@ -10,28 +6,28 @@ import FileManager from 'src/views/shared/fileManager'
 import { FileLibraryListItem } from 'react-media-library'
 import PaperHeader from 'src/views/shared/paper/PaperHeader'
 import PaperContent from 'src/views/shared/paper/PaperContent'
+import { useFormContext } from 'react-hook-form'
+import { IProduct } from 'src/form/admin/product/interface/IProduct'
+import { IProductFile } from 'src/form/admin/product/interface/IProductFile'
 
-export interface IImageProductBoxProps {
-  album: IProductFile[] | []
-  mainPicture: IProductFile
-  updateMainPicture: (mainPicture: IProductFile) => void
-  updateAlbum: (files: IProductFile[]) => void
-}
-
-const ImageProductBox = (props: IImageProductBoxProps) => {
-  const { album, mainPicture, updateMainPicture, updateAlbum } = props
+const ImageProductBox = () => {
+  const { watch, setValue, getValues } = useFormContext<IProduct>()
 
   const [isOpenFileManager, setIsOpenFileManager] = useState<{ isOpen: boolean; target: 'main' | 'album' | '' }>({ isOpen: false, target: 'main' })
 
+  const mainPicture = watch('mainPicture')
+  const album = watch('album')
+
   const handleFilesSelectCallbackForMainPicture = (items: FileLibraryListItem[]) => {
     if (items && items.length > 0) {
-      updateMainPicture({ fileId: items[0]._id as string, virtualPath: items[0].thumbnailUrl || '' })
+      const mainPicture = { fileId: items[0]._id as string, virtualPath: items[0].thumbnailUrl || '' }
+      setValue('mainPicture', mainPicture, { shouldDirty: true, shouldValidate: true })
     }
     setIsOpenFileManager({ isOpen: false, target: '' })
   }
 
   const handleFilesSelectCallbackForAlbum = (items: FileLibraryListItem[]) => {
-    const currentAlbum = [...album]
+    const currentAlbum = getValues('album') || []
     if (items && items.length > 0) {
       items.map(item => {
         if (currentAlbum.findIndex(x => x.fileId === item._id) === -1) {
@@ -42,7 +38,7 @@ const ImageProductBox = (props: IImageProductBoxProps) => {
           currentAlbum.push(addFile)
         }
       })
-      updateAlbum(currentAlbum)
+      setValue('album', currentAlbum, { shouldDirty: true, shouldValidate: true })
     }
     setIsOpenFileManager({ isOpen: false, target: '' })
   }
@@ -52,20 +48,20 @@ const ImageProductBox = (props: IImageProductBoxProps) => {
   }
 
   const handleRemoveMainPicture = () => {
-    updateMainPicture({ fileId: null, virtualPath: '' })
+    setValue('mainPicture', null, { shouldDirty: true, shouldValidate: true })
   }
 
   const handleRemoveItemInAlbum = (fileId: string | null) => {
-    const currentAlbum = [...album]
+    const currentAlbum = getValues('album') || []
     const files = currentAlbum.filter(item => item.fileId != fileId)
-    updateAlbum(files)
+    setValue('album', files, { shouldDirty: true, shouldValidate: true })
   }
 
   return (
     <Paper>
       <PaperHeader leftHeader={<Typography variant='h6'>Ảnh sản phẩm</Typography>} />
       <PaperContent>
-        {mainPicture.virtualPath ? (
+        {mainPicture && mainPicture.virtualPath ? (
           <Box
             sx={{
               position: 'relative',
@@ -129,7 +125,8 @@ const ImageProductBox = (props: IImageProductBoxProps) => {
           </Typography>
 
           <Grid container spacing={2}>
-            {album.length > 0 &&
+            {album &&
+              album.length > 0 &&
               album.map(item => (
                 <Grid item xs={3} key={item.fileId}>
                   <Box
@@ -212,14 +209,4 @@ const ImageProductBox = (props: IImageProductBoxProps) => {
   )
 }
 
-const mapStateToProps = (state: RootState) => ({
-  album: state.productAdmin.createOrUpdateProductAdminRequest.product.album,
-  mainPicture: state.productAdmin.createOrUpdateProductAdminRequest.product.mainPicture
-})
-
-const mapDispatchToProps = (dispatch: AppDispatch) => ({
-  updateMainPicture: (mainPicture: IProductFile) => dispatch(updateMainPicture(mainPicture)),
-  updateAlbum: (files: IProductFile[]) => dispatch(updateAlbum(files))
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(ImageProductBox)
+export default ImageProductBox

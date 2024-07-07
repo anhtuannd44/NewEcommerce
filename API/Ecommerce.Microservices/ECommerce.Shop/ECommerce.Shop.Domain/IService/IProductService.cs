@@ -18,14 +18,14 @@ public interface IProductService
     /// <param name="id">The Guid of Product Item</param>
     /// <returns>Status success or failed with error message</returns>
     Task<ProductDto> GetProductByIdAsync(Guid id);
-    
+
     /// <summary>
     /// Create/Update the Product Item
     /// </summary>
     /// <param name="productDto">The Dto for Creating/Updating</param>
     /// <returns>Status success or failed with error message</returns>
     Task<ActionEntityStatusDto> CreateOrUpdateProductAsync(ProductDto productDto);
-    
+
     /// <summary>
     /// Delete the Product Item
     /// </summary>
@@ -39,19 +39,19 @@ public interface IProductService
     /// <param name="dto">List ProductId and Status to updating</param>
     /// <returns>Status success or failed with error message</returns>
     public Task<ActionEntityStatusDto> UpdateProductsStatus(UpdateStatusProductsDto dto);
-    
+
     /// <summary>
     /// Get product tags
     /// </summary>
     /// <returns>All tags list</returns>
-    Task<List<string>> GetProductTagsAsync();
+    Task<ProductTagListResponseDto> GetProductTagsAsync();
 
     /// <summary>
     /// Get the brand list
     /// </summary>
     /// <returns>All brands list</returns>
-    Task<List<BrandDto>> GetBrandListAsync();
-    
+    Task<BrandListResponseDto> GetBrandListAsync();
+
     /// <summary>
     /// Create/Update Product Brand
     /// </summary>

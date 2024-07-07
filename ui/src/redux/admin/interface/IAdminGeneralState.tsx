@@ -1,4 +1,7 @@
+import { IProductCategory } from 'src/form/admin/product/interface/IProductCategory'
 import { IMessageCommon } from './ICommon'
+import { IProductInList } from 'src/form/admin/product/interface/IProductInList'
+import { IBrand } from 'src/form/admin/product/interface/IBrand'
 
 export interface IUser {
   id: string
@@ -20,41 +23,29 @@ export interface IOrderOrigin {
   isActive: boolean
 }
 
-export interface IProduct {
-  id: string
-  name: string
-  sku: string
-  seoUrl: string
-  price: number
-  stockQuantity: number
-  imgUrl: string
-}
-
 export interface IOrderOriginList {
-	orderOrigins?: IOrderOrigin[]
-	total?: number
-	status: IRequestStatus
+  orderOrigins?: IOrderOrigin[]
+  total?: number
+  status: IRequestStatus
 }
 
 export interface IProductList {
-  products?: IProduct[]
+  products?: IProductInList[]
   status: IRequestStatus
 }
 
 export interface IOrderAttributeList {
   orderAttributes?: IOrderAttribute[]
-	total?: number
+  total?: number
   status: IRequestStatus
 }
 
 export interface IOrderTagList {
-	orderTags?: string[]
-	status: IRequestStatus
+  orderTags?: string[]
+  status: IRequestStatus
 }
 
-export interface IUsersResponse {
-	
-}
+export interface IUsersResponse {}
 
 export interface IUserList {
   users?: IUser[]
@@ -62,17 +53,34 @@ export interface IUserList {
 }
 
 export interface IRequestStatus {
-	isSubmitted: boolean
+  isSubmitted: boolean
   isLoading: boolean
   isSuccess: boolean
-	isSentRequest: boolean
+  isSentRequest: boolean
+}
+
+export interface IProductCategoryList {
+  productCategories?: IProductCategory[]
+  status: IRequestStatus
+}
+
+export interface IProductTagList {
+  productTags?: string[]
+  status: IRequestStatus
+}
+
+export interface IProductBrandList {
+  brands?: IBrand[]
+  status: IRequestStatus
 }
 
 export interface IAdminGeneralState {
   userList: IUserList
   productList: IProductList
+  productCategoryList: IProductCategoryList
+  productTagList: IProductTagList
+  productBrandList: IProductBrandList
   orderAttributeList: IOrderAttributeList
-	orderOriginList: IOrderOriginList
-	orderTagList: IOrderTagList
-	message: IMessageCommon
+  orderOriginList: IOrderOriginList
+  orderTagList: IOrderTagList
 }

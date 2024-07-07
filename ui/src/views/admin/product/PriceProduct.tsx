@@ -1,34 +1,17 @@
 import { Box, FormControlLabel, Paper, Switch, Tooltip, Typography } from '@mui/material'
-import { AppDispatch, RootState } from 'src/redux/store'
-import { connect } from 'react-redux'
-import { IProductAdmin } from 'src/redux/admin/interface/IProductAdmin'
-import { updateGeneralField, updateProductType } from 'src/redux/admin/slice/productAdminSlice'
-import { ChangeEvent, useCallback } from 'react'
 import PriceSingleProduct from './price/PriceSingleProduct'
 import { ProductType } from 'src/common/enums'
 import PriceGroupProduct from './price/PriceGroupProduct'
 import { InformationOutline } from 'mdi-material-ui'
 import PaperContent from 'src/views/shared/paper/PaperContent'
 import PaperHeader from 'src/views/shared/paper/PaperHeader'
+import { Controller, useFormContext } from 'react-hook-form'
+import { IProduct } from 'src/form/admin/product/interface/IProduct'
 
-export interface IPriceProductProps {
-  product: IProductAdmin
-  updateGeneralField: (field: keyof IProductAdmin, value: boolean) => void
-  updateProductType: (productType: ProductType) => void
-}
+const PriceProduct = () => {
+  const { control, watch } = useFormContext<IProduct>()
 
-const PriceProduct = (props: IPriceProductProps) => {
-  const { product, updateGeneralField, updateProductType } = props
-
-  const handleManageStockQuantityChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.checked
-    updateGeneralField('manageStockQuantity', value)
-  }
-
-  const handleChangeProductType = (event: ChangeEvent<HTMLInputElement>) => {
-    const productType = event.target.checked ? ProductType.GroupedProduct : ProductType.SimpleProduct
-    updateProductType(productType)
-  }
+  const productType = watch('productType')
 
   return (
     <Paper>
@@ -54,31 +37,46 @@ const PriceProduct = (props: IPriceProductProps) => {
               placement='top'>
               <InformationOutline color='info' fontSize='small' />
             </Tooltip>
-            <Switch color='primary' checked={product.productType == ProductType.GroupedProduct} onChange={handleChangeProductType} />
+            <Controller
+              name={'productType'}
+              control={control}
+              render={({ field: { onChange } }) => (
+                <Switch
+                  color='primary'
+                  onChange={event => {
+                    onChange(event.target.checked ? ProductType.GroupedProduct : ProductType.SimpleProduct)
+                  }}
+                />
+              )}
+            />
           </>
         }
       />
       <PaperContent>
         <Box mb={5}>
-          <FormControlLabel
-            control={<Switch color='primary' checked={product.manageStockQuantity} onChange={handleManageStockQuantityChange} />}
-            label='Quản lý số lượng tồn kho?'
-            labelPlacement='end'
+          <Controller
+            name={'manageStockQuantity'}
+            control={control}
+            render={({ field: { onChange } }) => (
+              <FormControlLabel
+                control={
+                  <Switch
+                    color='primary'
+                    onChange={event => {
+                      onChange(event.target.checked)
+                    }}
+                  />
+                }
+                label='Quản lý số lượng tồn kho?'
+                labelPlacement='end'
+              />
+            )}
           />
         </Box>
-        {product.productType == ProductType.SimpleProduct ? <PriceSingleProduct /> : <PriceGroupProduct />}
+        {productType == ProductType.SimpleProduct ? <PriceSingleProduct /> : <PriceGroupProduct />}
       </PaperContent>
     </Paper>
   )
 }
 
-const mapStateToProps = (state: RootState) => ({
-  product: state.productAdmin.createOrUpdateProductAdminRequest.product
-})
-
-const mapDispatchToProps = (dispatch: AppDispatch) => ({
-  updateGeneralField: (field: keyof IProductAdmin, value: boolean) => dispatch(updateGeneralField({ field, value })),
-  updateProductType: (productType: ProductType) => dispatch(updateProductType(productType))
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(PriceProduct)
+export default PriceProduct
