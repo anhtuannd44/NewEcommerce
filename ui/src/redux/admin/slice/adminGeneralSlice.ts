@@ -67,7 +67,7 @@ const adminGeneralSlice = createSlice({
         state.userList.status.isSuccess = true
         state.userList.users = action.payload.data
       })
-      .addCase(getUserList.rejected, (state, action) => {
+      .addCase(getUserList.rejected, state => {
         state.userList.status.isLoading = false
         state.userList.status.isSentRequest = false
         state.userList.status.isSuccess = false
@@ -84,7 +84,7 @@ const adminGeneralSlice = createSlice({
         state.productList.status.isSuccess = true
         state.productList.products = action.payload.data
       })
-      .addCase(getProductList.rejected, (state, action) => {
+      .addCase(getProductList.rejected, state => {
         state.productList.status.isLoading = false
         state.productList.status.isSentRequest = false
         state.productList.status.isSuccess = false
@@ -101,7 +101,7 @@ const adminGeneralSlice = createSlice({
         state.productCategoryList.status.isSuccess = true
         state.productCategoryList.productCategories = action.payload.data
       })
-      .addCase(getProductCategoryList.rejected, (state, action) => {
+      .addCase(getProductCategoryList.rejected, state => {
         state.productCategoryList.status.isLoading = false
         state.productCategoryList.status.isSentRequest = false
         state.productCategoryList.status.isSuccess = false
@@ -118,7 +118,7 @@ const adminGeneralSlice = createSlice({
         state.productTagList.status.isSuccess = true
         state.productTagList.productTags = action.payload.data
       })
-      .addCase(getProductTags.rejected, (state, action) => {
+      .addCase(getProductTags.rejected, state => {
         state.productTagList.status.isLoading = false
         state.productTagList.status.isSentRequest = false
         state.productTagList.status.isSuccess = false
@@ -133,10 +133,9 @@ const adminGeneralSlice = createSlice({
         state.productBrandList.status.isLoading = false
         state.productBrandList.status.isSentRequest = false
         state.productBrandList.status.isSuccess = true
-        console.log(action.payload)
         state.productBrandList.brands = action.payload.data
       })
-      .addCase(getBrandList.rejected, (state, action) => {
+      .addCase(getBrandList.rejected, state => {
         state.productBrandList.status.isLoading = false
         state.productBrandList.status.isSentRequest = false
         state.productBrandList.status.isSuccess = false
@@ -154,7 +153,7 @@ const adminGeneralSlice = createSlice({
         state.orderAttributeList.orderAttributes = action.payload.data
         state.orderAttributeList.total = action.payload.total
       })
-      .addCase(getOrderAttributeList.rejected, (state, action) => {
+      .addCase(getOrderAttributeList.rejected, state => {
         state.orderAttributeList.status.isLoading = false
         state.orderAttributeList.status.isSentRequest = false
         state.orderAttributeList.status.isSuccess = false
@@ -172,7 +171,7 @@ const adminGeneralSlice = createSlice({
         state.orderOriginList.orderOrigins = action.payload.data
         state.orderOriginList.total = action.payload.total
       })
-      .addCase(getOrderOriginList.rejected, (state, action) => {
+      .addCase(getOrderOriginList.rejected, state => {
         state.orderOriginList.status.isLoading = false
         state.orderOriginList.status.isSentRequest = false
         state.orderOriginList.status.isSuccess = false
@@ -189,7 +188,7 @@ const adminGeneralSlice = createSlice({
         state.orderTagList.status.isSuccess = true
         state.orderTagList.orderTags = action.payload.data
       })
-      .addCase(getOrderTagList.rejected, (state, action) => {
+      .addCase(getOrderTagList.rejected, state => {
         state.orderTagList.status.isLoading = false
         state.orderTagList.status.isSentRequest = false
         state.orderTagList.status.isSuccess = false

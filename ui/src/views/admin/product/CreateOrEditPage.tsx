@@ -16,6 +16,9 @@ import DescriptionBox from './DescriptionBox'
 import AdditionalProductBox from './AdditionalProductBox'
 import ImageProductBox from './ImageProductBox'
 import PriceProduct from './PriceProduct'
+import { ProductType } from 'src/common/enums'
+import ProductAttributeCombinationBox from './price/product-attribute-combination/ProductAttributeCombinationBox'
+import { initProductDefaultValue } from 'src/form/admin/product/default-value/productDefaultValue'
 
 interface ICreateOrUpdateProductPageProps {
   id?: string
@@ -48,12 +51,14 @@ const CreateOrUpdateProductPage = (props: ICreateOrUpdateProductPageProps) => {
   }, [])
 
   const createOrUpdateProductForm = useForm<IProduct>({
-    defaultValues: product ?? undefined,
+    defaultValues: product ?? initProductDefaultValue,
     resolver: yupResolver<IProduct>(createOrUpdateProductSchema),
     mode: 'onChange',
     reValidateMode: 'onChange',
     progressive: true
   })
+
+  const productType = createOrUpdateProductForm.watch('productType')
 
   const onSubmit = (data: IProduct) => {
     // console.log('data', data)
@@ -84,7 +89,7 @@ const CreateOrUpdateProductPage = (props: ICreateOrUpdateProductPageProps) => {
           </Grid>
         </Grid>
         <Grid item xs={12}>
-          {/* {product.productType === ProductType.GroupedProduct && <ProductAttributeCombinationBox />} */}
+          {productType === ProductType.GroupedProduct && <ProductAttributeCombinationBox />}
           {/* <BodyContentBox /> */}
         </Grid>
         <Grid container>

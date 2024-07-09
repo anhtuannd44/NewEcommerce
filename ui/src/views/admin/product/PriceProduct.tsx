@@ -40,9 +40,10 @@ const PriceProduct = () => {
             <Controller
               name={'productType'}
               control={control}
-              render={({ field: { onChange } }) => (
+              render={({ field: { onChange, value } }) => (
                 <Switch
                   color='primary'
+                  checked={value === ProductType.GroupedProduct}
                   onChange={event => {
                     onChange(event.target.checked ? ProductType.GroupedProduct : ProductType.SimpleProduct)
                   }}
@@ -73,7 +74,7 @@ const PriceProduct = () => {
             )}
           />
         </Box>
-        {productType == ProductType.SimpleProduct ? <PriceSingleProduct /> : <PriceGroupProduct />}
+        {productType === ProductType.SimpleProduct ? <PriceSingleProduct /> : <PriceGroupProduct />}
       </PaperContent>
     </Paper>
   )

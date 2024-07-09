@@ -6,13 +6,13 @@ import { IProductAttributeCombination } from './IProductCombination'
 export interface IProduct {
   id?: string
   name: string
-  body: string
-  shortDescription: string
-  allowComments: boolean
-  metaTitle: string
-  metaKeywords: string
-  metaDescription: string
-  unit: string
+  body: string | null
+  shortDescription: string | null
+  allowComments?: boolean
+  metaTitle: string | null
+  metaKeywords: string | null
+  metaDescription: string | null
+  unit: string | null
   seoUrl: string
   status: ProductStatus
   tags?: string[] | null
@@ -22,7 +22,7 @@ export interface IProduct {
   barcode?: string
   manageStockQuantity: boolean
   stockQuantity?: number | null
-  callForPrice: boolean
+  callForPrice?: boolean
   price?: number | null
   wholesalePrice?: number | null
   oldPrice?: number | null

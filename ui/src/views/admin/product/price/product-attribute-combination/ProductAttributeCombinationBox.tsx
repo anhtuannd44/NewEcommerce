@@ -17,8 +17,6 @@ import {
   FormControl,
   FormHelperText
 } from '@mui/material'
-import { IProductAdmin, IProductAttribute, IProductAttributeCombination, IProductAttributeCombinationControls } from 'src/redux/admin/interface/IProductAdmin'
-import { handlePushMessageSnackbar, updateProductAttributeCombinationField, updateProductAttributes, updateGeneralField } from 'src/redux/admin/slice/productAdminSlice'
 import { Delete } from 'mdi-material-ui'
 import { alpha } from '@mui/material/styles'
 import { IMessageCommon } from 'src/redux/admin/interface/ICommon'
@@ -26,6 +24,11 @@ import { ChangeEvent, useEffect, useState } from 'react'
 import { NumberFormatValues, NumericFormat } from 'react-number-format'
 import PaperContent from 'src/views/shared/paper/PaperContent'
 import PaperHeader from 'src/views/shared/paper/PaperHeader'
+import { Controller, useFieldArray, useFormContext, useWatch } from 'react-hook-form'
+import { IProduct } from 'src/form/admin/product/interface/IProduct'
+import { IProductAttribute } from 'src/form/admin/product/interface/IProductAttribute'
+import { IAttributeJson, IProductAttributeCombination } from 'src/form/admin/product/interface/IProductCombination'
+import { v4 } from 'uuid'
 
 interface EnhancedTableProps {
   numSelected: number
@@ -112,19 +115,53 @@ const EnhancedTableToolbar = (props: ITableToolbarProps) => {
   )
 }
 
-export interface IProductAttributeCombinationBoxProps {
-  product: IProductAdmin
-  controls: IProductAttributeCombinationControls[]
-  isSubmitted: boolean
-  updateGeneralField: (field: keyof IProductAdmin, value: string | number) => void
-  updateProductAttributes: (values: IProductAttribute[]) => void
-  handlePushMessageSnackbar: (message: IMessageCommon) => void
-  updateProductAttributeCombinationField: (field: keyof IProductAttributeCombination, rowId: string, value: any) => void
-}
+const ProductAttributeCombinationBox = () => {
+  const { control, watch, setValue } = useFormContext<IProduct>()
 
-const ProductAttributeCombinationBox = (props: IProductAttributeCombinationBoxProps) => {
-  const { product, controls, isSubmitted, updateProductAttributeCombinationField, updateGeneralField, updateProductAttributes, handlePushMessageSnackbar } = props
-  const { productAttributes, productAttributeCombinations } = product
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'productAttributeCombinations'
+  })
+
+  const manageStockQuantity = watch('manageStockQuantity')
+  const sku = watch('sku')
+
+  const productAttributes = useWatch({ name: 'productAttributes' })
+
+  const generateCombinations = (attributes: IProductAttribute[]): IProductAttributeCombination[] => {
+    if (attributes.length === 0) return []
+
+    const combinations: IProductAttributeCombination[] = []
+
+    const generate = (prefix: IAttributeJson[], prefixName: string, remainingAttributes: IProductAttribute[]) => {
+      const [first, ...rest] = remainingAttributes
+
+      first.productAttributeValues.forEach(value => {
+        const combination = [...prefix, { productAttributeId: first.id, productAttributeValue: value }]
+        const combinationName = prefixName ? `${prefixName} - ${value}` : value
+        if (rest.length > 0) {
+          generate(combination, combinationName, rest)
+        } else {
+          combinations.push({
+            id: v4(),
+            name: combinationName,
+            sku: sku,
+            barCode: '',
+            attributeJson: combination
+          })
+        }
+      })
+    }
+
+    generate([], '', attributes)
+
+    return combinations
+  }
+
+  useEffect(() => {
+    const newCombinations = generateCombinations(productAttributes || [])
+    setValue('productAttributeCombinations', newCombinations)
+  }, [productAttributes])
 
   const [selected, setSelected] = useState<readonly string[]>([])
 
@@ -146,22 +183,12 @@ const ProductAttributeCombinationBox = (props: IProductAttributeCombinationBoxPr
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelected = productAttributeCombinations.map(n => n.id)
+      const newSelected = fields.map(n => n.id)
       setSelected(newSelected)
 
       return
     }
     setSelected([])
-  }
-
-  const handleTextChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, field: keyof IProductAttributeCombination, rowId: string) => {
-    const value = event.currentTarget.value
-    updateProductAttributeCombinationField(field, rowId, value)
-  }
-
-  const handleNumberChange = (field: keyof IProductAttributeCombination, rowId: string, values: NumberFormatValues) => {
-    const value = values.floatValue
-    updateProductAttributeCombinationField(field, rowId, value)
   }
 
   const isSelected = (id: string) => selected.indexOf(id) !== -1
@@ -181,15 +208,15 @@ const ProductAttributeCombinationBox = (props: IProductAttributeCombinationBoxPr
         <TableContainer>
           <EnhancedTableToolbar numSelected={selected.length} />
           <Table sx={{ minWidth: 750 }} aria-labelledby='tableTitle' size={'medium'}>
-            <EnhancedTableHead numSelected={selected.length} onSelectAllClick={handleSelectAllClick} rowCount={productAttributeCombinations.length} manageStockQuantity={product.manageStockQuantity} />
+            <EnhancedTableHead numSelected={selected.length} onSelectAllClick={handleSelectAllClick} rowCount={fields.length} manageStockQuantity={manageStockQuantity} />
             <TableBody>
-              {productAttributeCombinations &&
-                productAttributeCombinations.length > 0 &&
-                productAttributeCombinations.map((row, index) => {
+              {fields &&
+                fields.length > 0 &&
+                fields.map((row, index) => {
                   const isItemSelected = isSelected(row.id)
-                  const labelId = `enhanced-table-checkbox-${index}`
+                  const labelId = `enhanced-table-checkbox-${row.id}`
                   return (
-                    <TableRow hover role='checkbox' aria-checked={isItemSelected} tabIndex={-1} key={index} selected={isItemSelected} sx={{ cursor: 'pointer' }}>
+                    <TableRow hover role='checkbox' aria-checked={isItemSelected} tabIndex={-1} key={row.id} selected={isItemSelected} sx={{ cursor: 'pointer' }}>
                       <TableCell padding='checkbox'>
                         <Checkbox
                           color='primary'
@@ -204,112 +231,117 @@ const ProductAttributeCombinationBox = (props: IProductAttributeCombinationBoxPr
                         {row.name}
                       </TableCell>
                       <TableCell key={`sku-${index}`} align='left' sx={{ verticalAlign: 'top' }}>
-                        <FormControl error={isSubmitted && !controls.find(x => x.id === row.id)?.validate.sku.result.isValid} variant='standard' fullWidth>
-                          <TextField
-                            margin='dense'
-                            id={`sku-${index}`}
-                            name={`sku-${index}`}
-                            fullWidth
-                            variant='standard'
-                            onChange={event => {
-                              handleTextChange(event, 'sku', row.id)
-                            }}
-                            value={row.sku}
-                            error={isSubmitted && !controls.find(x => x.id === row.id)?.validate.sku.result.isValid}
-                          />
-                          <FormHelperText>{isSubmitted && controls.find(x => x.id === row.id)?.validate.sku.result.errorMessage}</FormHelperText>
-                        </FormControl>
+                        <Controller
+                          name={`productAttributeCombinations.${index}.sku`}
+                          control={control}
+                          render={({ field: { onChange }, fieldState }) => (
+                            <FormControl error={!!fieldState.error} variant='standard' fullWidth>
+                              <TextField margin='dense' id={`sku-${index}`} name={`sku-${index}`} fullWidth variant='standard' onChange={onChange} error={!!fieldState.error} />
+                              <FormHelperText>{fieldState.error?.message}</FormHelperText>
+                            </FormControl>
+                          )}
+                        />
                       </TableCell>
                       <TableCell key={`barcode-${index}`} align='left' sx={{ verticalAlign: 'top' }}>
-                        <FormControl error={isSubmitted && !controls.find(x => x.id === row.id)?.validate.barCode.result.isValid} variant='standard' fullWidth required>
-                          <TextField
-                            margin='dense'
-                            id={`barcode-${index}`}
-                            name={`barcode-${index}`}
-                            fullWidth
-                            variant='standard'
-                            onChange={event => {
-                              handleTextChange(event, 'barCode', row.id)
-                            }}
-                            value={row.barCode}
-                            error={isSubmitted && !controls.find(x => x.id === row.id)?.validate.barCode.result.isValid}
-                          />
-                          <FormHelperText>{isSubmitted && controls.find(x => x.id === row.id)?.validate.barCode.result.errorMessage}</FormHelperText>
-                        </FormControl>
+                        <Controller
+                          name={`productAttributeCombinations.${index}.barCode`}
+                          control={control}
+                          render={({ field: { onChange }, fieldState }) => (
+                            <FormControl error={!!fieldState.error} variant='standard' fullWidth>
+                              <TextField margin='dense' id={`barCode-${index}`} name={`barCode-${index}`} fullWidth variant='standard' onChange={onChange} error={!!fieldState.error} />
+                              <FormHelperText>{fieldState.error?.message}</FormHelperText>
+                            </FormControl>
+                          )}
+                        />
                       </TableCell>
                       <TableCell key={`price-${index}`} align='right' sx={{ verticalAlign: 'top' }}>
-                        <FormControl error={isSubmitted && !controls.find(x => x.id === row.id)?.validate.price.result.isValid} variant='standard' fullWidth>
-                          <NumericFormat
-                            valueIsNumericString={false}
-                            margin='dense'
-                            id={`price-${index}`}
-                            name={`price-${index}`}
-                            value={row.price || ''}
-                            variant='standard'
-                            type='text'
-                            inputProps={{ min: 0, style: { textAlign: 'right' } }}
-                            onValueChange={values => {
-                              handleNumberChange('price', row.id, values)
-                            }}
-                            suffix=' ₫'
-                            customInput={TextField}
-                            decimalScale={2}
-                            thousandSeparator=','
-                            allowLeadingZeros={false}
-                            allowNegative={false}
-                            error={isSubmitted && !controls.find(x => x.id === row.id)?.validate.price.result.isValid}
-                          />
-                          <FormHelperText>{isSubmitted && controls.find(x => x.id === row.id)?.validate.price.result.errorMessage}</FormHelperText>
-                        </FormControl>
-                      </TableCell>
-                      {product.manageStockQuantity && (
-                        <>
-                          <TableCell key={`stockQuantity-${index}`} align='right' sx={{ verticalAlign: 'top' }}>
-                            <FormControl error={isSubmitted && !controls.find(x => x.id === row.id)?.validate.stockQuantity.result.isValid} variant='standard' fullWidth>
+                        <Controller
+                          name={`productAttributeCombinations.${index}.price`}
+                          control={control}
+                          render={({ field: { onChange }, fieldState }) => (
+                            <FormControl error={!!fieldState.error} variant='standard' fullWidth>
                               <NumericFormat
+                                valueIsNumericString={false}
                                 margin='dense'
-                                id={`stockQuantity-${index}`}
-                                name={`stockQuantity-${index}`}
-                                value={row.stockQuantity || ''}
+                                id={`price-${index}`}
+                                name={`price-${index}`}
                                 variant='standard'
                                 type='text'
                                 inputProps={{ min: 0, style: { textAlign: 'right' } }}
                                 onValueChange={values => {
-                                  handleNumberChange('stockQuantity', row.id, values)
+                                  onChange(values.floatValue)
                                 }}
-                                customInput={TextField}
-                                decimalScale={0}
-                                thousandSeparator=','
-                                allowLeadingZeros={false}
-                                allowNegative={false}
-                                error={isSubmitted && !controls.find(x => x.id === row.id)?.validate.stockQuantity.result.isValid}
-                              />
-                              <FormHelperText>{isSubmitted && controls.find(x => x.id === row.id)?.validate.stockQuantity.result.errorMessage}</FormHelperText>
-                            </FormControl>
-                          </TableCell>
-                          <TableCell key={`price-${index}`} align='right' sx={{ verticalAlign: 'top' }}>
-                            <FormControl error={isSubmitted && !controls.find(x => x.id === row.id)?.validate.productCost.result.isValid} variant='standard' fullWidth>
-                              <NumericFormat
-                                margin='dense'
-                                id={`productCost-${index}`}
-                                name={`productCost-${index}`}
-                                value={row.productCost || ''}
-                                variant='standard'
-                                type='text'
                                 suffix=' ₫'
-                                inputProps={{ min: 0, style: { textAlign: 'right' } }}
-                                onValueChange={values => {
-                                  handleNumberChange('productCost', row.id, values)
-                                }}
                                 customInput={TextField}
                                 decimalScale={2}
                                 thousandSeparator=','
                                 allowLeadingZeros={false}
                                 allowNegative={false}
-                                error={isSubmitted && !controls.find(x => x.id === row.id)?.validate.productCost.result.isValid}
+                                error={!!fieldState.error}
                               />
-                              <FormHelperText>{isSubmitted && controls.find(x => x.id === row.id)?.validate.productCost.result.errorMessage}</FormHelperText>
+                              <FormHelperText>{fieldState.error?.message}</FormHelperText>
                             </FormControl>
+                          )}
+                        />
+                      </TableCell>
+                      {manageStockQuantity && (
+                        <>
+                          <TableCell key={`stockQuantity-${index}`} align='right' sx={{ verticalAlign: 'top' }}>
+                            <Controller
+                              name={`productAttributeCombinations.${index}.stockQuantity`}
+                              control={control}
+                              render={({ field: { onChange }, fieldState }) => (
+                                <FormControl error={!!fieldState.error} variant='standard' fullWidth>
+                                  <NumericFormat
+                                    margin='dense'
+                                    id={`stockQuantity-${index}`}
+                                    name={`stockQuantity-${index}`}
+                                    variant='standard'
+                                    type='text'
+                                    inputProps={{ min: 0, style: { textAlign: 'right' } }}
+                                    onValueChange={values => {
+                                      onChange(values.floatValue)
+                                    }}
+                                    customInput={TextField}
+                                    decimalScale={0}
+                                    thousandSeparator=','
+                                    allowLeadingZeros={false}
+                                    allowNegative={false}
+                                    error={!!fieldState.error}
+                                  />
+                                  <FormHelperText>{fieldState.error?.message}</FormHelperText>
+                                </FormControl>
+                              )}
+                            />
+                          </TableCell>
+                          <TableCell key={`productCost-${index}`} align='right' sx={{ verticalAlign: 'top' }}>
+                            <Controller
+                              name={`productAttributeCombinations.${index}.productCost`}
+                              control={control}
+                              render={({ field: { onChange }, fieldState }) => (
+                                <FormControl error={!!fieldState.error} variant='standard' fullWidth>
+                                  <NumericFormat
+                                    margin='dense'
+                                    id={`productCost-${index}`}
+                                    name={`productCost-${index}`}
+                                    variant='standard'
+                                    type='text'
+                                    suffix=' ₫'
+                                    inputProps={{ min: 0, style: { textAlign: 'right' } }}
+                                    onValueChange={values => {
+                                      onChange(values.floatValue)
+                                    }}
+                                    customInput={TextField}
+                                    decimalScale={2}
+                                    thousandSeparator=','
+                                    allowLeadingZeros={false}
+                                    allowNegative={false}
+                                    error={!!fieldState.error}
+                                  />
+                                  <FormHelperText>{fieldState.error?.message}</FormHelperText>
+                                </FormControl>
+                              )}
+                            />
                           </TableCell>
                         </>
                       )}
