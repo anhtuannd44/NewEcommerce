@@ -1,9 +1,6 @@
 import type { Settings } from '@core/contexts/settingsContext'
 
 const demoConfigs: { [key: string]: Settings } = {
-  main: {
-    mode: 'light'
-  },
   'demo-1': {
     mode: 'light'
   },

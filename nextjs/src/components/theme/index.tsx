@@ -4,12 +4,9 @@
 import { useMemo } from 'react'
 
 // MUI Imports
-import { deepmerge } from '@mui/utils'
 import {
   Experimental_CssVarsProvider as CssVarsProvider,
-  experimental_extendTheme as extendTheme,
-  lighten,
-  darken
+  experimental_extendTheme as extendTheme
 } from '@mui/material/styles'
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter'
 import CssBaseline from '@mui/material/CssBaseline'
@@ -33,7 +30,7 @@ import themeConfig from '@configs/themeConfig'
 import { useSettings } from '@core/hooks/useSettings'
 
 // Core Theme Imports
-import defaultCoreTheme from '@core/theme'
+import mergedTheme from './mergedTheme'
 
 type Props = ChildrenType & {
   direction: Direction
@@ -64,30 +61,7 @@ const ThemeProvider = (props: Props) => {
 
   // Merge the primary color scheme override with the core theme
   const theme = useMemo(() => {
-    const newColorScheme = {
-      colorSchemes: {
-        light: {
-          palette: {
-            primary: {
-              main: settings.primaryColor,
-              light: lighten(settings.primaryColor as string, 0.2),
-              dark: darken(settings.primaryColor as string, 0.1)
-            }
-          }
-        },
-        dark: {
-          palette: {
-            primary: {
-              main: settings.primaryColor,
-              light: lighten(settings.primaryColor as string, 0.2),
-              dark: darken(settings.primaryColor as string, 0.1)
-            }
-          }
-        }
-      }
-    }
-
-    const coreTheme = deepmerge(defaultCoreTheme(settings, currentMode, direction), newColorScheme)
+    const coreTheme = mergedTheme(settings, currentMode, direction)
 
     return extendTheme(coreTheme)
 

@@ -76,7 +76,7 @@ export const SettingsProvider = (props: Props) => {
 
   // Cookies
   const [settingsCookie, updateSettingsCookie] = useObjectCookie<Settings>(
-    demoName ? themeConfig.settingsCookieName.replace('main', demoName) : themeConfig.settingsCookieName,
+    demoName ? themeConfig.settingsCookieName.replace('demo-1', demoName) : themeConfig.settingsCookieName,
     JSON.stringify(props.settingsCookie) !== '{}' ? props.settingsCookie : updatedInitialSettings
   )
 
