@@ -37,8 +37,6 @@ export const authOptions: NextAuthOptions = {
             body: JSON.stringify({ email, password })
           })
 
-          console.log(res)
-
           const data = await res.json()
 
           if (res.status === 401) {
@@ -107,6 +105,8 @@ export const authOptions: NextAuthOptions = {
          */
         token.name = user.name
       }
+
+      console.log(token)
 
       return token
     },
