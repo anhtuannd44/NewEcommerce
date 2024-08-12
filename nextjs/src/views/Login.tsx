@@ -19,7 +19,6 @@ import Divider from '@mui/material/Divider'
 import Alert from '@mui/material/Alert'
 
 // Third-party Imports
-import { signIn } from 'next-auth/react'
 import { Controller, useForm } from 'react-hook-form'
 import { valibotResolver } from '@hookform/resolvers/valibot'
 import { object, minLength, string, email } from 'valibot'
@@ -42,6 +41,7 @@ import { useImageVariant } from '@core/hooks/useImageVariant'
 
 // Util Imports
 import { getLocalizedUrl } from '@/utils/i18n'
+import { getToken } from '@/services/auth'
 
 type ErrorType = {
   message: string[]
@@ -100,20 +100,15 @@ const Login = ({ mode }: { mode: Mode }) => {
   const handleClickShowPassword = () => setIsPasswordShown(show => !show)
 
   const onSubmit: SubmitHandler<FormData> = async (data: FormData) => {
-    const res = await signIn('credentials', {
-      email: data.email,
-      password: data.password,
-      redirect: false
-    })
+    const res = await getToken({ email: 'anhtuan.nd44@gmail.com', password: data.password })
 
-    if (res && res.ok && res.error === null) {
-      // Vars
+    if (res.data) {
       const redirectURL = searchParams.get('redirectTo') ?? '/'
 
       router.push(getLocalizedUrl(redirectURL, locale as Locale))
     } else {
       if (res?.error) {
-        const error = JSON.parse(res.error)
+        const error = JSON.parse(res.error.message)
 
         setErrorState(error)
       }
@@ -235,7 +230,6 @@ const Login = ({ mode }: { mode: Mode }) => {
             className='self-center text-textPrimary'
             startIcon={<img src='/images/logos/google.png' alt='Google' width={22} />}
             sx={{ '& .MuiButton-startIcon': { marginInlineEnd: 3 } }}
-            onClick={() => signIn('google')}
           >
             Sign in with Google
           </Button>

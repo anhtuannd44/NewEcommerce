@@ -12,9 +12,9 @@ import { i18n } from '@configs/i18n'
 // Util Imports
 import { getLocalizedUrl, isUrlMissingLocale } from '@/utils/i18n'
 import { ensurePrefix, withoutSuffix } from '@/utils/string'
-import type { ITokenInfo } from './interface/auth'
+import type { ITokenInfo, IUserInfo } from './interface/auth'
 import { isTokenExpired } from './utils/auth'
-import { refreshAccessToken } from './services/auth'
+import { parseAuthResponse, refreshAccessToken } from './services/auth'
 
 // Constants
 const HOME_PAGE_URL = '/dashboards/crm'
@@ -63,16 +63,58 @@ const localizedRedirect = (url: string, locale: string | undefined, request: Nex
   return NextResponse.redirect(redirectUrl)
 }
 
-const privatePaths = ['/admin']
+const privatePaths = ['/apps']
 const authPaths = ['/login', '/register']
+
+const checkUserToken = async (request: NextRequest) => {
+  const tokenInfoFromCookie = request.cookies.get('tokenInfo')?.value
+  const userInfoFromCookie = request.cookies.get('userInfo')?.value
+
+  if (!tokenInfoFromCookie) {
+    return
+  }
+
+  const tokenInfo = JSON.parse(tokenInfoFromCookie) as ITokenInfo
+  const userInfo = JSON.parse(userInfoFromCookie || '') as IUserInfo
+
+  const { refreshToken, expireIn, accessToken } = tokenInfo
+
+  if (!accessToken || isTokenExpired(expireIn)) {
+    if (!refreshToken) {
+      return
+    }
+
+    const newTokenInfo = await refreshAccessToken(refreshToken)
+
+    if (!newTokenInfo.data) {
+      return
+    }
+
+    const saveToken = parseAuthResponse(newTokenInfo.data)
+
+    return saveToken
+  }
+
+  return { tokenInfo: tokenInfo, userInfo: userInfo }
+}
 
 export const middleware = async (request: NextRequest) => {
   // Get locale from request headers
   const locale = getLocale(request)
-
   const pathname = request.nextUrl.pathname
 
-  if (privatePaths.some(path => pathname.startsWith(path))) {
+  if (authPaths.some(path => pathname.startsWith(path))) {
+    const userTokenInfo = await checkUserToken(request)
+
+    if (userTokenInfo) {
+      return localizedRedirect(HOME_PAGE_URL, locale, request)
+    }
+
+    return isUrlMissingLocale(pathname) ? localizedRedirect(pathname, locale, request) : NextResponse.next()
+  }
+
+  // If pathname are private path, check and add accessToken to request header
+  if (privatePaths.some(path => pathname.slice(3).startsWith(path))) {
     let redirectUrl = '/login'
 
     if (!(pathname === '/' || pathname === `/${locale}`)) {
@@ -81,76 +123,24 @@ export const middleware = async (request: NextRequest) => {
       redirectUrl += `?${searchParamsStr}`
     }
 
-    const tokenInfoFromCookie = request.cookies.get('tokenInfo')?.value
+    const userTokenInfo = await checkUserToken(request)
 
-    if (!tokenInfoFromCookie) {
+    if (!userTokenInfo) {
       return localizedRedirect(redirectUrl, locale, request)
     }
 
-    const tokenInfo = JSON.parse(tokenInfoFromCookie) as ITokenInfo
+    const responseWithCookie = isUrlMissingLocale(pathname)
+      ? localizedRedirect(pathname, locale, request)
+      : NextResponse.next()
 
-    const { refreshToken, expireIn, accessToken } = tokenInfo
+    responseWithCookie.cookies.set('tokenInfo', JSON.stringify(userTokenInfo.tokenInfo), { httpOnly: true })
+    responseWithCookie.cookies.set('userInfo', JSON.stringify(userTokenInfo.userInfo), { httpOnly: true })
 
-    if (!accessToken || isTokenExpired(expireIn)) {
-      if (!refreshToken) {
-        return NextResponse.redirect(new URL('/login', request.url))
-      }
-
-      const newTokenInfo = await refreshAccessToken(refreshToken)
-
-      if (!newTokenInfo.data) {
-        return NextResponse.redirect(new URL('/login', request.url))
-      }
-
-      const saveToken = parseAuthResponse(newTokenInfo.data)
-
-      const responseWithCookie = NextResponse.next()
-
-      responseWithCookie.cookies.set('tokenInfo', JSON.stringify(saveToken.tokenInfo), { httpOnly: true })
-      responseWithCookie.cookies.set('userInfo', JSON.stringify(saveToken.userInfo), { httpOnly: true })
-
-      return responseWithCookie
-    }
-  }
-
-  // Check if the user is logged in
-  const isUserLoggedIn = !!token?.exp
-
-  // Guest routes (Routes that can be accessed by guest users who are not logged in)
-  const guestRoutes = ['login', 'register', 'forgot-password']
-
-  // Shared routes (Routes that can be accessed by both guest and logged in users)
-  const sharedRoutes = ['shared-route']
-
-  // Private routes (All routes except guest and shared routes that can only be accessed by logged in users)
-  const privateRoute = ![...guestRoutes, ...sharedRoutes].some(route => pathname.endsWith(route))
-
-  // If the user is not logged in and is trying to access a private route, redirect to the login page
-  if (!isUserLoggedIn && privateRoute) {
-    let redirectUrl = '/login'
-
-    if (!(pathname === '/' || pathname === `/${locale}`)) {
-      const searchParamsStr = new URLSearchParams({ redirectTo: withoutSuffix(pathname, '/') }).toString()
-
-      redirectUrl += `?${searchParamsStr}`
-    }
-
-    return localizedRedirect(redirectUrl, locale, request)
-  }
-
-  // If the user is logged in and is trying to access a guest route, redirect to the root page
-  const isRequestedRouteIsGuestRoute = guestRoutes.some(route => pathname.endsWith(route))
-
-  if (isUserLoggedIn && isRequestedRouteIsGuestRoute) {
-    return localizedRedirect(HOME_PAGE_URL, locale, request)
-  }
-
-  // If the user is logged in and is trying to access root page, redirect to the home page
-  if (pathname === '/' || pathname === `/${locale}`) {
-    return localizedRedirect(HOME_PAGE_URL, locale, request)
+    return responseWithCookie
   }
 
   // If pathname already contains a locale, return next() else redirect with localized URL
+
   return isUrlMissingLocale(pathname) ? localizedRedirect(pathname, locale, request) : NextResponse.next()
 }
 

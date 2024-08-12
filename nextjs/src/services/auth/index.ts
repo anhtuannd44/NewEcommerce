@@ -2,6 +2,7 @@ import type { FetchDataResult } from '@/interface/api-base/IFetchDataResult'
 import type { IGetTokenResponse, ILoginData, ITokenInfo, IUserInfo } from '@/interface/auth'
 import { APIServer } from '@/enums/api-enums'
 import { setStoredAuthState } from '@/utils/auth'
+import { http } from '@/apis/api-services'
 
 export const getToken = async (loginData: ILoginData): Promise<FetchDataResult<IGetTokenResponse>> => {
   const response = await http.post<IGetTokenResponse>(

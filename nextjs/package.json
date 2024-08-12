@@ -59,6 +59,7 @@
     "globby": "14.0.0",
     "kbar": "0.1.0-beta.45",
     "keen-slider": "6.8.6",
+    "lodash": "^4.17.21",
     "negotiator": "0.6.3",
     "next": "14.0.4",
     "next-auth": "4.24.5",
@@ -87,5 +88,8 @@
     "tsx": "4.7.0",
     "typescript": "5.3.3",
     "valibot": "0.25.0"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.17.7"
   }
 }
