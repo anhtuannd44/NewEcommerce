@@ -10,8 +10,7 @@ import { match as matchLocale } from '@formatjs/intl-localematcher'
 import { i18n } from '@configs/i18n'
 
 // Util Imports
-import { getLocalizedUrl, isUrlMissingLocale } from '@/utils/i18n'
-import { ensurePrefix, withoutSuffix } from '@/utils/string'
+import { withoutSuffix } from '@/utils/string'
 import type { ITokenInfo, IUserInfo } from './interface/auth'
 import { isTokenExpired } from './utils/auth'
 import { parseAuthResponse, refreshAccessToken } from './services/auth'
@@ -39,28 +38,6 @@ const getLocale = (request: NextRequest): string | undefined => {
   const locale = matchLocale(languages, locales, i18n.defaultLocale)
 
   return locale
-}
-
-const localizedRedirect = (url: string, locale: string | undefined, request: NextRequest) => {
-  let _url = url
-
-  const isLocaleMissing = isUrlMissingLocale(_url)
-
-  if (isLocaleMissing) {
-    // e.g. incoming request is /products
-    // The new URL is now /en/products
-    _url = getLocalizedUrl(_url, locale ?? i18n.defaultLocale)
-  }
-
-  let _basePath = process.env.BASEPATH ?? ''
-
-  _basePath = _basePath.replace('demo-1', request.headers.get('X-server-header') ?? 'demo-1')
-
-  _url = ensurePrefix(_url, `${_basePath ?? ''}`)
-
-  const redirectUrl = new URL(_url, request.url).toString()
-
-  return NextResponse.redirect(redirectUrl)
 }
 
 const privatePaths = ['/apps']
@@ -107,10 +84,10 @@ export const middleware = async (request: NextRequest) => {
     const userTokenInfo = await checkUserToken(request)
 
     if (userTokenInfo) {
-      return localizedRedirect(HOME_PAGE_URL, locale, request)
+      return NextResponse.redirect(HOME_PAGE_URL)
     }
 
-    return isUrlMissingLocale(pathname) ? localizedRedirect(pathname, locale, request) : NextResponse.next()
+    return NextResponse.next()
   }
 
   // If pathname are private path, check and add accessToken to request header
@@ -126,12 +103,10 @@ export const middleware = async (request: NextRequest) => {
     const userTokenInfo = await checkUserToken(request)
 
     if (!userTokenInfo) {
-      return localizedRedirect(redirectUrl, locale, request)
+      return NextResponse.redirect(redirectUrl)
     }
 
-    const responseWithCookie = isUrlMissingLocale(pathname)
-      ? localizedRedirect(pathname, locale, request)
-      : NextResponse.next()
+    const responseWithCookie = NextResponse.next()
 
     responseWithCookie.cookies.set('tokenInfo', JSON.stringify(userTokenInfo.tokenInfo), { httpOnly: true })
     responseWithCookie.cookies.set('userInfo', JSON.stringify(userTokenInfo.userInfo), { httpOnly: true })
@@ -141,7 +116,7 @@ export const middleware = async (request: NextRequest) => {
 
   // If pathname already contains a locale, return next() else redirect with localized URL
 
-  return isUrlMissingLocale(pathname) ? localizedRedirect(pathname, locale, request) : NextResponse.next()
+  return NextResponse.next()
 }
 
 // Matcher Config
