@@ -264,7 +264,7 @@ const InvoiceListTable = ({ invoiceData }: { invoiceData: InvoiceType[] }) => {
                 {
                   text: 'Edit',
                   icon: 'ri-pencil-line text-[22px]',
-                  href: getLocalizedUrl(`apps/invoice/edit/${row.original.id}`, locale as Locale),
+                  href: `apps/invoice/edit/${row.original.id}`,
                   linkProps: {
                     className: 'flex items-center is-full plb-2 pli-4 gap-2 text-textSecondary'
                   }

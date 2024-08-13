@@ -3,7 +3,6 @@ import Button from '@mui/material/Button'
 
 // Type Imports
 import type { ChildrenType } from '@core/types'
-import type { Locale } from '@configs/i18n'
 
 // Layout Imports
 import LayoutWrapper from '@layouts/LayoutWrapper'
@@ -25,13 +24,14 @@ import ScrollToTop from '@core/components/scroll-to-top'
 import { i18n } from '@configs/i18n'
 
 // Util Imports
-import { getDictionary } from '@/utils/getDictionary'
+import { getDictionary, getLangFromCookie } from '@/utils/getDictionary'
 import { getMode, getSkin, getSystemMode } from '@core/utils/serverHelpers'
 
-const Layout = async ({ children, params }: ChildrenType & { params: { lang: Locale } }) => {
+const Layout = async ({ children }: ChildrenType) => {
   // Vars
-  const direction = i18n.langDirection[params.lang] || 'ltr'
-  const dictionary = await getDictionary('en')
+  const lang = getLangFromCookie()
+  const direction = i18n.langDirection[lang] || 'ltr'
+  const dictionary = await getDictionary(lang)
   const mode = getMode()
   const systemMode = getSystemMode()
   const skin = getSkin()

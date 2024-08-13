@@ -3,7 +3,7 @@ import type { IApiServices } from '@/interface/api-base/IAptServices'
 import type { FetchDataResult } from '@/interface/api-base/IFetchDataResult'
 
 import { parseAuthResponse, refreshAccessToken } from '@/services/auth'
-import { getTokenInfoFromLocalCookie, isTokenExpired, logout, setStoredAuthState } from '@/utils/auth'
+import { getTokenInfoFromLocalCookie, isTokenExpired, setStoredAuthState } from '@/utils/auth'
 
 const serverMapping = {
   [APIServer.IdentityServer]: process.env.NEXT_PUBLIC_API_IDENTITY_URL,
@@ -88,17 +88,12 @@ const fetchData = async <T>(
 
     const baseUrl = serverMapping[server]
 
-    console.log('baseUrl', process.env.NEXT_PUBLIC_API_IDENTITY_URL)
     const fullUrl = url.startsWith('/') ? `${baseUrl}${url}` : `${baseUrl}/${url}`
-
-    const currentHref = window.location.href
 
     if (auth) {
       const accessToken = await checkAuthentication()
 
       if (!accessToken) {
-        logout(currentHref)
-
         return { error: { status: 401, statusText: 'Unauthorized', message: 'No token info', title: 'Unauthorized' } }
       }
 
@@ -116,10 +111,6 @@ const fetchData = async <T>(
     const response = await fetch(fullUrl, fetchConfigs)
 
     if (!response.ok) {
-      if (response.status === 401) {
-        logout(currentHref)
-      }
-
       return {
         error: {
           status: response.status,

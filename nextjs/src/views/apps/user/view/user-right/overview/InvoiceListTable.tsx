@@ -119,7 +119,7 @@ const InvoiceListTable = ({ invoiceData }: { invoiceData: InvoiceType[] }) => {
         cell: ({ row }) => (
           <Typography
             component={Link}
-            href={getLocalizedUrl(`apps/invoice/preview/${row.original.id}`, locale as Locale)}
+            href={`apps/invoice/preview/${row.original.id}`}
             color='primary'
           >{`#${row.original.id}`}</Typography>
         )
@@ -168,10 +168,7 @@ const InvoiceListTable = ({ invoiceData }: { invoiceData: InvoiceType[] }) => {
               <i className='ri-delete-bin-7-line text-[22px] text-textSecondary' />
             </IconButton>
             <IconButton>
-              <Link
-                href={getLocalizedUrl(`apps/invoice/preview/${row.original.id}`, locale as Locale)}
-                className='flex'
-              >
+              <Link href={`apps/invoice/preview/${row.original.id}`} className='flex'>
                 <i className='ri-eye-line text-[22px] text-textSecondary' />
               </Link>
             </IconButton>
@@ -186,7 +183,7 @@ const InvoiceListTable = ({ invoiceData }: { invoiceData: InvoiceType[] }) => {
                 {
                   text: 'Edit',
                   icon: 'ri-pencil-line text-[22px]',
-                  href: getLocalizedUrl(`apps/invoice/edit/${row.original.id}`, locale as Locale),
+                  href: `apps/invoice/edit/${row.original.id}`,
                   linkProps: {
                     className: classnames('flex items-center bs-[40px] plb-2 pli-4 is-full gap-2 text-textSecondary')
                   }

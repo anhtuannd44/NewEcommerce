@@ -77,12 +77,12 @@ const verticalMenuData = (
           {
             label: dictionary['navigation'].list,
             icon: 'ri-circle-line',
-            href: '/apps/user/list'
+            href: '/admin/user/list'
           },
           {
             label: dictionary['navigation'].view,
             icon: 'ri-circle-line',
-            href: '/apps/user/view'
+            href: '/admin/user/view'
           }
         ]
       },

@@ -13,7 +13,6 @@ import '@/app/globals.css'
 // Generated Icon CSS Imports
 import '@assets/iconify-icons/generated-icons.css'
 import { getLangFromCookie } from '@/utils/getDictionary'
-import Providers from '@/components/Providers'
 
 export const metadata = {
   title: 'Materio - Material Design Next.js Admin Template',
@@ -25,14 +24,11 @@ const RootLayout = ({ children }: ChildrenType) => {
   // Vars
   const lang = getLangFromCookie()
 
-  console.log(lang)
   const direction = i18n.langDirection[lang]
 
   return (
     <html id='__next' lang={lang} dir={direction}>
-      <body className='flex is-full min-bs-full flex-auto flex-col'>
-        <Providers direction={direction}>{children}</Providers>
-      </body>
+      <body className='flex is-full min-bs-full flex-auto flex-col'>{children}</body>
     </html>
   )
 }

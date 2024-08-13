@@ -1,10 +1,5 @@
 'use client'
 
-// Next Imports
-import { useParams } from 'next/navigation'
-
-// Type Imports
-import type { Locale } from '@configs/i18n'
 import type {
   VerticalMenuDataType,
   VerticalSectionDataType,
@@ -19,14 +14,8 @@ import type {
 import { SubMenu as HorizontalSubMenu, MenuItem as HorizontalMenuItem } from '@menu/horizontal-menu'
 import { SubMenu as VerticalSubMenu, MenuItem as VerticalMenuItem, MenuSection } from '@menu/vertical-menu'
 
-// Util Imports
-import { getLocalizedUrl } from '@/utils/i18n'
-
 // Generate a menu from the menu data array
 export const GenerateVerticalMenu = ({ menuData }: { menuData: VerticalMenuDataType[] }) => {
-  // Hooks
-  const { lang: locale } = useParams()
-
   const renderMenuItems = (data: VerticalMenuDataType[]) => {
     // Use the map method to iterate through the array of menu data
     return data.map((item: VerticalMenuDataType, index) => {
@@ -61,14 +50,9 @@ export const GenerateVerticalMenu = ({ menuData }: { menuData: VerticalMenuDataT
         )
       }
 
-      // Localize the href
-      const href = menuItem.href?.startsWith('http')
-        ? menuItem.href
-        : menuItem.href && getLocalizedUrl(menuItem.href, locale as Locale)
-
       // If the current item is neither a section nor a sub menu, return a MenuItem component
       return (
-        <VerticalMenuItem key={index} {...menuItem} href={href} icon={icon}>
+        <VerticalMenuItem key={index} {...menuItem} href={menuItem.href} icon={icon}>
           {menuItem.label}
         </VerticalMenuItem>
       )
@@ -80,9 +64,6 @@ export const GenerateVerticalMenu = ({ menuData }: { menuData: VerticalMenuDataT
 
 // Generate a menu from the menu data array
 export const GenerateHorizontalMenu = ({ menuData }: { menuData: HorizontalMenuDataType[] }) => {
-  // Hooks
-  const { lang: locale } = useParams()
-
   const renderMenuItems = (data: HorizontalMenuDataType[]) => {
     // Use the map method to iterate through the array of menu data
     return data.map((item: HorizontalMenuDataType, index) => {
@@ -103,14 +84,9 @@ export const GenerateHorizontalMenu = ({ menuData }: { menuData: HorizontalMenuD
         )
       }
 
-      // Localize the href
-      const href = menuItem.href?.startsWith('http')
-        ? menuItem.href
-        : menuItem.href && getLocalizedUrl(menuItem.href, locale as Locale)
-
       // If the current item is not a sub menu, return a MenuItem component
       return (
-        <HorizontalMenuItem key={index} {...menuItem} href={href} icon={icon}>
+        <HorizontalMenuItem key={index} {...menuItem} href={menuItem.href} icon={icon}>
           {menuItem.label}
         </HorizontalMenuItem>
       )

@@ -2,13 +2,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-// Third-party Imports
-import Negotiator from 'negotiator'
-import { match as matchLocale } from '@formatjs/intl-localematcher'
-
-// Config Imports
-import { i18n } from '@configs/i18n'
-
 // Util Imports
 import { withoutSuffix } from '@/utils/string'
 import type { ITokenInfo, IUserInfo } from './interface/auth'
@@ -16,29 +9,7 @@ import { isTokenExpired } from './utils/auth'
 import { parseAuthResponse, refreshAccessToken } from './services/auth'
 
 // Constants
-const HOME_PAGE_URL = '/dashboards/crm'
-
-const getLocale = (request: NextRequest): string | undefined => {
-  // Try to get locale from URL
-  const urlLocale = i18n.locales.find(locale => request.nextUrl.pathname.startsWith(`/${locale}`))
-
-  if (urlLocale) return urlLocale
-
-  // Negotiator expects plain object so we need to transform headers
-  const negotiatorHeaders: Record<string, string> = {}
-
-  request.headers.forEach((value, key) => (negotiatorHeaders[key] = value))
-
-  // @ts-ignore locales are readonly
-  const locales: string[] = i18n.locales
-
-  // Use negotiator and intl-localematcher to get best locale
-  const languages = new Negotiator({ headers: negotiatorHeaders }).languages(locales)
-
-  const locale = matchLocale(languages, locales, i18n.defaultLocale)
-
-  return locale
-}
+const HOME_PAGE_ADMIN_URL = '/admin'
 
 const privatePaths = ['/apps']
 const authPaths = ['/login', '/register']
@@ -77,14 +48,13 @@ const checkUserToken = async (request: NextRequest) => {
 
 export const middleware = async (request: NextRequest) => {
   // Get locale from request headers
-  const locale = getLocale(request)
   const pathname = request.nextUrl.pathname
 
   if (authPaths.some(path => pathname.startsWith(path))) {
     const userTokenInfo = await checkUserToken(request)
 
     if (userTokenInfo) {
-      return NextResponse.redirect(HOME_PAGE_URL)
+      return NextResponse.redirect(new URL(HOME_PAGE_ADMIN_URL, request.url))
     }
 
     return NextResponse.next()
@@ -94,7 +64,7 @@ export const middleware = async (request: NextRequest) => {
   if (privatePaths.some(path => pathname.slice(3).startsWith(path))) {
     let redirectUrl = '/login'
 
-    if (!(pathname === '/' || pathname === `/${locale}`)) {
+    if (pathname !== '/') {
       const searchParamsStr = new URLSearchParams({ redirectTo: withoutSuffix(pathname, '/') }).toString()
 
       redirectUrl += `?${searchParamsStr}`
@@ -103,7 +73,7 @@ export const middleware = async (request: NextRequest) => {
     const userTokenInfo = await checkUserToken(request)
 
     if (!userTokenInfo) {
-      return NextResponse.redirect(redirectUrl)
+      return NextResponse.redirect(new URL(redirectUrl, request.url))
     }
 
     const responseWithCookie = NextResponse.next()

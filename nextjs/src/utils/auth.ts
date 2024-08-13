@@ -21,8 +21,6 @@ export const setStoredAuthState = (tokenInfo: ITokenInfo, userInfo: IUserInfo) =
     secure: false
   }
 
-  console.log('a', JSON.stringify(tokenInfo))
-
   Cookies.set('tokenInfo', JSON.stringify(tokenInfo), options)
   Cookies.set('userInfo', JSON.stringify(userInfo), options)
 }
