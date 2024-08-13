@@ -51,6 +51,7 @@ const RenderExpandIcon = ({ open, transitionDuration }: RenderExpandIconProps) =
 
 const VerticalMenu = ({ dictionary, scrollMenu }: Props) => {
   // Hooks
+  console.log(dictionary)
   const theme = useTheme()
   const verticalNavOptions = useVerticalNav()
   const params = useParams()

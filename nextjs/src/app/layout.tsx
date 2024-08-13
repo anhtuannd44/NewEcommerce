@@ -3,7 +3,6 @@ import 'react-perfect-scrollbar/dist/css/styles.css'
 
 // Type Imports
 import type { ChildrenType } from '@core/types'
-import type { Locale } from '@configs/i18n'
 
 // Config Imports
 import { i18n } from '@configs/i18n'
@@ -13,6 +12,8 @@ import '@/app/globals.css'
 
 // Generated Icon CSS Imports
 import '@assets/iconify-icons/generated-icons.css'
+import { getLangFromCookie } from '@/utils/getDictionary'
+import Providers from '@/components/Providers'
 
 export const metadata = {
   title: 'Materio - Material Design Next.js Admin Template',
@@ -20,14 +21,17 @@ export const metadata = {
     'Materio - Material Design Next.js Admin Dashboard Template - is the most developer friendly & highly customizable Admin Dashboard Template based on MUI v5.'
 }
 
-const RootLayout = ({ children, params }: ChildrenType & { params: { lang: Locale } }) => {
+const RootLayout = ({ children }: ChildrenType) => {
   // Vars
-  const direction = i18n.langDirection[params.lang]
+  const lang = getLangFromCookie()
+
+  console.log(lang)
+  const direction = i18n.langDirection[lang]
 
   return (
-    <html id='__next' lang={params.lang} dir={direction}>
+    <html id='__next' lang={lang} dir={direction}>
       <body className='flex is-full min-bs-full flex-auto flex-col'>
-        {children}
+        <Providers direction={direction}>{children}</Providers>
       </body>
     </html>
   )

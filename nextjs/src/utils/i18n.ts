@@ -15,3 +15,11 @@ export const getLocalizedUrl = (url: string, languageCode: string): string => {
 
   return isUrlMissingLocale(url) ? `/${languageCode}${ensurePrefix(url, '/')}` : url
 }
+
+// export const setLangToCookie = (lang: Locale): boolean => {
+//   const cookieStore = cookies()
+
+//   cookieStore.set(LOCALE_KEY, lang)
+
+//   return true
+// }
