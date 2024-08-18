@@ -1,80 +1,96 @@
+'use client'
+
 import { useEffect, useState } from 'react'
 
-import { Alert, Backdrop, CircularProgress, Grid, Snackbar } from '@mui/material'
-import { connect } from 'react-redux'
-import { AppDispatch, RootState, dispatch } from 'src/redux/store'
-import {
-  getBrandList,
-  getProduct,
-  getProductCategoryList,
-  getProductTags,
-  createProductAdmin
-} from 'src/services/product'
-import CreateOrEditLoadingBox from 'src/views/admin/loading-box/CreateOrEditLoadingBox'
+import { Grid } from '@mui/material'
 
-import type {
-  IProductBrandList,
-  IProductCategoryList,
-  IProductTagList
-} from 'src/redux/admin/interface/IAdminGeneralState'
-import type { IProduct } from 'src/form/admin/product/interface/IProduct'
-import { showSnackbar } from 'src/redux/admin/slice/snackbarSlice'
-import { ERROR_MESSAGE_COMMON } from 'src/common/constants'
 import type { FieldErrors } from 'react-hook-form'
 import { FormProvider, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { createOrUpdateProductSchema } from 'src/form/admin/product/scheme/createOrUpdateProductSchema'
 
-import { ProductType } from 'src/common/enums'
+// import { createOrUpdateProductSchema } from 'src/form/admin/product/scheme/createOrUpdateProductSchema'
 
-import { initProductDefaultValue } from 'src/form/admin/product/default-value/productDefaultValue'
+import { toast } from 'react-toastify'
 
-import DescriptionBox from './DescriptionBox'
-import AdditionalProductBox from './AdditionalProductBox'
-import ImageProductBox from './ImageProductBox'
-import PriceProduct from './PriceProduct'
-import ProductAttributeCombinationBox from './price/product-attribute-combination/ProductAttributeCombinationBox'
+import type { Mode } from '@core/types'
 
-import GeneralInfoProduct from './GeneralInfoProduct'
+// import AdditionalProductBox from './AdditionalProductBox'
 
-interface ICreateOrUpdateProductPageProps {
+import type { IProductCategory } from '@/interface/admin/product/IProductCategory'
+import type { IBrand } from '@/interface/admin/product/IBrand'
+
+import { getBrandList, getProduct, getProductCategoryList, getProductTags } from '@/services/admin/product'
+import type { getDictionary } from '@/utils/getDictionary'
+import CreateOrEditProductLoadingBox from './CreateOrEditLoadingBox'
+import type { IProduct } from '@/interface/admin/product/IProduct'
+import { createOrUpdateProductSchema } from '@/form/admin/product/schema/createOrUpdateProductSchema'
+import { initProductDefaultValue } from '@/form/admin/product/default-value/productDefaultValue'
+import NotFound from '@/views/NotFound'
+
+interface IEditProductProps {
   id?: string
-  product?: IProduct
-  productCategoryList: IProductCategoryList
-  productBrandList: IProductBrandList
-  productTagList: IProductTagList
-  getProductCategoryList: () => void
-  getProductTags: () => void
-  getBrandList: () => void
+  dictionary: Awaited<ReturnType<typeof getDictionary>>
+  mode: Mode
 }
 
-const EditProduct = (props: ICreateOrUpdateProductPageProps) => {
-  const {
-    id,
-    product,
-    productCategoryList,
-    productBrandList,
-    productTagList,
-    getProductCategoryList,
-    getProductTags,
-    getBrandList
-  } = props
+const AddOrEditEditProduct = (props: IEditProductProps) => {
+  const { id, dictionary, mode } = props
 
-  const isUpdate: boolean = id !== undefined && id !== ''
+  const [loading, setLoading] = useState<boolean>(true)
+  const [isEdit, setIsEdit] = useState<boolean>(false)
+  const [product, setProduct] = useState<IProduct | null>(null)
+  const [productCategoryList, setProductCategoryList] = useState<IProductCategory[]>()
+  const [productBrandList, setProductBrandList] = useState<IBrand[]>()
+  const [productTagList, setProductTagList] = useState<string[]>()
 
-  const [loading, setLoading] = useState<boolean>(false)
+  const getProductById = async (id: string) => {
+    setLoading(true)
+
+    const productData = await getProduct(id)
+
+    if (!productData.data) {
+      toast.error(productData.error?.message || dictionary.messageNotification.apiMessageNotification.error.common)
+      setLoading(false)
+
+      return
+    }
+
+    setProduct(productData.data.data)
+
+    await initOtherData()
+  }
+
+  const initOtherData = async () => {
+    setLoading(true)
+
+    try {
+      const [categoriesResponse, brandsResponse, tagsResponse] = await Promise.all([
+        getProductCategoryList(),
+        getBrandList(),
+        getProductTags()
+      ])
+
+      if (!categoriesResponse.data || !brandsResponse.data || !tagsResponse.data) {
+        throw new Error(dictionary.messageNotification.apiMessageNotification.error.common)
+      }
+
+      setProductCategoryList(categoriesResponse.data.data)
+      setProductBrandList(brandsResponse.data.data)
+      setProductTagList(tagsResponse.data.data)
+      setLoading(true)
+    } catch (error: any) {
+      toast.error(dictionary.messageNotification.apiMessageNotification.error.common)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    if (!productCategoryList.productCategories) {
-      getProductCategoryList()
-    }
-
-    if (!productBrandList.brands) {
-      getBrandList()
-    }
-
-    if (!productTagList.productTags) {
-      getProductTags()
+    if (id) {
+      setIsEdit(true)
+      getProductById(id)
+    } else {
+      initOtherData()
     }
   }, [])
 
@@ -98,14 +114,12 @@ const EditProduct = (props: ICreateOrUpdateProductPageProps) => {
     console.log('Validation Errors:', errors)
   }
 
-  if (
-    (isUpdate && !product) ||
-    !productCategoryList.productCategories ||
-    !productTagList.productTags ||
-    !productBrandList.brands ||
-    loading
-  ) {
-    return <CreateOrEditLoadingBox />
+  if (loading) {
+    return <CreateOrEditProductLoadingBox />
+  }
+
+  if (id && !product) {
+    return <NotFound mode={mode} />
   }
 
   return (
@@ -113,21 +127,21 @@ const EditProduct = (props: ICreateOrUpdateProductPageProps) => {
       <form onSubmit={createOrUpdateProductForm.handleSubmit(onSubmit, onError)}>
         <Grid container spacing={6}>
           <Grid item xs={9}>
-            <GeneralInfoProduct />
+            {/* <GeneralInfoProduct />
             <DescriptionBox />
-            <PriceProduct />
+            <PriceProduct /> */}
           </Grid>
           <Grid item xs={3}>
-            <AdditionalProductBox
+            {/* <AdditionalProductBox
               productCategoryList={productCategoryList.productCategories}
               productTagList={productTagList.productTags}
               brandList={productBrandList.brands}
-            />
-            <ImageProductBox />
+            /> */}
+            {/* <ImageProductBox /> */}
           </Grid>
         </Grid>
         <Grid item xs={12}>
-          {productType === ProductType.GroupedProduct && <ProductAttributeCombinationBox />}
+          {/* {productType === ProductType.GroupedProduct && <ProductAttributeCombinationBox />} */}
           {/* <BodyContentBox /> */}
         </Grid>
         <Grid container>
@@ -140,4 +154,4 @@ const EditProduct = (props: ICreateOrUpdateProductPageProps) => {
   )
 }
 
-export default EditProduct
+export default AddOrEditEditProduct

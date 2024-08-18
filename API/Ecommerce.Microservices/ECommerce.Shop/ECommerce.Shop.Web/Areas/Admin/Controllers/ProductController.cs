@@ -45,18 +45,18 @@ public class ProductController : AdminBaseController
     [Route("{id}")]
     public async Task<IActionResult> GetProductByIdAsync(Guid id)
     {
-        _logger.LogInformation("Start getting product list - GetProductListAsync");
-        try
+        _logger.LogInformation("Start getting product by id - GetProductByIdAsync");
+        var result = await _productService.GetProductByIdAsync(id);
+
+
+        if (!result.IsSuccess)
         {
-            var result = await _productService.GetProductByIdAsync(id);
-            _logger.LogInformation("Start getting product list - GetProductListAsync");
-            return Ok(result);
+            _logger.LogError("Failed getting product by id - GetProductByIdAsync");
+            return BadRequest(result);
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, $"{nameof(GetProductListAsync)} failed: ");
-            return BadRequest();
-        }
+
+        _logger.LogInformation("Successfully getting product by id - GetProductByIdAsync");
+        return Ok(result);
     }
 
     [HttpPost]

@@ -2,7 +2,7 @@
 
 namespace ECommerce.Shop.Domain.DTOs.Products;
 
-public class CreateOrUpdateProductResponseDto : ActionEntityStatusDto
+public class ProductResponseDto : ActionEntityStatusDto
 {
     public ProductDto Data { get; set; }
 }

@@ -17,7 +17,7 @@ public interface IProductService
     /// </summary>
     /// <param name="id">The Guid of Product Item</param>
     /// <returns>Status success or failed with error message</returns>
-    Task<ProductDto> GetProductByIdAsync(Guid id);
+    Task<ProductResponseDto> GetProductByIdAsync(Guid id);
 
     /// <summary>
     /// Create/Update the Product Item

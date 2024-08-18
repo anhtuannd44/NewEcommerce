@@ -81,5 +81,19 @@
     "menuLevel2": "Niveau menu 2",
     "menuLevel3": "Niveau menu 3",
     "disabledMenu": "Menu désactivé"
+  },
+  "messageNotification": {
+    "apiMessageNotification": {
+      "error": {
+        "common": "Đã xảy ra lỗi, vui lòng thử lại sau",
+        "network": "Kết nối mạng gặp sự cố hoặc máy chủ không phản hồi"
+      },
+      "success": {
+        "commonAdd": "Dữ liệu đã được thêm mới thành công",
+        "commonGet": "Dữ liệu đã được lấy thành công",
+        "commonUpdate": "Dữ liệu đã được cập nhật thành công",
+        "commonDelete": "Dữ liệu đã được xóa thành công"
+      }
+    }
   }
 }

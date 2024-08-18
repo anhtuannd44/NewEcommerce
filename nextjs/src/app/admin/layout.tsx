@@ -1,3 +1,5 @@
+import { cloneElement } from 'react'
+
 // MUI Imports
 import Button from '@mui/material/Button'
 
@@ -46,12 +48,12 @@ const Layout = async ({ children }: ChildrenType) => {
             navbar={<Navbar />}
             footer={<VerticalFooter />}
           >
-            {children}
+            {cloneElement(children as React.ReactElement, { dictionary })}
           </VerticalLayout>
         }
         horizontalLayout={
           <HorizontalLayout header={<Header dictionary={dictionary} />} footer={<HorizontalFooter />}>
-            {children}
+            {cloneElement(children as React.ReactElement, { dictionary })}
           </HorizontalLayout>
         }
       />

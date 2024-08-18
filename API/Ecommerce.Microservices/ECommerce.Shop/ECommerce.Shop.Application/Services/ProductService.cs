@@ -113,9 +113,12 @@ public class ProductService : BaseService, IProductService
         return result;
     }
 
-    public async Task<ProductDto> GetProductByIdAsync(Guid id)
+    public async Task<ProductResponseDto> GetProductByIdAsync(Guid id)
     {
         _logger.LogInformation(string.Format(ShopDomainConstants.MessageInformationStart, nameof(GetProductByIdAsync), string.Empty));
+
+        var result = new ProductResponseDto();
+
         try
         {
             _logger.LogInformation(string.Format(ShopDomainConstants.MessageInformationStart, nameof(GetProductByIdAsync), $"ProductId {id}"));
@@ -135,11 +138,14 @@ public class ProductService : BaseService, IProductService
 
             if (product == null)
             {
-                return null;
+                const string message = "Product not found";
+                _logger.LogInformation($"CreateProductAsync - {message}");
+                result.Message = message;
+                return result;
             }
 
             // Mapping to the responseDto
-            var result = new ProductDto
+            var productDto = new ProductDto
             {
                 Id = product.Id,
                 Name = product.Name,
@@ -193,19 +199,23 @@ public class ProductService : BaseService, IProductService
                 }).ToList()
             };
 
+            result.Data = productDto;
+            result.Message = $"Successfully get product with id: {productDto.Id}";
+            result.IsSuccess = true;
             _logger.LogInformation(string.Format(ShopDomainConstants.MessageInformationEnd, nameof(GetProductByIdAsync), $"ProductId {id}"));
-            return result;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, $"{nameof(GetProductByIdAsync)} failed: ");
-            return null;
+            result.Message = $"Getting product by id {id} failed";
         }
+
+        return result;
     }
 
     public async Task<ActionEntityStatusDto> CreateOrUpdateProductAsync(ProductDto productDto)
     {
-        var result = new CreateOrUpdateProductResponseDto()
+        var result = new ProductResponseDto()
         {
             IsSuccess = false
         };

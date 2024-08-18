@@ -1,6 +1,8 @@
-﻿namespace ECommerce.Shop.Domain.DTOs.Products;
+﻿using ECommerce.Common.Domain.DTOs;
 
-public class ProductCategoryListResponseDto
+namespace ECommerce.Shop.Domain.DTOs.Products;
+
+public class ProductCategoryListResponseDto : ActionEntityStatusDto
 {
     public List<ProductCategoryInListCategoryViewResponseDto> Data { get; set; }
     public int Total { get; set; }
