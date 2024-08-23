@@ -22,6 +22,7 @@ import type { IBrand } from '@/interface/admin/product/IBrand'
 import { getBrandList, getProduct, getProductCategoryList, getProductTags } from '@/services/admin/product'
 import type { getDictionary } from '@/utils/getDictionary'
 import CreateOrEditProductLoadingBox from './CreateOrEditLoadingBox'
+import type { IManyResult } from '@/interface/api-base/IManyResult'
 import type { IProduct } from '@/interface/admin/product/IProduct'
 import { createOrUpdateProductSchema } from '@/form/admin/product/schema/createOrUpdateProductSchema'
 import { initProductDefaultValue } from '@/form/admin/product/default-value/productDefaultValue'
@@ -39,9 +40,9 @@ const AddOrEditEditProduct = (props: IEditProductProps) => {
   const [loading, setLoading] = useState<boolean>(true)
   const [isEdit, setIsEdit] = useState<boolean>(false)
   const [product, setProduct] = useState<IProduct | null>(null)
-  const [productCategoryList, setProductCategoryList] = useState<IProductCategory[]>()
-  const [productBrandList, setProductBrandList] = useState<IBrand[]>()
-  const [productTagList, setProductTagList] = useState<string[]>()
+  const [productCategoryList, setProductCategoryList] = useState<IManyResult<IProductCategory>>()
+  const [productBrandList, setProductBrandList] = useState<IManyResult<IBrand>>()
+  const [productTagList, setProductTagList] = useState<IManyResult<string>>()
 
   const getProductById = async (id: string) => {
     setLoading(true)
@@ -74,9 +75,9 @@ const AddOrEditEditProduct = (props: IEditProductProps) => {
         throw new Error(dictionary.messageNotification.apiMessageNotification.error.common)
       }
 
-      setProductCategoryList(categoriesResponse.data.data)
-      setProductBrandList(brandsResponse.data.data)
-      setProductTagList(tagsResponse.data.data)
+      setProductCategoryList(categoriesResponse.data)
+      setProductBrandList(brandsResponse.data)
+      setProductTagList(tagsResponse.data)
       setLoading(true)
     } catch (error: any) {
       toast.error(dictionary.messageNotification.apiMessageNotification.error.common)
