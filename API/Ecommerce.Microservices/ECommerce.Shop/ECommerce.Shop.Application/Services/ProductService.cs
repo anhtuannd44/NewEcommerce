@@ -328,15 +328,15 @@ public class ProductService : BaseService, IProductService
                 if (isAddNew)
                 {
                     foreach (var productAttributeCombination in productDto.ProductAttributeCombinations.Select(x => new ProductAttributeCombination
-                             {
-                                 ProductId = entity.Id,
-                                 Price = x.Price,
-                                 ProductCost = x.ProductCost,
-                                 StockQuantity = x.StockQuantity,
-                                 Sku = x.Sku,
-                                 BarCode = x.BarCode,
-                                 AttributesJson = JsonSerializer.Serialize(x.AttributeJson)
-                             }))
+                    {
+                        ProductId = entity.Id,
+                        Price = x.Price,
+                        ProductCost = x.ProductCost,
+                        StockQuantity = x.StockQuantity,
+                        Sku = x.Sku,
+                        BarCode = x.BarCode,
+                        AttributesJson = JsonSerializer.Serialize(x.AttributeJson)
+                    }))
                     {
                         await _unitOfWork.Repository<ProductAttributeCombination>().AddAsync(productAttributeCombination);
                     }
@@ -344,10 +344,10 @@ public class ProductService : BaseService, IProductService
             }
 
             var albumToAddList = productDto.Album.Where(x => x.FileId.HasValue && x.FileId != Guid.Empty).Select(x => new ProductFilesMapping
-                {
-                    ProductId = productId,
-                    FileId = x.FileId.Value
-                })
+            {
+                ProductId = productId,
+                FileId = x.FileId.Value
+            })
                 .ToList();
             if (albumToAddList.Count > 0)
             {
@@ -526,17 +526,15 @@ public class ProductService : BaseService, IProductService
             var brands = await _unitOfWork.Repository<Brand>()
                 .AsNoTracking()
                 .ToListAsync();
-            if (brands.Count == 0)
-            {
-                return result;
-            }
 
             result.Data = brands.Select(x => new BrandDto
             {
                 Id = x.Id,
                 Name = x.Name
             }).ToList();
+            
             result.IsSuccess = true;
+            result.Total = result.Data.Count;
         }
         catch (Exception ex)
         {

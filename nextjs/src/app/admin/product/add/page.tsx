@@ -1,7 +1,7 @@
 import type { Mode } from '@core/types'
 
 // Type Imports
-import type { getDictionary } from '@/utils/getDictionary'
+import type { getDictionary } from '@/utils/dictionary/getDictionaryServer'
 
 // Component Imports
 import AddOrEditProduct from '@/views/admin/product/add-or-edit'

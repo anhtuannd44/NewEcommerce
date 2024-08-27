@@ -12,7 +12,7 @@ import '@/app/globals.css'
 
 // Generated Icon CSS Imports
 import '@assets/iconify-icons/generated-icons.css'
-import { getLangFromCookie } from '@/utils/getDictionary'
+import { getLangFromCookie } from '@/utils/dictionary/getDictionaryServer'
 
 export const metadata = {
   title: 'Materio - Material Design Next.js Admin Template',

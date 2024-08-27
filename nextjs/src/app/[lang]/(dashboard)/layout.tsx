@@ -25,7 +25,7 @@ import ScrollToTop from '@core/components/scroll-to-top'
 import { i18n } from '@configs/i18n'
 
 // Util Imports
-import { getDictionary } from '@/utils/getDictionary'
+import { getDictionary } from '@/utils/dictionary/getDictionaryServer'
 import { getMode, getSkin, getSystemMode } from '@core/utils/serverHelpers'
 
 const Layout = async ({ children, params }: ChildrenType & { params: { lang: Locale } }) => {

@@ -5,4 +5,5 @@ namespace ECommerce.Shop.Domain.DTOs.Products;
 public class BrandListResponseDto : ActionEntityStatusDto
 {
     public List<BrandDto> Data { get; set; }
+    public int Total { get; set; }
 }

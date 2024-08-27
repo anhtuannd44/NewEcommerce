@@ -26,7 +26,7 @@ import ScrollToTop from '@core/components/scroll-to-top'
 import { i18n } from '@configs/i18n'
 
 // Util Imports
-import { getDictionary, getLangFromCookie } from '@/utils/getDictionary'
+import { getDictionary, getLangFromCookie } from '@/utils/dictionary/getDictionaryServer'
 import { getMode, getSkin, getSystemMode } from '@core/utils/serverHelpers'
 
 const Layout = async ({ children }: ChildrenType) => {
@@ -39,7 +39,7 @@ const Layout = async ({ children }: ChildrenType) => {
   const skin = getSkin()
 
   return (
-    <Providers direction={direction}>
+    <Providers direction={direction} dictionary={dictionary} lang={lang}>
       <LayoutWrapper
         systemMode={systemMode}
         verticalLayout={

@@ -95,5 +95,28 @@
         "commonDelete": "Dữ liệu đã được xóa thành công"
       }
     }
+  },
+  "adminArea": {
+    "common": {
+      "button": {
+        "submit": "Hoàn tất",
+        "cancel": "Hủy"
+      }
+    },
+    "product": {
+      "generalInformationPanelTitle": "Thông tin chung",
+      "field": {
+        "name": {
+          "label": "Tên sản phẩm",
+          "placeholder": "VD: Tủ áo Decor 3 tầng",
+          "helperText": "Tên sản phẩm thường KHÔNG bao gồm các thuộc tính như màu sắc, kích cỡ, ..."
+        },
+        "seoUrl": {
+          "label": "Đường dẫn tĩnh",
+          "placeholder": "VD: san-pham-01",
+          "helperText": "Đường dẫn tĩnh để tối ưu hóa SEO. Nếu để trống, hệ thống tự sinh ra theo tên sản phẩm"
+        }
+      }
+    }
   }
 }

@@ -19,7 +19,6 @@ import { getBrandList, getProduct, getProductCategoryList, getProductTags } from
 import type { Mode } from '@core/types'
 import type { IProductCategory } from '@/interface/admin/product/IProductCategory'
 import type { IBrand } from '@/interface/admin/product/IBrand'
-import type { getDictionary } from '@/utils/getDictionary'
 import type { IManyResult } from '@/interface/api-base/IManyResult'
 import type { IProduct } from '@/interface/admin/product/IProduct'
 
@@ -29,18 +28,21 @@ import { initProductDefaultValue } from '@/form/admin/product/default-value/prod
 
 // Component Imports
 import NotFound from '@/views/NotFound'
-import CreateOrEditProductLoadingBox from '@/views/admin/product/add-or-edit/CreateOrEditLoadingBox'
-import GeneralInfoProduct from '@/views/admin/product/add-or-edit/GeneralInfoProduct'
-import ProductDescriptionBox from '@/views/admin/product/add-or-edit/ProductDescriptionBox'
+import CreateOrEditProductLoadingBox from './CreateOrEditLoadingBox'
+import GeneralInfoProduct from './GeneralInfoProduct'
+import ProductDescriptionBox from './ProductDescriptionBox'
+import PriceProduct from './price'
+import { useDictionary } from '@/contexts/dictionaryContext'
 
 interface IEditProductProps {
   id?: string
-  dictionary: Awaited<ReturnType<typeof getDictionary>>
   mode: Mode
 }
 
 const AddOrEditProduct = (props: IEditProductProps) => {
-  const { id, dictionary, mode } = props
+  const { id, mode } = props
+
+  const { dictionary } = useDictionary()
 
   const [loading, setLoading] = useState<boolean>(true)
   const [isEdit, setIsEdit] = useState<boolean>(false)
@@ -77,7 +79,9 @@ const AddOrEditProduct = (props: IEditProductProps) => {
       ])
 
       if (!categoriesResponse.data || !brandsResponse.data || !tagsResponse.data) {
-        throw new Error(dictionary.messageNotification.apiMessageNotification.error.common)
+        toast.error(dictionary.messageNotification.apiMessageNotification.error.common)
+
+        return
       }
 
       setProductCategoryList(categoriesResponse.data)
@@ -85,7 +89,7 @@ const AddOrEditProduct = (props: IEditProductProps) => {
       setProductTagList(tagsResponse.data)
       setLoading(false)
     } catch (error: any) {
-      toast.error(dictionary.messageNotification.apiMessageNotification.error.common)
+      toast.error(error || dictionary.messageNotification.apiMessageNotification.error.common)
     }
   }
 

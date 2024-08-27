@@ -1,26 +1,26 @@
 {
   "navigation": {
-    "dashboards": "Dashboards",
+    "dashboards": "Bảng điều khiển",
     "crm": "CRM",
     "analytics": "Analytics",
     "eCommerce": "eCommerce",
-    "appsPages": "Apps & Pages",
-    "apps": "Apps",
+    "appsPages": "Ứng dụng & Trang",
+    "apps": "Ứng dụng",
     "email": "Email",
     "chat": "Chat",
-    "calendar": "Calendar",
-    "invoice": "Invoice",
-    "list": "List",
-    "preview": "Preview",
-    "edit": "Edit",
-    "add": "Add",
-    "user": "User",
-    "view": "View",
-    "rolesPermissions": "Roles & Permissions",
-    "roles": "Roles",
-    "permissions": "Permissions",
-    "pages": "Pages",
-    "userProfile": "User Profile",
+    "calendar": "Lịch",
+    "invoice": "Hóa đơn",
+    "list": "Danh sách",
+    "preview": "Xem trước",
+    "edit": "Sửa",
+    "add": "Thêm",
+    "user": "Người dùng",
+    "view": "Xem",
+    "rolesPermissions": "Vai trò & Quyền",
+    "roles": "Vai trò",
+    "permissions": "Quyền truy cập",
+    "pages": "Trang",
+    "userProfile": "Thông tin người dùng",
     "accountSettings": "Account Settings",
     "faq": "FAQ",
     "pricing": "Pricing",
@@ -93,6 +93,29 @@
         "commonGet": "Dữ liệu đã được lấy thành công",
         "commonUpdate": "Dữ liệu đã được cập nhật thành công",
         "commonDelete": "Dữ liệu đã được xóa thành công"
+      }
+    }
+  },
+  "adminArea": {
+    "common": {
+      "button": {
+        "submit": "Hoàn tất",
+        "cancel": "Hủy"
+      }
+    },
+    "product": {
+      "generalInformationPanelTitle": "Thông tin chung",
+      "field": {
+        "name": {
+          "label": "Tên sản phẩm",
+          "placeholder": "VD: Tủ áo Decor 3 tầng",
+          "helperText": "Tên sản phẩm thường KHÔNG bao gồm các thuộc tính như màu sắc, kích cỡ, ..."
+        },
+        "seoUrl": {
+          "label": "Đường dẫn tĩnh",
+          "placeholder": "VD: san-pham-01",
+          "helperText": "Đường dẫn tĩnh để tối ưu hóa SEO. Nếu để trống, hệ thống tự sinh ra theo tên sản phẩm"
+        }
       }
     }
   }

@@ -7,7 +7,7 @@ import { useEffect, useRef } from 'react'
 import { styled, useColorScheme, useTheme } from '@mui/material/styles'
 
 // Type Imports
-import type { getDictionary } from '@/utils/getDictionary'
+import type { getDictionary } from '@/utils/dictionary/getDictionaryServer'
 import type { Mode, Skin, SystemMode } from '@core/types'
 
 // Component Imports

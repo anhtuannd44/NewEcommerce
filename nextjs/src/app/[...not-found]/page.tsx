@@ -8,7 +8,7 @@ import { i18n } from '@configs/i18n'
 
 // Util Imports
 import { getSystemMode, getServerMode } from '@core/utils/serverHelpers'
-import { getLangFromCookie } from '@/utils/getDictionary'
+import { getLangFromCookie } from '@/utils/dictionary/getDictionaryServer'
 
 const NotFoundPage = () => {
   // Vars

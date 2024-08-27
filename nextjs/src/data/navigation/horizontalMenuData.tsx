@@ -1,6 +1,6 @@
 // Type Imports
 import type { HorizontalMenuDataType } from '@/types/menuTypes'
-import type { getDictionary } from '@/utils/getDictionary'
+import type { getDictionary } from '@/utils/dictionary/getDictionaryServer'
 
 type Params = {
   [key: string]: string | string[]

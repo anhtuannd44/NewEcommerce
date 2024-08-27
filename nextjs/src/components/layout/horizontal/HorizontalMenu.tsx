@@ -9,7 +9,7 @@ import { useTheme } from '@mui/material/styles'
 import Chip from '@mui/material/Chip'
 
 // Type Imports
-import type { getDictionary } from '@/utils/getDictionary'
+import type { getDictionary } from '@/utils/dictionary/getDictionaryServer'
 import type { VerticalMenuContextProps } from '@menu/components/vertical-menu/Menu'
 
 // Component Imports

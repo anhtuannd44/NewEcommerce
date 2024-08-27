@@ -10,12 +10,8 @@ import type { Locale } from '@configs/i18n'
 //Const import
 import { DEFAULT_LOCALE, LOCALE_KEY } from '@/consts/localeConsts'
 
-const dictionaries = {
-  vi: () => import('@/data/dictionaries/vi.json').then(module => module.default),
-  en: () => import('@/data/dictionaries/en.json').then(module => module.default),
-  fr: () => import('@/data/dictionaries/fr.json').then(module => module.default),
-  ar: () => import('@/data/dictionaries/ar.json').then(module => module.default)
-}
+// Data Imports
+import { dictionaries } from './dictionaryModules'
 
 export const getDictionary = async (locale: Locale) => dictionaries[locale]()
 

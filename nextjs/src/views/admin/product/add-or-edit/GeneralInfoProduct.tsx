@@ -10,17 +10,20 @@ import type { IProduct } from '@/interface/admin/product/IProduct'
 // Component Imports
 import PaperHeader from '@/components/paper/PaperHeader'
 import PaperContent from '@/components/paper/PaperContent'
+import { useDictionary } from '@/contexts/dictionaryContext'
 
 const GeneralInfoProduct = () => {
   const { control } = useFormContext<IProduct>()
 
+  const { dictionary } = useDictionary()
+
   return (
     <Paper>
       <PaperHeader
-        leftHeader={<Typography variant='h6'>Thông tin chung</Typography>}
+        leftHeader={<Typography variant='h6'>{dictionary.adminArea.product.generalInformationPanelTitle}</Typography>}
         rightHeader={
           <Button type='submit' variant='contained' color='success'>
-            Hoàn Tất
+            {dictionary.adminArea.common.button.submit}
           </Button>
         }
       />
@@ -35,9 +38,9 @@ const GeneralInfoProduct = () => {
                   <TextField
                     fullWidth
                     type='text'
-                    label='Tên sản phẩm'
-                    placeholder='VD: Tủ áo Decor 3 tầng'
-                    helperText={'Tên sản phẩm thường KHÔNG bao gồm các thuộc tính như màu sắc, kích cỡ, ...'}
+                    label={dictionary.adminArea.product.field.name.label}
+                    placeholder={dictionary.adminArea.product.field.name.placeholder}
+                    helperText={dictionary.adminArea.product.field.name.helperText}
                     onChange={onChange}
                     error={!!fieldState.error}
                   />
@@ -55,9 +58,9 @@ const GeneralInfoProduct = () => {
                   <TextField
                     fullWidth
                     type='text'
-                    label='Đường dẫn tĩnh'
-                    placeholder='VD: san-pham-01'
-                    helperText='Đường dẫn tĩnh để tối ưu hóa SEO. Nếu để trống, hệ thống tự sinh ra theo tên sản phẩm'
+                    label={dictionary.adminArea.product.field.seoUrl.label}
+                    placeholder={dictionary.adminArea.product.field.seoUrl.placeholder}
+                    helperText={dictionary.adminArea.product.field.seoUrl.helperText}
                     sx={{
                       fontSize: '0.4rem !important'
                     }}
