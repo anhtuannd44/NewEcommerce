@@ -4,7 +4,7 @@ import type { Mode } from '@core/types'
 import type { getDictionary } from '@/utils/getDictionary'
 
 // Component Imports
-import AddOrEditEditProduct from '@/views/admin/product/edit'
+import AddOrEditProduct from '@/views/admin/product/add-or-edit'
 
 const AddProductPage = ({
   dictionary,
@@ -13,7 +13,7 @@ const AddProductPage = ({
   dictionary: Awaited<ReturnType<typeof getDictionary>>
   mode: Mode
 }) => {
-  return <AddOrEditEditProduct dictionary={dictionary} mode={mode} />
+  return <AddOrEditProduct dictionary={dictionary} mode={mode} />
 }
 
 export default AddProductPage

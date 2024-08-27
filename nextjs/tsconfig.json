@@ -51,6 +51,9 @@
       ],
       "@reducers/*": [
         "./src/reducers/*"
+      ],
+      "@interface/*": [
+        "./src/interface/*"
       ]
     }
   },

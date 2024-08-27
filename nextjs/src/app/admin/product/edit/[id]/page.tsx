@@ -3,7 +3,7 @@ import type { Mode } from '@core/types'
 import type { getDictionary } from '@/utils/getDictionary'
 
 // Component Imports
-import AddOrEditEditProduct from '@/views/admin/product/edit'
+import AddOrEditProduct from '@/views/admin/product/add-or-edit'
 
 const EditProductPage = async ({
   params,
@@ -14,7 +14,7 @@ const EditProductPage = async ({
   dictionary: Awaited<ReturnType<typeof getDictionary>>
   mode: Mode
 }) => {
-  return <AddOrEditEditProduct id={params.id} dictionary={dictionary} mode={mode} />
+  return <AddOrEditProduct id={params.id} dictionary={dictionary} mode={mode} />
 }
 
 export default EditProductPage

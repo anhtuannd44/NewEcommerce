@@ -1,32 +1,37 @@
 'use client'
 
+// React Imports
 import { useEffect, useState } from 'react'
 
+// MUI Imports
 import { Grid } from '@mui/material'
 
+// Third-party Imports
 import type { FieldErrors } from 'react-hook-form'
 import { FormProvider, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-
-// import { createOrUpdateProductSchema } from 'src/form/admin/product/scheme/createOrUpdateProductSchema'
-
 import { toast } from 'react-toastify'
 
+// APIs Request Imports
+import { getBrandList, getProduct, getProductCategoryList, getProductTags } from '@/services/admin/product'
+
+// Type Imports
 import type { Mode } from '@core/types'
-
-// import AdditionalProductBox from './AdditionalProductBox'
-
 import type { IProductCategory } from '@/interface/admin/product/IProductCategory'
 import type { IBrand } from '@/interface/admin/product/IBrand'
-
-import { getBrandList, getProduct, getProductCategoryList, getProductTags } from '@/services/admin/product'
 import type { getDictionary } from '@/utils/getDictionary'
-import CreateOrEditProductLoadingBox from './CreateOrEditLoadingBox'
 import type { IManyResult } from '@/interface/api-base/IManyResult'
 import type { IProduct } from '@/interface/admin/product/IProduct'
+
+// Data Imports
 import { createOrUpdateProductSchema } from '@/form/admin/product/schema/createOrUpdateProductSchema'
 import { initProductDefaultValue } from '@/form/admin/product/default-value/productDefaultValue'
+
+// Component Imports
 import NotFound from '@/views/NotFound'
+import CreateOrEditProductLoadingBox from '@/views/admin/product/add-or-edit/CreateOrEditLoadingBox'
+import GeneralInfoProduct from '@/views/admin/product/add-or-edit/GeneralInfoProduct'
+import ProductDescriptionBox from '@/views/admin/product/add-or-edit/ProductDescriptionBox'
 
 interface IEditProductProps {
   id?: string
@@ -34,7 +39,7 @@ interface IEditProductProps {
   mode: Mode
 }
 
-const AddOrEditEditProduct = (props: IEditProductProps) => {
+const AddOrEditProduct = (props: IEditProductProps) => {
   const { id, dictionary, mode } = props
 
   const [loading, setLoading] = useState<boolean>(true)
@@ -78,11 +83,9 @@ const AddOrEditEditProduct = (props: IEditProductProps) => {
       setProductCategoryList(categoriesResponse.data)
       setProductBrandList(brandsResponse.data)
       setProductTagList(tagsResponse.data)
-      setLoading(true)
+      setLoading(false)
     } catch (error: any) {
       toast.error(dictionary.messageNotification.apiMessageNotification.error.common)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -119,7 +122,7 @@ const AddOrEditEditProduct = (props: IEditProductProps) => {
     return <CreateOrEditProductLoadingBox />
   }
 
-  if (id && !product) {
+  if (isEdit && !product) {
     return <NotFound mode={mode} />
   }
 
@@ -128,9 +131,9 @@ const AddOrEditEditProduct = (props: IEditProductProps) => {
       <form onSubmit={createOrUpdateProductForm.handleSubmit(onSubmit, onError)}>
         <Grid container spacing={6}>
           <Grid item xs={9}>
-            {/* <GeneralInfoProduct />
-            <DescriptionBox />
-            <PriceProduct /> */}
+            <GeneralInfoProduct />
+            <ProductDescriptionBox />
+            <PriceProduct />
           </Grid>
           <Grid item xs={3}>
             {/* <AdditionalProductBox
@@ -155,4 +158,4 @@ const AddOrEditEditProduct = (props: IEditProductProps) => {
   )
 }
 
-export default AddOrEditEditProduct
+export default AddOrEditProduct
