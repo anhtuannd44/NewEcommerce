@@ -22,9 +22,11 @@ import { Icon } from '@iconify-icon/react'
 import type { IProduct } from '@/interface/admin/product/IProduct'
 import type { IProductAttribute } from '@/interface/admin/product/IProductAttribute'
 
-// Component Imports
+// Context Imports
+import { useDictionary } from '@/contexts/dictionaryContext'
 
 const ProductPriceGroup = () => {
+  const { dictionary } = useDictionary()
   const { control } = useFormContext<IProduct>()
 
   const { fields, append, remove } = useFieldArray({
@@ -53,10 +55,14 @@ const ProductPriceGroup = () => {
       <Grid container spacing={8} mb={3}>
         <Grid item xs={1} textAlign='center'></Grid>
         <Grid item xs={2}>
-          <Typography variant='h6'>Tên thuộc tính</Typography>
+          <Typography variant='h6'>
+            {dictionary.adminArea.product.field.productGroup.table.nameAttributeColumn}
+          </Typography>
         </Grid>
         <Grid item xs={9}>
-          <Typography variant='h6'>Giá trị</Typography>
+          <Typography variant='h6'>
+            {dictionary.adminArea.product.field.productGroup.table.valueAttributeColumn}
+          </Typography>
         </Grid>
       </Grid>
       <Divider sx={{ marginTop: 0, marginBottom: 5, borderColor: '#A2A2A2' }} />
@@ -81,19 +87,17 @@ const ProductPriceGroup = () => {
                 name={`productAttributes.${index}.name`}
                 control={control}
                 render={({ field: { onChange }, fieldState }) => (
-                  <FormControl error={!!fieldState.error} variant='standard' fullWidth>
-                    <TextField
-                      fullWidth
-                      error={!!fieldState.error}
-                      size='small'
-                      type='text'
-                      sx={{
-                        fontSize: '0.4rem !important'
-                      }}
-                      onChange={onChange}
-                    />
-                    <FormHelperText>{fieldState.error?.message}</FormHelperText>
-                  </FormControl>
+                  <TextField
+                    fullWidth
+                    error={!!fieldState.error}
+                    size='small'
+                    type='text'
+                    sx={{
+                      fontSize: '0.4rem !important'
+                    }}
+                    onChange={onChange}
+                    helperText={fieldState.error?.message}
+                  />
                 )}
               />
             </Grid>
@@ -111,7 +115,7 @@ const ProductPriceGroup = () => {
                       renderInput={params => (
                         <TextField
                           {...params}
-                          placeholder='Nhập giá trị và nhấn Enter để thêm'
+                          placeholder={dictionary.adminArea.product.field.productGroup.valueAttributePlaceholder}
                           error={!!fieldState.error}
                         />
                       )}
@@ -127,15 +131,16 @@ const ProductPriceGroup = () => {
             </Grid>
           </Grid>
         ))}
+
       <Button
         variant='text'
         sx={{ fontSize: '.875rem', marginTop: 4 }}
-        startIcon={<Plus sx={{ border: '1px solid', borderRadius: '99px' }} />}
+        startIcon={<Icon icon='mdi:plus' style={{ border: '1px solid', borderRadius: '99px' }} />}
         onClick={() => {
           handleAddNewAttribute()
         }}
       >
-        Thêm thuộc tính khác
+        {dictionary.adminArea.product.field.productGroup.addNewAttributeButton}
       </Button>
     </>
   )

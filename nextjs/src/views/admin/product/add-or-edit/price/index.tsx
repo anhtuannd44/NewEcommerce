@@ -10,6 +10,9 @@ import { Icon } from '@iconify-icon/react'
 // Type Imports
 import type { IProduct } from '@interface/admin/product/IProduct'
 
+// Context Imports
+import { useDictionary } from '@/contexts/dictionaryContext'
+
 // Enum Imports
 import { ProductType } from '@/enums/product-enums'
 
@@ -24,24 +27,26 @@ const PriceProduct = () => {
 
   const productType = watch('productType')
 
+  const { dictionary } = useDictionary()
+
   return (
     <Paper>
       <PaperHeader
-        leftHeader={<Typography variant='h6'>Giá sản phẩm</Typography>}
+        leftHeader={<Typography variant='h6'>{dictionary.adminArea.product.pricePanel.title}</Typography>}
         rightHeader={
           <>
             <Typography variant='body1' justifyContent='center'>
-              Sản phẩm có biến thể?
+              {dictionary.adminArea.product.pricePanel.isProductAttributionQuestion}
             </Typography>
             <Tooltip
               sx={{ marginX: 1, cursor: 'pointer' }}
               title={
                 <>
                   <Typography variant='body1' fontSize='.75rem' color='white'>
-                    Tạo các thuộc tính để phân biệt các phiên bản khác nhau của từng sản phẩm
+                    {dictionary.adminArea.product.pricePanel.productAttributDescriptionFirst}
                   </Typography>
                   <Typography variant='body2' fontSize='.7rem' color='white'>
-                    Ví dụ: Màu sắc, Kích thước, Chất liệu,...
+                    {dictionary.adminArea.product.pricePanel.productAttributDescriptionSecond}
                   </Typography>
                 </>
               }
@@ -80,7 +85,7 @@ const PriceProduct = () => {
                     }}
                   />
                 }
-                label='Quản lý số lượng tồn kho?'
+                label={dictionary.adminArea.product.field.manageStockQuantity.questionTitle}
                 labelPlacement='end'
               />
             )}

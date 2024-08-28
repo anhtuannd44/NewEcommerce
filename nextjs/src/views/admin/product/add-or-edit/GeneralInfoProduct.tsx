@@ -1,5 +1,5 @@
 //MUI Imports
-import { Button, FormControl, FormHelperText, Grid, Paper, TextField, Typography } from '@mui/material'
+import { Button, Card, Grid, Paper, TextField, Typography } from '@mui/material'
 
 // Third-party Imports
 import { Controller, useFormContext } from 'react-hook-form'
@@ -18,7 +18,7 @@ const GeneralInfoProduct = () => {
   const { dictionary } = useDictionary()
 
   return (
-    <Paper>
+    <Card>
       <PaperHeader
         leftHeader={<Typography variant='h6'>{dictionary.adminArea.product.generalInformationPanelTitle}</Typography>}
         rightHeader={
@@ -34,18 +34,15 @@ const GeneralInfoProduct = () => {
               name='name'
               control={control}
               render={({ field: { onChange }, fieldState }) => (
-                <FormControl error={!!fieldState.error} variant='standard' fullWidth>
-                  <TextField
-                    fullWidth
-                    type='text'
-                    label={dictionary.adminArea.product.field.name.label}
-                    placeholder={dictionary.adminArea.product.field.name.placeholder}
-                    helperText={dictionary.adminArea.product.field.name.helperText}
-                    onChange={onChange}
-                    error={!!fieldState.error}
-                  />
-                  <FormHelperText>{fieldState.error?.message}</FormHelperText>
-                </FormControl>
+                <TextField
+                  fullWidth
+                  type='text'
+                  label={dictionary.adminArea.product.field.name.label}
+                  placeholder={dictionary.adminArea.product.field.name.placeholder}
+                  helperText={fieldState.error?.message || dictionary.adminArea.product.field.name.helperText}
+                  onChange={onChange}
+                  error={!!fieldState.error}
+                />
               )}
             />
           </Grid>
@@ -54,21 +51,18 @@ const GeneralInfoProduct = () => {
               name='seoUrl'
               control={control}
               render={({ field: { onChange }, fieldState }) => (
-                <FormControl error={!!fieldState.error} variant='standard' fullWidth>
-                  <TextField
-                    fullWidth
-                    type='text'
-                    label={dictionary.adminArea.product.field.seoUrl.label}
-                    placeholder={dictionary.adminArea.product.field.seoUrl.placeholder}
-                    helperText={dictionary.adminArea.product.field.seoUrl.helperText}
-                    sx={{
-                      fontSize: '0.4rem !important'
-                    }}
-                    error={!!fieldState.error}
-                    onChange={onChange}
-                  />
-                  <FormHelperText>{fieldState.error?.message}</FormHelperText>
-                </FormControl>
+                <TextField
+                  fullWidth
+                  type='text'
+                  label={dictionary.adminArea.product.field.seoUrl.label}
+                  placeholder={dictionary.adminArea.product.field.seoUrl.placeholder}
+                  helperText={fieldState.error?.message || dictionary.adminArea.product.field.seoUrl.helperText}
+                  sx={{
+                    fontSize: '0.4rem !important'
+                  }}
+                  error={!!fieldState.error}
+                  onChange={onChange}
+                />
               )}
             />
           </Grid>
@@ -77,21 +71,18 @@ const GeneralInfoProduct = () => {
               name='sku'
               control={control}
               render={({ field: { onChange }, fieldState }) => (
-                <FormControl error={!!fieldState.error} variant='standard' fullWidth>
-                  <TextField
-                    fullWidth
-                    type='text'
-                    label='Mã sản phẩm'
-                    placeholder='VD: FIVO0293'
-                    helperText='Mã không trùng lặp để định danh sản phẩm'
-                    sx={{
-                      fontSize: '0.4rem !important'
-                    }}
-                    error={!!fieldState.error}
-                    onChange={onChange}
-                  />
-                  <FormHelperText>{fieldState.error?.message}</FormHelperText>
-                </FormControl>
+                <TextField
+                  fullWidth
+                  type='text'
+                  label={dictionary.adminArea.product.field.seoUrl.label}
+                  placeholder={dictionary.adminArea.product.field.seoUrl.placeholder}
+                  helperText={fieldState.error?.message || dictionary.adminArea.product.field.seoUrl.helperText}
+                  sx={{
+                    fontSize: '0.4rem !important'
+                  }}
+                  error={!!fieldState.error}
+                  onChange={onChange}
+                />
               )}
             />
           </Grid>
@@ -100,27 +91,24 @@ const GeneralInfoProduct = () => {
               name='unit'
               control={control}
               render={({ field: { onChange }, fieldState }) => (
-                <FormControl error={!!fieldState.error} variant='standard' fullWidth>
-                  <TextField
-                    fullWidth
-                    type='text'
-                    label='Đơn vị tính'
-                    placeholder='VD: Cái, chai, ly, ...'
-                    helperText='Đơn vị tính của sản phẩm (Cái, chai, ly, ...)'
-                    sx={{
-                      fontSize: '0.4rem !important'
-                    }}
-                    error={!!fieldState.error}
-                    onChange={onChange}
-                  />
-                  <FormHelperText>{fieldState.error?.message}</FormHelperText>
-                </FormControl>
+                <TextField
+                  fullWidth
+                  type='text'
+                  label={dictionary.adminArea.product.field.seoUrl.label}
+                  placeholder={dictionary.adminArea.product.field.seoUrl.placeholder}
+                  helperText={fieldState.error?.message || dictionary.adminArea.product.field.seoUrl.helperText}
+                  sx={{
+                    fontSize: '0.4rem !important'
+                  }}
+                  error={!!fieldState.error}
+                  onChange={onChange}
+                />
               )}
             />
           </Grid>
         </Grid>
       </PaperContent>
-    </Paper>
+    </Card>
   )
 }
 

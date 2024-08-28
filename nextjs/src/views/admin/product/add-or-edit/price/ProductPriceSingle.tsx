@@ -1,7 +1,7 @@
 'use client'
 
 // MUI Imports
-import { FormControl, FormHelperText, FormLabel, Grid, TextField } from '@mui/material'
+import { Grid, TextField } from '@mui/material'
 
 // Third-party Imports
 import { Controller, useFormContext } from 'react-hook-form'
@@ -10,7 +10,11 @@ import { NumericFormat } from 'react-number-format'
 // Type Imports
 import type { IProduct } from '@/interface/admin/product/IProduct'
 
+// Context Imports
+import { useDictionary } from '@/contexts/dictionaryContext'
+
 const ProductPriceSingle = () => {
+  const { dictionary } = useDictionary()
   const { control, watch } = useFormContext<IProduct>()
 
   const manageStockQuantity = watch('manageStockQuantity')
@@ -23,27 +27,25 @@ const ProductPriceSingle = () => {
             name={'price'}
             control={control}
             render={({ field: { onChange }, fieldState }) => (
-              <FormControl fullWidth error={!!fieldState.error}>
-                <FormLabel id='product-price'>Giá sản phẩm</FormLabel>
-                <NumericFormat
-                  error={!!fieldState.error}
-                  aria-labelledby='product-price'
-                  fullWidth
-                  suffix=' ₫'
-                  variant='standard'
-                  type='text'
-                  inputProps={{ min: 0, style: { textAlign: 'right' } }}
-                  onValueChange={values => {
-                    onChange(values.floatValue)
-                  }}
-                  customInput={TextField}
-                  decimalScale={2}
-                  thousandSeparator=','
-                  allowLeadingZeros={false}
-                  allowNegative={false}
-                />
-                <FormHelperText>{fieldState.error?.message}</FormHelperText>
-              </FormControl>
+              <NumericFormat
+                label={dictionary.adminArea.product.field.productGroup.priceTitle}
+                error={!!fieldState.error}
+                aria-labelledby='product-price'
+                fullWidth
+                suffix=' ₫'
+                variant='standard'
+                type='text'
+                inputProps={{ min: 0, style: { textAlign: 'right' } }}
+                onValueChange={values => {
+                  onChange(values.floatValue)
+                }}
+                helperText={fieldState.error?.message}
+                customInput={TextField}
+                decimalScale={2}
+                thousandSeparator=','
+                allowLeadingZeros={false}
+                allowNegative={false}
+              />
             )}
           />
         </Grid>
@@ -52,26 +54,24 @@ const ProductPriceSingle = () => {
             name={'wholesalePrice'}
             control={control}
             render={({ field: { onChange }, fieldState }) => (
-              <FormControl fullWidth error={!!fieldState.error}>
-                <FormLabel id='wholesale-price'>Giá bán sỉ</FormLabel>
-                <NumericFormat
-                  fullWidth
-                  variant='standard'
-                  type='text'
-                  suffix=' ₫'
-                  inputProps={{ min: 0, style: { textAlign: 'right' } }}
-                  onValueChange={values => {
-                    onChange(values.floatValue)
-                  }}
-                  customInput={TextField}
-                  decimalScale={2}
-                  thousandSeparator=','
-                  allowLeadingZeros={false}
-                  allowNegative={false}
-                  error={!!fieldState.error}
-                />
-                <FormHelperText>{fieldState.error?.message}</FormHelperText>
-              </FormControl>
+              <NumericFormat
+                fullWidth
+                variant='standard'
+                type='text'
+                label={dictionary.adminArea.product.field.productGroup.wholesalePrice}
+                suffix=' ₫'
+                inputProps={{ min: 0, style: { textAlign: 'right' } }}
+                onValueChange={values => {
+                  onChange(values.floatValue)
+                }}
+                customInput={TextField}
+                decimalScale={2}
+                thousandSeparator=','
+                allowLeadingZeros={false}
+                allowNegative={false}
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+              />
             )}
           />
         </Grid>
@@ -83,25 +83,23 @@ const ProductPriceSingle = () => {
               name={'stockQuantity'}
               control={control}
               render={({ field: { onChange }, fieldState }) => (
-                <FormControl fullWidth error={!!fieldState.error}>
-                  <FormLabel id='product-price'>Số lượng tồn kho</FormLabel>
-                  <NumericFormat
-                    fullWidth
-                    variant='standard'
-                    type='text'
-                    inputProps={{ style: { textAlign: 'right' } }}
-                    onValueChange={values => {
-                      onChange(values.floatValue)
-                    }}
-                    customInput={TextField}
-                    decimalScale={0}
-                    thousandSeparator=','
-                    allowLeadingZeros={false}
-                    allowNegative={false}
-                    error={!!fieldState.error}
-                  />
-                  <FormHelperText>{fieldState.error?.message}</FormHelperText>
-                </FormControl>
+                <NumericFormat
+                  fullWidth
+                  variant='standard'
+                  type='text'
+                  label={dictionary.adminArea.product.field.manageStockQuantity.label}
+                  inputProps={{ style: { textAlign: 'right' } }}
+                  onValueChange={values => {
+                    onChange(values.floatValue)
+                  }}
+                  customInput={TextField}
+                  decimalScale={0}
+                  thousandSeparator=','
+                  allowLeadingZeros={false}
+                  allowNegative={false}
+                  error={!!fieldState.error}
+                  helperText={fieldState.error?.message}
+                />
               )}
             />
           </Grid>
@@ -110,25 +108,23 @@ const ProductPriceSingle = () => {
               name={'productCost'}
               control={control}
               render={({ field: { onChange }, fieldState }) => (
-                <FormControl fullWidth error={!!fieldState.error}>
-                  <FormLabel id='product-cost'>Giá nhập</FormLabel>
-                  <NumericFormat
-                    fullWidth
-                    variant='standard'
-                    type='text'
-                    inputProps={{ style: { textAlign: 'right' } }}
-                    onValueChange={values => {
-                      onChange(values.floatValue)
-                    }}
-                    customInput={TextField}
-                    decimalScale={2}
-                    thousandSeparator=','
-                    allowLeadingZeros={false}
-                    allowNegative={false}
-                    error={!!fieldState.error}
-                  />
-                  <FormHelperText>{fieldState.error?.message}</FormHelperText>
-                </FormControl>
+                <NumericFormat
+                  fullWidth
+                  variant='standard'
+                  type='text'
+                  label={dictionary.adminArea.product.field.productGroup.productCost}
+                  inputProps={{ style: { textAlign: 'right' } }}
+                  onValueChange={values => {
+                    onChange(values.floatValue)
+                  }}
+                  customInput={TextField}
+                  decimalScale={2}
+                  thousandSeparator=','
+                  allowLeadingZeros={false}
+                  allowNegative={false}
+                  error={!!fieldState.error}
+                  helperText={fieldState.error?.message}
+                />
               )}
             />
           </Grid>

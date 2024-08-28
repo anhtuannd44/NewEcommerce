@@ -105,6 +105,13 @@
     },
     "product": {
       "generalInformationPanelTitle": "Thông tin chung",
+      "shortDescriptionPanelTitle": "Mô tả ngắn",
+      "pricePanel": {
+        "title": "Giá sản phẩm",
+        "isProductAttributionQuestion": "Sản phẩm có biến thể?",
+        "productAttributDescriptionFirst": "Tạo các thuộc tính để phân biệt các phiên bản khác nhau của từng sản phẩm",
+        "productAttributDescriptionSecond": "Ví dụ: Màu sắc, Kích thước, Chất liệu,..."
+      },
       "field": {
         "name": {
           "label": "Tên sản phẩm",
@@ -115,6 +122,29 @@
           "label": "Đường dẫn tĩnh",
           "placeholder": "VD: san-pham-01",
           "helperText": "Đường dẫn tĩnh để tối ưu hóa SEO. Nếu để trống, hệ thống tự sinh ra theo tên sản phẩm"
+        },
+        "sku": {
+          "label": "SKU (Mã sản phẩm)",
+          "placeholder": "VD: FIVO0293",
+          "helperText": "Mã không trùng lặp để định danh sản phẩm"
+        },
+        "unit": {
+          "label": "Đơn vị tính",
+          "placeholder": "VD: Cái, chai, ly, ...",
+          "helperText": "Đơn vị tính của sản phẩm (Cái, chai, ly, ...)"
+        },
+        "manageStockQuantity": {
+          "label": "Quản lý số lượng tồn kho?"
+        },
+        "productGroup": {
+          "table": {
+            "nameAttributeColumn": "Tên thuộc tính",
+            "valueAttributeColumn": "Giá trị"
+          },
+          "valueAttributePlaceholder": "Nhập giá trị và nhấn Enter để thêm",
+          "addNewAttributeButton": "Thêm thuộc tính khác",
+          "priceTitle": "Giá sản phẩm",
+          "wholesalePrice": "Giá bán sỉ"
         }
       }
     }
