@@ -22,7 +22,7 @@ type Props = {
 const StepDealUsage = ({ activeStep, handleNext, handlePrev, steps }: Props) => {
   return (
     <Grid container spacing={5} className='pbs-5'>
-      <Grid item xs={12} sm={6}>
+      <Grid xs={12} sm={6}>
         <FormControl fullWidth>
           <InputLabel id='select-user-type'>User Type</InputLabel>
           <Select labelId='select-user-type' label='User Type' defaultValue=''>
@@ -33,16 +33,16 @@ const StepDealUsage = ({ activeStep, handleNext, handlePrev, steps }: Props) => 
           </Select>
         </FormControl>
       </Grid>
-      <Grid item xs={12} sm={6}>
+      <Grid xs={12} sm={6}>
         <TextField fullWidth type='number' label='Max Users' placeholder='500' />
       </Grid>
-      <Grid item xs={12} sm={6}>
+      <Grid xs={12} sm={6}>
         <TextField fullWidth type='number' label='Minimum Cart Amount' placeholder='$99' />
       </Grid>
-      <Grid item xs={12} sm={6}>
+      <Grid xs={12} sm={6}>
         <TextField fullWidth type='number' label='Promotional Fee' placeholder='$9' />
       </Grid>
-      <Grid item xs={12} sm={6}>
+      <Grid xs={12} sm={6}>
         <FormControl fullWidth>
           <InputLabel id='select-payment-method'>Payment Method</InputLabel>
           <Select labelId='select-payment-method' label='Payment Method' defaultValue=''>
@@ -53,7 +53,7 @@ const StepDealUsage = ({ activeStep, handleNext, handlePrev, steps }: Props) => 
           </Select>
         </FormControl>
       </Grid>
-      <Grid item xs={12} sm={6}>
+      <Grid xs={12} sm={6}>
         <FormControl fullWidth>
           <InputLabel id='select-deal-status'>Deal Status</InputLabel>
           <Select labelId='select-deal-status' label='Deal Status' defaultValue=''>
@@ -64,10 +64,10 @@ const StepDealUsage = ({ activeStep, handleNext, handlePrev, steps }: Props) => 
           </Select>
         </FormControl>
       </Grid>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <FormControlLabel control={<Switch />} label='Limit this discount to a single-use per customer?' />
       </Grid>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <div className='flex items-center justify-between'>
           <Button
             variant='outlined'

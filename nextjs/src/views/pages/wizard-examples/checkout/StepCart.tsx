@@ -63,7 +63,7 @@ const StepCart = ({ handleNext }: { handleNext: () => void }) => {
 
   return (
     <Grid container spacing={6}>
-      <Grid item xs={12} lg={8} className='flex flex-col gap-4'>
+      <Grid xs={12} lg={8} className='flex flex-col gap-4'>
         <Collapse in={openCollapse}>
           <Fade in={openFade} timeout={{ exit: 300 }}>
             <Alert
@@ -154,7 +154,7 @@ const StepCart = ({ handleNext }: { handleNext: () => void }) => {
           />
         </Typography>
       </Grid>
-      <Grid item xs={12} lg={4} className='flex flex-col gap-2'>
+      <Grid xs={12} lg={4} className='flex flex-col gap-2'>
         <div className='border rounded'>
           <CardContent className='flex flex-col gap-4'>
             <Typography className='font-medium' color='text.primary'>

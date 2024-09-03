@@ -107,7 +107,7 @@ const StepPropertyDetails = ({ activeStep, handleNext, handlePrev, steps }: Prop
           />
         )
       })}
-      <Grid item xs={12} md={6}>
+      <Grid xs={12} md={6}>
         <FormControl fullWidth>
           <InputLabel id='validation-property-select'>Property Type</InputLabel>
           <Select label='Property Type' labelId='validation-property-select' defaultValue=''>
@@ -116,10 +116,10 @@ const StepPropertyDetails = ({ activeStep, handleNext, handlePrev, steps }: Prop
           </Select>
         </FormControl>
       </Grid>
-      <Grid item xs={12} md={6}>
+      <Grid xs={12} md={6}>
         <TextField fullWidth type='number' label='Zip Code' placeholder='99950' />
       </Grid>
-      <Grid item xs={12} md={6}>
+      <Grid xs={12} md={6}>
         <FormControl fullWidth>
           <InputLabel id='country-select'>Country</InputLabel>
           <Select label='Country' labelId='country-select' aria-describedby='country-select' defaultValue=''>
@@ -131,19 +131,19 @@ const StepPropertyDetails = ({ activeStep, handleNext, handlePrev, steps }: Prop
           </Select>
         </FormControl>
       </Grid>
-      <Grid item xs={12} md={6}>
+      <Grid xs={12} md={6}>
         <TextField fullWidth label='Landmark' placeholder='Nr. Hard Rock Cafe' />
       </Grid>
-      <Grid item xs={12} md={6}>
+      <Grid xs={12} md={6}>
         <TextField fullWidth label='City' placeholder='Los Angeles' />
       </Grid>
-      <Grid item xs={12} md={6}>
+      <Grid xs={12} md={6}>
         <TextField fullWidth label='State' placeholder='California' />
       </Grid>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <TextField fullWidth multiline minRows={2} label='Address' placeholder='12, Business Park' />
       </Grid>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <div className='flex items-center justify-between'>
           <Button
             variant='outlined'

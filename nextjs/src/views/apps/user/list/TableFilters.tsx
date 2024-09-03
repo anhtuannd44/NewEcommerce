@@ -33,7 +33,7 @@ const TableFilters = ({ setData, tableData }: { setData: any; tableData?: UsersT
   return (
     <CardContent>
       <Grid container spacing={5}>
-        <Grid item xs={12} sm={4}>
+        <Grid xs={12} sm={4}>
           <FormControl fullWidth>
             <InputLabel id='role-select'>Select Role</InputLabel>
             <Select
@@ -54,7 +54,7 @@ const TableFilters = ({ setData, tableData }: { setData: any; tableData?: UsersT
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={12} sm={4}>
+        <Grid xs={12} sm={4}>
           <FormControl fullWidth>
             <InputLabel id='plan-select'>Select Plan</InputLabel>
             <Select
@@ -74,7 +74,7 @@ const TableFilters = ({ setData, tableData }: { setData: any; tableData?: UsersT
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={12} sm={4}>
+        <Grid xs={12} sm={4}>
           <FormControl fullWidth>
             <InputLabel id='status-select'>Select Status</InputLabel>
             <Select

@@ -17,7 +17,7 @@ const FaqFooter = () => {
         </Typography>
       </div>
       <Grid container spacing={6} className='mbs-6'>
-        <Grid item xs={12} md={6}>
+        <Grid xs={12} md={6}>
           <div className='flex justify-center items-center flex-col gap-4 p-6 rounded bg-actionHover'>
             <CustomAvatar variant='rounded' color='primary' skin='light' size={50}>
               <i className='ri-phone-line text-3xl' />
@@ -28,7 +28,7 @@ const FaqFooter = () => {
             </div>
           </div>
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid xs={12} md={6}>
           <div className='flex justify-center items-center flex-col gap-4 p-6 rounded bg-actionHover'>
             <CustomAvatar variant='rounded' color='primary' skin='light' size={50}>
               <i className='ri-mail-line text-3xl' />

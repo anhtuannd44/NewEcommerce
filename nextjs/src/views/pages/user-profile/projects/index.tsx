@@ -25,7 +25,7 @@ const Projects = ({ data }: { data?: ProjectsTabType[] }) => {
       {data &&
         data.map((item, index) => {
           return (
-            <Grid item key={index} xs={12} md={6} lg={4}>
+            <Grid key={index} xs={12} md={6} lg={4}>
               <Card>
                 <CardContent className='flex flex-col gap-4'>
                   <div className='flex items-center justify-between gap-4'>

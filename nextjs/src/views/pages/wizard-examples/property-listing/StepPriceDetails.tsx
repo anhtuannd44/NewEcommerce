@@ -26,7 +26,7 @@ type Props = {
 const StepPriceDetails = ({ activeStep, handleNext, handlePrev, steps }: Props) => {
   return (
     <Grid container spacing={5}>
-      <Grid item xs={12} md={6}>
+      <Grid xs={12} md={6}>
         <TextField
           fullWidth
           type='number'
@@ -41,7 +41,7 @@ const StepPriceDetails = ({ activeStep, handleNext, handlePrev, steps }: Props) 
           }}
         />
       </Grid>
-      <Grid item xs={12} md={6}>
+      <Grid xs={12} md={6}>
         <TextField
           fullWidth
           type='number'
@@ -56,7 +56,7 @@ const StepPriceDetails = ({ activeStep, handleNext, handlePrev, steps }: Props) 
           }}
         />
       </Grid>
-      <Grid item xs={12} md={6}>
+      <Grid xs={12} md={6}>
         <TextField
           fullWidth
           type='number'
@@ -72,7 +72,7 @@ const StepPriceDetails = ({ activeStep, handleNext, handlePrev, steps }: Props) 
         />
       </Grid>
 
-      <Grid item xs={12} md={6}>
+      <Grid xs={12} md={6}>
         <FormControl fullWidth>
           <InputLabel id='select-maintenance'>Maintenance Period</InputLabel>
           <Select labelId='select-maintenance' label='Maintenance Period' defaultValue=''>
@@ -84,7 +84,7 @@ const StepPriceDetails = ({ activeStep, handleNext, handlePrev, steps }: Props) 
           </Select>
         </FormControl>
       </Grid>
-      <Grid item xs={12} md={6}>
+      <Grid xs={12} md={6}>
         <TextField
           fullWidth
           type='number'
@@ -99,7 +99,7 @@ const StepPriceDetails = ({ activeStep, handleNext, handlePrev, steps }: Props) 
           }}
         />
       </Grid>
-      <Grid item xs={12} md={6}>
+      <Grid xs={12} md={6}>
         <TextField
           fullWidth
           type='number'
@@ -114,7 +114,7 @@ const StepPriceDetails = ({ activeStep, handleNext, handlePrev, steps }: Props) 
           }}
         />
       </Grid>
-      <Grid item xs={12} md={6}>
+      <Grid xs={12} md={6}>
         <FormControl className='gap-2'>
           <FormLabel id='price-radio'>Show Price As</FormLabel>
           <RadioGroup name='price-group' defaultValue='negotiable' aria-labelledby='price-radio'>
@@ -123,14 +123,14 @@ const StepPriceDetails = ({ activeStep, handleNext, handlePrev, steps }: Props) 
           </RadioGroup>
         </FormControl>
       </Grid>
-      <Grid item xs={12} md={6}>
+      <Grid xs={12} md={6}>
         <FormControl className='gap-2'>
           <FormLabel>Price Includes</FormLabel>
           <FormControlLabel control={<Checkbox defaultChecked />} label='Car Parking' />
           <FormControlLabel control={<Checkbox />} label='Club Membership' />
         </FormControl>
       </Grid>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <div className='flex items-center justify-between'>
           <Button
             variant='outlined'

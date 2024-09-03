@@ -236,13 +236,13 @@ const ProfitStackedBar = () => {
   return (
     <Card>
       <Grid container>
-        <Grid item xs={12} sm={7} className='border-be sm:border-be-0 sm:border-ie'>
+        <Grid xs={12} sm={7} className='border-be sm:border-be-0 sm:border-ie'>
           <CardHeader title='Total Profit' />
           <CardContent sx={{ '& .apexcharts-xcrosshairs.apexcharts-active': { opacity: 0 } }}>
             <AppReactApexCharts type='bar' height={262} width='100%' series={series} options={options} />
           </CardContent>
         </Grid>
-        <Grid item xs={12} sm={5}>
+        <Grid xs={12} sm={5}>
           <CardHeader
             title='$482.85k'
             subheader='Last month balance $234.40k'

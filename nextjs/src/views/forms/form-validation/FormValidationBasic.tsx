@@ -76,7 +76,7 @@ const FormValidationBasic = () => {
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={5}>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <Controller
                 name='firstName'
                 control={control}
@@ -92,7 +92,7 @@ const FormValidationBasic = () => {
                 )}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <Controller
                 name='lastName'
                 control={control}
@@ -108,7 +108,7 @@ const FormValidationBasic = () => {
                 )}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <Controller
                 name='email'
                 control={control}
@@ -125,7 +125,7 @@ const FormValidationBasic = () => {
                 )}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <Controller
                 name='password'
                 control={control}
@@ -157,7 +157,7 @@ const FormValidationBasic = () => {
                 )}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <Controller
                 name='dob'
                 control={control}
@@ -182,7 +182,7 @@ const FormValidationBasic = () => {
                 )}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <FormControl fullWidth>
                 <InputLabel error={Boolean(errors.select)}>Country</InputLabel>
                 <Controller
@@ -201,7 +201,7 @@ const FormValidationBasic = () => {
                 {errors.select && <FormHelperText error>This field is required.</FormHelperText>}
               </FormControl>
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <Controller
                 name='textarea'
                 control={control}
@@ -218,7 +218,7 @@ const FormValidationBasic = () => {
                 )}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <FormControl error={Boolean(errors.radio)}>
                 <FormLabel>Gender</FormLabel>
                 <Controller
@@ -236,7 +236,7 @@ const FormValidationBasic = () => {
                 {errors.radio && <FormHelperText error>This field is required.</FormHelperText>}
               </FormControl>
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <FormControl error={Boolean(errors.checkbox)}>
                 <Controller
                   name='checkbox'
@@ -249,7 +249,7 @@ const FormValidationBasic = () => {
                 {errors.checkbox && <FormHelperText error>This field is required.</FormHelperText>}
               </FormControl>
             </Grid>
-            <Grid item xs={12} className='flex gap-4'>
+            <Grid xs={12} className='flex gap-4'>
               <Button variant='contained' type='submit'>
                 Submit
               </Button>

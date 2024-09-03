@@ -88,7 +88,7 @@ const DepositWithdraw = () => {
   return (
     <Card>
       <Grid container>
-        <Grid item xs={12} md={6} className='border-be md:border-be-0 md:border-ie'>
+        <Grid xs={12} md={6} className='border-be md:border-be-0 md:border-ie'>
           <CardHeader
             title='Deposit'
             action={
@@ -122,7 +122,7 @@ const DepositWithdraw = () => {
             ))}
           </CardContent>
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid xs={12} md={6}>
           <CardHeader
             title='Withdraw'
             action={

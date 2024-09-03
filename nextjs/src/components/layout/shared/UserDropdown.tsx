@@ -97,7 +97,7 @@ const UserDropdown = () => {
       >
         <Avatar
           ref={anchorRef}
-          alt={session?.user?.name || ''}
+          alt={session?.user?.name || 'ss'}
           src={session?.user?.image || ''}
           onClick={handleDropdownOpen}
           className='cursor-pointer bs-[38px] is-[38px]'
@@ -125,7 +125,7 @@ const UserDropdown = () => {
                     <Avatar alt={session?.user?.name || ''} src={session?.user?.image || ''} />
                     <div className='flex items-start flex-col'>
                       <Typography className='font-medium' color='text.primary'>
-                        {session?.user?.name || ''}
+                        {session?.user?.name || 'ss'}
                       </Typography>
                       <Typography variant='caption'>{session?.user?.email || ''}</Typography>
                     </div>

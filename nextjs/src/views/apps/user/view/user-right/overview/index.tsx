@@ -22,13 +22,13 @@ const OverViewTab = async () => {
 
   return (
     <Grid container spacing={6}>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <ProjectListTable />
       </Grid>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <UserActivityTimeLine />
       </Grid>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <InvoiceListTable invoiceData={invoiceData} />
       </Grid>
     </Grid>

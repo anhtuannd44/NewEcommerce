@@ -26,15 +26,15 @@ const FinanceSummary = () => {
       ></CardHeader>
       <CardContent>
         <Grid container spacing={9}>
-          <Grid item xs={12}>
+          <Grid xs={12}>
             <Grid container spacing={2}>
-              <Grid item sm={6}>
+              <Grid sm={6}>
                 <div className='flex flex-col gap-1'>
                   <Typography>Annual Companies Taxes</Typography>
                   <Typography variant='h5'>$1450.35</Typography>
                 </div>
               </Grid>
-              <Grid item sm={6}>
+              <Grid sm={6}>
                 <div className='flex flex-col gap-1'>
                   <Typography>Next Tax Review Date</Typography>
                   <Typography variant='h5'>July 14, 2021</Typography>
@@ -42,15 +42,15 @@ const FinanceSummary = () => {
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={12}>
+          <Grid xs={12}>
             <Grid container spacing={2}>
-              <Grid item sm={6}>
+              <Grid sm={6}>
                 <div className='flex flex-col gap-1'>
                   <Typography>Average Product Price</Typography>
                   <Typography variant='h5'>$85.50</Typography>
                 </div>
               </Grid>
-              <Grid item sm={6}>
+              <Grid sm={6}>
                 <div className='flex flex-col gap-1'>
                   <Typography>Satisfaction Rate</Typography>
                   <div className='flex items-center gap-5'>
@@ -61,16 +61,16 @@ const FinanceSummary = () => {
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={12}>
+          <Grid xs={12}>
             <Grid container spacing={2} justifyContent='space-between' alignItems='center'>
-              <Grid item xs={6}>
+              <Grid xs={6}>
                 <AvatarGroup total={6}>
                   <Avatar alt='Travis Howard' src='/images/avatars/7.png' />
                   <Avatar alt='Agnes Walker' src='/images/avatars/8.png' />
                   <Avatar alt='John Doe' src='/images/avatars/6.png' />
                 </AvatarGroup>
               </Grid>
-              <Grid item xs={6} className='text-end'>
+              <Grid xs={6} className='text-end'>
                 <Chip label='5 Days Ago' variant='tonal' size='small' color='primary' />
               </Grid>
             </Grid>

@@ -141,19 +141,19 @@ const StepBillingDetails = ({ handlePrev, activeStep }: StepBillingDetailsProps)
         <Typography>Enter your card information</Typography>
       </div>
       <Grid container spacing={5}>
-        <Grid item xs={12}>
+        <Grid xs={12}>
           <TextField fullWidth label='Card Number' placeholder='1234 1234 1234 1234' />
         </Grid>
-        <Grid item xs={12} sm={4}>
+        <Grid xs={12} sm={4}>
           <TextField fullWidth label='Name on Card' placeholder='John Doe' />
         </Grid>
-        <Grid item xs={12} sm={4}>
+        <Grid xs={12} sm={4}>
           <TextField fullWidth label='Expiry Date' placeholder='MM/YY' />
         </Grid>
-        <Grid item xs={12} sm={4}>
+        <Grid xs={12} sm={4}>
           <TextField fullWidth label='CVV' placeholder='123' />
         </Grid>
-        <Grid item xs={12} className='flex justify-between'>
+        <Grid xs={12} className='flex justify-between'>
           <Button
             disabled={activeStep === 0}
             variant='outlined'

@@ -16,7 +16,7 @@ const FormLayoutsWithIcon = () => {
       <CardContent>
         <form onSubmit={e => e.preventDefault()}>
           <Grid container spacing={5}>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <TextField
                 fullWidth
                 label='Name'
@@ -30,7 +30,7 @@ const FormLayoutsWithIcon = () => {
                 }}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <TextField
                 fullWidth
                 type='email'
@@ -45,7 +45,7 @@ const FormLayoutsWithIcon = () => {
                 }}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <TextField
                 fullWidth
                 label='Phone No.'
@@ -59,7 +59,7 @@ const FormLayoutsWithIcon = () => {
                 }}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <TextField
                 fullWidth
                 rows={4}
@@ -76,7 +76,7 @@ const FormLayoutsWithIcon = () => {
                 }}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <Button variant='contained' type='submit'>
                 Submit
               </Button>

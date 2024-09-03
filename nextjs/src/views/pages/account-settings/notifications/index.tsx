@@ -97,13 +97,13 @@ const Notifications = () => {
         <CardContent>
           <Typography className='mbe-6 font-medium'>When should we send you notifications?</Typography>
           <Grid container spacing={6}>
-            <Grid item xs={12} sm={6} md={4}>
+            <Grid xs={12} sm={6} md={4}>
               <Select fullWidth defaultValue='online'>
                 <MenuItem value='online'>Only when I&#39;m online</MenuItem>
                 <MenuItem value='anytime'>Anytime</MenuItem>
               </Select>
             </Grid>
-            <Grid item xs={12} className='flex gap-4 flex-wrap'>
+            <Grid xs={12} className='flex gap-4 flex-wrap'>
               <Button variant='contained' type='submit'>
                 Save Changes
               </Button>

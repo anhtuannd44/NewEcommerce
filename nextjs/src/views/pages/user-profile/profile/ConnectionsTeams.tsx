@@ -30,7 +30,7 @@ const ConnectionsTeams = (props: Props) => {
 
   return (
     <>
-      <Grid item xs={12} md={6}>
+      <Grid xs={12} md={6}>
         <Card>
           <CardHeader
             title='Connections'
@@ -71,7 +71,7 @@ const ConnectionsTeams = (props: Props) => {
           </CardContent>
         </Card>
       </Grid>
-      <Grid item xs={12} md={6}>
+      <Grid xs={12} md={6}>
         <Card>
           <CardHeader
             title='Teams'

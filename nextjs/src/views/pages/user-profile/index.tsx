@@ -27,11 +27,11 @@ const UserProfile = ({ tabContentList, data }: { tabContentList: { [key: string]
 
   return (
     <Grid container spacing={6}>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <UserProfileHeader data={data?.profileHeader} />
       </Grid>
       {activeTab === undefined ? null : (
-        <Grid item xs={12} className='flex flex-col gap-6'>
+        <Grid xs={12} className='flex flex-col gap-6'>
           <TabContext value={activeTab}>
             <CustomTabList onChange={handleChange} variant='scrollable' pill='true'>
               <Tab

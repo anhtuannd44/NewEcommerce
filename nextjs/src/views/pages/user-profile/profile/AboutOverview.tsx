@@ -48,7 +48,7 @@ const renderTeams = (teams: ProfileTeamsType[]) => {
 const AboutOverview = ({ data }: { data?: ProfileTabType }) => {
   return (
     <Grid container spacing={6}>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <Card>
           <CardContent className='flex flex-col gap-6'>
             <div className='flex flex-col gap-4'>
@@ -72,7 +72,7 @@ const AboutOverview = ({ data }: { data?: ProfileTabType }) => {
           </CardContent>
         </Card>
       </Grid>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <Card>
           <CardContent>
             <div className='flex flex-col gap-4'>

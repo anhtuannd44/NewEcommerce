@@ -45,12 +45,12 @@ const RoleCards = () => {
     className: 'cursor-pointer bs-full',
     children: (
       <Grid container className='bs-full'>
-        <Grid item xs={5}>
+        <Grid xs={5}>
           <div className='flex items-end justify-center bs-full'>
             <img alt='add-role' src='/images/illustrations/characters/1.png' height={130} />
           </div>
         </Grid>
-        <Grid item xs={7}>
+        <Grid xs={7}>
           <CardContent>
             <div className='flex flex-col items-end gap-4 text-right'>
               <Button variant='contained' size='small'>
@@ -71,7 +71,7 @@ const RoleCards = () => {
     <>
       <Grid container spacing={6}>
         {cardData.map((item, index) => (
-          <Grid item xs={12} sm={6} lg={4} key={index}>
+          <Grid xs={12} sm={6} lg={4} key={index}>
             <Card>
               <CardContent className='flex flex-col gap-4'>
                 <div className='flex items-center justify-between'>
@@ -100,7 +100,7 @@ const RoleCards = () => {
             </Card>
           </Grid>
         ))}
-        <Grid item xs={12} sm={6} lg={4}>
+        <Grid xs={12} sm={6} lg={4}>
           <OpenDialogOnElementClick element={Card} elementProps={CardProps} dialog={RoleDialog} />
         </Grid>
       </Grid>

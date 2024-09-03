@@ -30,7 +30,7 @@ const ChangePassword = () => {
         </Alert>
         <form>
           <Grid container spacing={4}>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <TextField
                 fullWidth
                 label='Password'
@@ -50,7 +50,7 @@ const ChangePassword = () => {
                 }}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <TextField
                 fullWidth
                 label='Confirm Password'
@@ -71,7 +71,7 @@ const ChangePassword = () => {
               />
             </Grid>
 
-            <Grid item xs={12} className='flex gap-4'>
+            <Grid xs={12} className='flex gap-4'>
               <Button variant='contained'>Change Password</Button>
             </Grid>
           </Grid>

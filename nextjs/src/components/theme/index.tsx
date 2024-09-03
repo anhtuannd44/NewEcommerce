@@ -4,10 +4,8 @@
 import { useMemo } from 'react'
 
 // MUI Imports
-import {
-  Experimental_CssVarsProvider as CssVarsProvider,
-  experimental_extendTheme as extendTheme
-} from '@mui/material/styles'
+import { extendTheme, CssVarsProvider } from '@mui/material/styles'
+
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter'
 import CssBaseline from '@mui/material/CssBaseline'
 import type {} from '@mui/material/themeCssVarsAugmentation' //! Do not remove this import otherwise you will get type errors while making a production build
@@ -37,7 +35,7 @@ type Props = ChildrenType & {
   systemMode: SystemMode
 }
 
-const ThemeProvider = (props: Props) => {
+const ThemeProviderWrapper = (props: Props) => {
   // Props
   const { children, direction, systemMode } = props
 
@@ -80,7 +78,6 @@ const ThemeProvider = (props: Props) => {
     >
       <CssVarsProvider
         theme={theme}
-        defaultMode={systemMode}
         modeStorageKey={`${themeConfig.templateName.toLowerCase().split(' ').join('-')}-mui-template-mode`}
       >
         <>
@@ -93,4 +90,4 @@ const ThemeProvider = (props: Props) => {
   )
 }
 
-export default ThemeProvider
+export default ThemeProviderWrapper

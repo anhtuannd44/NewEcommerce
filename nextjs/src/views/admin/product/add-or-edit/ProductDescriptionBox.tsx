@@ -1,7 +1,7 @@
 'use client'
 
 // MUI Imports
-import { Paper, Typography } from '@mui/material'
+import { Card, CardContent, CardHeader } from '@mui/material'
 
 // Third-party Imports
 import { Controller, useFormContext } from 'react-hook-form'
@@ -13,8 +13,6 @@ import type { IProduct } from '@interface/admin/product/IProduct'
 import { useDictionary } from '@/contexts/dictionaryContext'
 
 // Component Imports
-import PaperContent from '@components/paper/PaperContent'
-import PaperHeader from '@components/paper/PaperHeader'
 import DxHtmlEditor from '@views/shared/editor/DxHtmlEditor'
 
 const ProductDescriptionBox = () => {
@@ -23,18 +21,16 @@ const ProductDescriptionBox = () => {
   const { dictionary } = useDictionary()
 
   return (
-    <Paper>
-      <PaperHeader
-        leftHeader={<Typography variant='h6'>{dictionary.adminArea.product.shortDescriptionPanelTitle}</Typography>}
-      />
-      <PaperContent>
+    <Card>
+      <CardHeader title={dictionary.adminArea.product.shortDescriptionPanelTitle} />
+      <CardContent>
         <Controller
           name='shortDescription'
           control={control}
           render={({ field: { onChange } }) => <DxHtmlEditor height='350px' handleValueChange={onChange} />}
         />
-      </PaperContent>
-    </Paper>
+      </CardContent>
+    </Card>
   )
 }
 

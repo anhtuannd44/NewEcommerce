@@ -1,9 +1,16 @@
+// NextJs Imports
+import { redirect } from 'next/navigation'
+
+// Enum Imports
 import { APIServer } from '@/enums/api-enums'
+
+// Type Imports
 import type { IApiServices } from '@/interface/api-base/IAptServices'
 import type { FetchDataResult } from '@/interface/api-base/IFetchDataResult'
 
 import { parseAuthResponse, refreshAccessToken } from '@/services/auth'
 import { getTokenInfoFromLocalCookie, isTokenExpired, setStoredAuthState } from '@/utils/auth'
+import { withoutSuffix } from '@/utils/string'
 
 const serverMapping = {
   [APIServer.IdentityServer]: process.env.NEXT_PUBLIC_API_IDENTITY_URL,
@@ -74,6 +81,8 @@ const checkAuthentication = async (): Promise<string | null> => {
   return accessToken
 }
 
+const isClient = (): boolean => typeof window !== 'undefined'
+
 const fetchData = async <T>(
   configs: RequestInit,
   url: string,
@@ -86,6 +95,11 @@ const fetchData = async <T>(
       'Content-Type': 'application/json'
     }
 
+    const pathname = isClient() ? window.location.pathname : ''
+    const searchParamsStr = new URLSearchParams({ redirectTo: withoutSuffix(pathname, '/') }).toString()
+
+    const redirectUrl = `/login?${searchParamsStr}`
+
     const baseUrl = serverMapping[server]
 
     const fullUrl = url.startsWith('/') ? `${baseUrl}${url}` : `${baseUrl}/${url}`
@@ -94,7 +108,11 @@ const fetchData = async <T>(
       const accessToken = await checkAuthentication()
 
       if (!accessToken) {
-        return { error: { status: 401, statusText: 'Unauthorized', message: 'No token info', title: 'Unauthorized' } }
+        if (isClient()) {
+          location.href = redirectUrl
+        } else {
+          redirect(redirectUrl)
+        }
       }
 
       headers = {
@@ -111,6 +129,14 @@ const fetchData = async <T>(
     const response = await fetch(fullUrl, fetchConfigs)
 
     if (!response.ok) {
+      if (response.status === 401) {
+        if (isClient()) {
+          location.href = redirectUrl
+        } else {
+          redirect(redirectUrl)
+        }
+      }
+
       return {
         error: {
           status: response.status,

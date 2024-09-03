@@ -47,7 +47,7 @@ const StepPayment = ({ handleNext }: { handleNext: () => void }) => {
 
   return (
     <Grid container spacing={6}>
-      <Grid item xs={12} lg={8} className='flex flex-col gap-5'>
+      <Grid xs={12} lg={8} className='flex flex-col gap-5'>
         <Collapse in={openCollapse}>
           <Fade in={openFade} timeout={{ exit: 300 }}>
             <Alert
@@ -88,26 +88,26 @@ const StepPayment = ({ handleNext }: { handleNext: () => void }) => {
             <Tab value='gift-card' label='Gift Card' />
           </CustomTabList>
           <Grid container>
-            <Grid item md={8} xs={12}>
+            <Grid md={8} xs={12}>
               <TabPanel value='credit-card' className='p-0'>
                 <form>
                   <Grid container spacing={5}>
-                    <Grid item xs={12}>
+                    <Grid xs={12}>
                       <TextField fullWidth type='number' label='Card Number' placeholder='0000 0000 0000 0000' />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
+                    <Grid xs={12} sm={6}>
                       <TextField fullWidth label='Name' placeholder='John Doe' />
                     </Grid>
-                    <Grid item xs={6} sm={3}>
+                    <Grid xs={6} sm={3}>
                       <TextField fullWidth label='Expiry Date' placeholder='MM/YY' />
                     </Grid>
-                    <Grid item xs={6} sm={3}>
+                    <Grid xs={6} sm={3}>
                       <TextField fullWidth label='CVV' placeholder='123' />
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid xs={12}>
                       <FormControlLabel control={<Switch defaultChecked />} label='Save Card for future billing?' />
                     </Grid>
-                    <Grid item xs={12} className='flex gap-4'>
+                    <Grid xs={12} className='flex gap-4'>
                       <Button variant='contained' onClick={handleNext}>
                         Checkout
                       </Button>
@@ -132,13 +132,13 @@ const StepPayment = ({ handleNext }: { handleNext: () => void }) => {
                   Enter Gift Card Details
                 </Typography>
                 <Grid container spacing={5}>
-                  <Grid item xs={12}>
+                  <Grid xs={12}>
                     <TextField fullWidth type='number' label='Gift Card Number' placeholder='Gift Card Number' />
                   </Grid>
-                  <Grid item xs={12}>
+                  <Grid xs={12}>
                     <TextField fullWidth type='number' label='Gift Card Pin' placeholder='Gift Card Pin' />
                   </Grid>
-                  <Grid item xs={12}>
+                  <Grid xs={12}>
                     <Button variant='contained' onClick={handleNext}>
                       Redeem Gift Card
                     </Button>
@@ -149,7 +149,7 @@ const StepPayment = ({ handleNext }: { handleNext: () => void }) => {
           </Grid>
         </TabContext>
       </Grid>
-      <Grid item xs={12} lg={4}>
+      <Grid xs={12} lg={4}>
         <div className='border rounded'>
           <CardContent>
             <Typography className='font-medium mbe-4' color='text.primary'>

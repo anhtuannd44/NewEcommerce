@@ -47,16 +47,16 @@ const StepPropertyFeatures = ({ activeStep, handleNext, handlePrev, steps }: Pro
 
   return (
     <Grid container spacing={5}>
-      <Grid item xs={12} md={6}>
+      <Grid xs={12} md={6}>
         <TextField fullWidth label='Bedrooms' placeholder='3' />
       </Grid>
-      <Grid item xs={12} md={6}>
+      <Grid xs={12} md={6}>
         <TextField fullWidth label='Floor No' placeholder='12' />
       </Grid>
-      <Grid item xs={12} md={6}>
+      <Grid xs={12} md={6}>
         <TextField fullWidth label='Bathroom' placeholder='4' />
       </Grid>
-      <Grid item xs={12} md={6}>
+      <Grid xs={12} md={6}>
         <FormControl fullWidth>
           <InputLabel id='select-furnished-status'>Furnished Status</InputLabel>
           <Select id='demo-simple-select' label='Furnished Status' labelId='select-furnished-status' defaultValue=''>
@@ -67,7 +67,7 @@ const StepPropertyFeatures = ({ activeStep, handleNext, handlePrev, steps }: Pro
           </Select>
         </FormControl>
       </Grid>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <Autocomplete
           fullWidth
           multiple
@@ -87,7 +87,7 @@ const StepPropertyFeatures = ({ activeStep, handleNext, handlePrev, steps }: Pro
           }
         />
       </Grid>
-      <Grid item xs={12} md={6}>
+      <Grid xs={12} md={6}>
         <FormControl className='gap-2'>
           <FormLabel>Is There Any Common Area</FormLabel>
           <RadioGroup defaultValue='yes'>
@@ -96,7 +96,7 @@ const StepPropertyFeatures = ({ activeStep, handleNext, handlePrev, steps }: Pro
           </RadioGroup>
         </FormControl>
       </Grid>
-      <Grid item xs={12} md={6}>
+      <Grid xs={12} md={6}>
         <FormControl className='gap-2'>
           <FormLabel>Is There Any Attached Balcony</FormLabel>
           <RadioGroup defaultValue='yes'>
@@ -105,7 +105,7 @@ const StepPropertyFeatures = ({ activeStep, handleNext, handlePrev, steps }: Pro
           </RadioGroup>
         </FormControl>
       </Grid>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <div className='flex items-center justify-between'>
           <Button
             variant='outlined'

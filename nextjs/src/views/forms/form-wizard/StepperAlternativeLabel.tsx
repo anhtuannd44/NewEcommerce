@@ -123,7 +123,7 @@ const StepperAlternativeLabel = () => {
       case 0:
         return (
           <>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <TextField
                 fullWidth
                 label='Username'
@@ -132,7 +132,7 @@ const StepperAlternativeLabel = () => {
                 onChange={e => setFormData({ ...formData, username: e.target.value })}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <TextField
                 fullWidth
                 type='email'
@@ -142,7 +142,7 @@ const StepperAlternativeLabel = () => {
                 onChange={e => setFormData({ ...formData, email: e.target.value })}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <TextField
                 fullWidth
                 label='Password'
@@ -167,7 +167,7 @@ const StepperAlternativeLabel = () => {
                 }}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <TextField
                 fullWidth
                 label='Confirm Password'
@@ -197,7 +197,7 @@ const StepperAlternativeLabel = () => {
       case 1:
         return (
           <>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <TextField
                 fullWidth
                 label='First Name'
@@ -206,7 +206,7 @@ const StepperAlternativeLabel = () => {
                 onChange={e => setFormData({ ...formData, firstName: e.target.value })}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <TextField
                 fullWidth
                 label='Last Name'
@@ -215,7 +215,7 @@ const StepperAlternativeLabel = () => {
                 onChange={e => setFormData({ ...formData, lastName: e.target.value })}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <FormControl fullWidth>
                 <InputLabel>Country</InputLabel>
                 <Select
@@ -230,7 +230,7 @@ const StepperAlternativeLabel = () => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <FormControl fullWidth>
                 <InputLabel>Language</InputLabel>
                 <Select
@@ -254,7 +254,7 @@ const StepperAlternativeLabel = () => {
       case 2:
         return (
           <>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <TextField
                 fullWidth
                 label='Facebook'
@@ -263,7 +263,7 @@ const StepperAlternativeLabel = () => {
                 onChange={e => setFormData({ ...formData, facebook: e.target.value })}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <TextField
                 fullWidth
                 label='Twitter'
@@ -272,7 +272,7 @@ const StepperAlternativeLabel = () => {
                 onChange={e => setFormData({ ...formData, twitter: e.target.value })}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <TextField
                 fullWidth
                 label='Instagram'
@@ -281,7 +281,7 @@ const StepperAlternativeLabel = () => {
                 onChange={e => setFormData({ ...formData, instagram: e.target.value })}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <TextField
                 fullWidth
                 label='Github'
@@ -338,14 +338,14 @@ const StepperAlternativeLabel = () => {
             <>
               <form onSubmit={e => e.preventDefault()}>
                 <Grid container spacing={5}>
-                  <Grid item xs={12}>
+                  <Grid xs={12}>
                     <Typography className='font-medium' color='text.primary'>
                       {steps[activeStep].title}
                     </Typography>
                     <Typography variant='body2'>{steps[activeStep].subtitle}</Typography>
                   </Grid>
                   {renderStepContent(activeStep)}
-                  <Grid item xs={12} className='flex justify-between'>
+                  <Grid xs={12} className='flex justify-between'>
                     <Button variant='outlined' disabled={activeStep === 0} onClick={handleBack} color='secondary'>
                       Back
                     </Button>

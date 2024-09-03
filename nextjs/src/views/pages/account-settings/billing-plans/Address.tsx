@@ -26,19 +26,19 @@ const Address = () => {
       <CardContent>
         <form>
           <Grid container spacing={5}>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <TextField fullWidth label='Company Name' variant='outlined' placeholder='ThemeSelection' />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <TextField fullWidth label='Billing Email' variant='outlined' placeholder='john.doe@example.com' />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <TextField fullWidth label='TAX ID' variant='outlined' placeholder='Enter TAX ID' />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <TextField fullWidth label='VAT Number' variant='outlined' placeholder='Enter VAT Number' />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <TextField
                 fullWidth
                 type='number'
@@ -49,7 +49,7 @@ const Address = () => {
                 }}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <FormControl fullWidth>
                 <InputLabel>Country</InputLabel>
                 <Select label='Country' value={state} onChange={e => setState(e.target.value)}>
@@ -62,16 +62,16 @@ const Address = () => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <TextField fullWidth label='Billing Address' variant='outlined' placeholder='Billing Address' />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <TextField fullWidth label='State' variant='outlined' placeholder='California' />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <TextField fullWidth type='number' label='Zip Code' variant='outlined' placeholder='231465' />
             </Grid>
-            <Grid item xs={12} className='flex gap-4 flex-wrap'>
+            <Grid xs={12} className='flex gap-4 flex-wrap'>
               <Button variant='contained'>Save Changes</Button>
               <Button variant='outlined' type='reset' color='secondary' onClick={() => setState('')}>
                 Reset

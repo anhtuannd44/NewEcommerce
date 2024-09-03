@@ -73,13 +73,13 @@ const StepDealDetails = ({ activeStep, handleNext, handlePrev, steps }: Props) =
 
   return (
     <Grid container spacing={5} className='pbs-5'>
-      <Grid item xs={12} sm={6}>
+      <Grid xs={12} sm={6}>
         <TextField fullWidth label='Deal Title' placeholder='Black Friday sale, 25% off' />
       </Grid>
-      <Grid item xs={12} sm={6}>
+      <Grid xs={12} sm={6}>
         <TextField fullWidth label='Deal Code' placeholder='25PEROFF' />
       </Grid>
-      <Grid item xs={12} sm={6}>
+      <Grid xs={12} sm={6}>
         <TextField
           fullWidth
           multiline
@@ -88,9 +88,9 @@ const StepDealDetails = ({ activeStep, handleNext, handlePrev, steps }: Props) =
           placeholder='To sell or distribute something as a business deal'
         />
       </Grid>
-      <Grid item xs={12} sm={6}>
+      <Grid xs={12} sm={6}>
         <Grid container spacing={5}>
-          <Grid item xs={12}>
+          <Grid xs={12}>
             <FormControl fullWidth>
               <InputLabel id='select-offered-items'>Offered Items</InputLabel>
               <Select
@@ -115,7 +115,7 @@ const StepDealDetails = ({ activeStep, handleNext, handlePrev, steps }: Props) =
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={12}>
+          <Grid xs={12}>
             <FormControl fullWidth>
               <InputLabel id='select-cart-condition'>Cart Condition</InputLabel>
               <Select labelId='select-cart-condition' label='Cart Condition' defaultValue=''>
@@ -126,7 +126,7 @@ const StepDealDetails = ({ activeStep, handleNext, handlePrev, steps }: Props) =
           </Grid>
         </Grid>
       </Grid>
-      <Grid item xs={12} sm={6}>
+      <Grid xs={12} sm={6}>
         <AppReactDatepicker
           selectsRange
           endDate={endDate}
@@ -140,7 +140,7 @@ const StepDealDetails = ({ activeStep, handleNext, handlePrev, steps }: Props) =
           }
         />
       </Grid>
-      <Grid item xs={12} sm={6}>
+      <Grid xs={12} sm={6}>
         <FormControl>
           <FormLabel className='text-[.8125rem] leading-5'>Notify Users</FormLabel>
           <FormGroup aria-label='position' row>
@@ -150,7 +150,7 @@ const StepDealDetails = ({ activeStep, handleNext, handlePrev, steps }: Props) =
           </FormGroup>
         </FormControl>
       </Grid>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <div className='flex items-center justify-between'>
           <Button
             variant='outlined'

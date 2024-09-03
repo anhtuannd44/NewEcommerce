@@ -20,7 +20,7 @@ const Connections = ({ data }: { data?: ConnectionsTabType[] }) => {
       {data &&
         data.map((item, index) => {
           return (
-            <Grid item key={index} xs={12} sm={6} md={4}>
+            <Grid key={index} xs={12} sm={6} md={4}>
               <Card className='relative'>
                 <OptionMenu
                   options={[

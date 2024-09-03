@@ -116,7 +116,7 @@ const FormLayoutsWithTabs = () => {
           <CardContent>
             <TabPanel value='personal_info'>
               <Grid container spacing={5}>
-                <Grid item xs={12} sm={6}>
+                <Grid xs={12} sm={6}>
                   <TextField
                     fullWidth
                     label='First Name'
@@ -125,7 +125,7 @@ const FormLayoutsWithTabs = () => {
                     onChange={e => setFormData({ ...formData, firstName: e.target.value })}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid xs={12} sm={6}>
                   <TextField
                     fullWidth
                     label='Last Name'
@@ -134,7 +134,7 @@ const FormLayoutsWithTabs = () => {
                     onChange={e => setFormData({ ...formData, lastName: e.target.value })}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid xs={12} sm={6}>
                   <FormControl fullWidth>
                     <InputLabel>Country</InputLabel>
                     <Select
@@ -149,7 +149,7 @@ const FormLayoutsWithTabs = () => {
                     </Select>
                   </FormControl>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid xs={12} sm={6}>
                   <FormControl fullWidth>
                     <InputLabel>Language</InputLabel>
                     <Select
@@ -168,7 +168,7 @@ const FormLayoutsWithTabs = () => {
                     </Select>
                   </FormControl>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid xs={12} sm={6}>
                   <AppReactDatepicker
                     selected={formData.date}
                     showYearDropdown
@@ -178,7 +178,7 @@ const FormLayoutsWithTabs = () => {
                     customInput={<TextField fullWidth label='Birth Date' placeholder='MM-DD-YYYY' />}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid xs={12} sm={6}>
                   <TextField
                     fullWidth
                     label='Phone Number'
@@ -192,7 +192,7 @@ const FormLayoutsWithTabs = () => {
             </TabPanel>
             <TabPanel value='account_details'>
               <Grid container spacing={5}>
-                <Grid item xs={12} sm={6}>
+                <Grid xs={12} sm={6}>
                   <TextField
                     fullWidth
                     label='Username'
@@ -201,7 +201,7 @@ const FormLayoutsWithTabs = () => {
                     onChange={e => setFormData({ ...formData, username: e.target.value })}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid xs={12} sm={6}>
                   <TextField
                     fullWidth
                     type='email'
@@ -211,7 +211,7 @@ const FormLayoutsWithTabs = () => {
                     onChange={e => setFormData({ ...formData, email: e.target.value })}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid xs={12} sm={6}>
                   <TextField
                     fullWidth
                     label='Password'
@@ -236,7 +236,7 @@ const FormLayoutsWithTabs = () => {
                     }}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid xs={12} sm={6}>
                   <TextField
                     fullWidth
                     label='Confirm Password'
@@ -265,7 +265,7 @@ const FormLayoutsWithTabs = () => {
             </TabPanel>
             <TabPanel value='social_links' className='pbs-0'>
               <Grid container spacing={5}>
-                <Grid item xs={12} sm={6}>
+                <Grid xs={12} sm={6}>
                   <TextField
                     fullWidth
                     label='Twitter'
@@ -274,7 +274,7 @@ const FormLayoutsWithTabs = () => {
                     onChange={e => setFormData({ ...formData, twitter: e.target.value })}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid xs={12} sm={6}>
                   <TextField
                     fullWidth
                     label='Facebook'
@@ -283,7 +283,7 @@ const FormLayoutsWithTabs = () => {
                     onChange={e => setFormData({ ...formData, facebook: e.target.value })}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid xs={12} sm={6}>
                   <TextField
                     fullWidth
                     label='Google+'
@@ -292,7 +292,7 @@ const FormLayoutsWithTabs = () => {
                     onChange={e => setFormData({ ...formData, google: e.target.value })}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid xs={12} sm={6}>
                   <TextField
                     fullWidth
                     label='LinkedIn'
@@ -301,7 +301,7 @@ const FormLayoutsWithTabs = () => {
                     onChange={e => setFormData({ ...formData, linkedin: e.target.value })}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid xs={12} sm={6}>
                   <TextField
                     fullWidth
                     label='Instagram'
@@ -310,7 +310,7 @@ const FormLayoutsWithTabs = () => {
                     onChange={e => setFormData({ ...formData, instagram: e.target.value })}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid xs={12} sm={6}>
                   <TextField
                     fullWidth
                     label='Quora'

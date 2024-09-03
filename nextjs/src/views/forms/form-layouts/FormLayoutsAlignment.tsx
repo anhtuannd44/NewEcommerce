@@ -28,13 +28,13 @@ const FormLayoutsAlignment = () => {
       <CardContent className='flex flex-col items-center justify-center bs-[500px]'>
         <form onSubmit={e => e.preventDefault()} className='p-12 max-is-[400px] border rounded'>
           <Grid container spacing={5}>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <Typography variant='h5'>Sign In</Typography>
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <TextField fullWidth label='Username' placeholder='johnDoe ' />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <TextField
                 fullWidth
                 label='Password'
@@ -57,10 +57,10 @@ const FormLayoutsAlignment = () => {
                 }}
               />
             </Grid>
-            <Grid item xs={12} className='pbs-2'>
+            <Grid xs={12} className='pbs-2'>
               <FormControlLabel control={<Checkbox />} label='Remember me' />
             </Grid>
-            <Grid item xs={12} className='pbs-2'>
+            <Grid xs={12} className='pbs-2'>
               <Button variant='contained' type='submit' fullWidth>
                 Log In
               </Button>

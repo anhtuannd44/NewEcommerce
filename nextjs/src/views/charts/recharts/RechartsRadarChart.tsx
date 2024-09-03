@@ -15,7 +15,7 @@ import CardContent from '@mui/material/CardContent'
 import {
   Radar,
   Tooltip,
-  PolarGrid,
+  PolarGrid2 as Grid,
   RadarChart,
   PolarAngleAxis,
   PolarRadiusAxis,

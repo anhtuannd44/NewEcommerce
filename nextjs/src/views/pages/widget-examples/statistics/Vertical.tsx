@@ -12,7 +12,7 @@ const Vertical = ({ data }: { data: CardStatsVerticalProps[] }) => {
     return (
       <Grid container spacing={6}>
         {data.map((item, index) => (
-          <Grid item xs={12} sm={4} lg={2} key={index}>
+          <Grid xs={12} sm={4} lg={2} key={index}>
             <CardStatVertical {...item} />
           </Grid>
         ))}

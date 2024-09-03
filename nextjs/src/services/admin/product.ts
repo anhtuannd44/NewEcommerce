@@ -3,15 +3,14 @@ import { httpWithAuth } from '@/apis/api-services'
 import type { IBrand } from '@/interface/admin/product/IBrand'
 import type { IProduct } from '@/interface/admin/product/IProduct'
 import type { IProductCategory } from '@/interface/admin/product/IProductCategory'
+import type { IProductInList } from '@/interface/admin/product/IProductInList'
 import type { FetchDataResult } from '@/interface/api-base/IFetchDataResult'
 import type { IManyResult } from '@/interface/api-base/IManyResult'
 import type { ISingleResult } from '@/interface/api-base/ISingleResult'
 
-// export const getProductList = () : Promise<FetchDataResult<IProduct>> => {
-//   const response = await httpWithAuth.get<IManyResult<IProductInList>>('/product')
-
-//   return await httpWithAuth.get<IProduct>(`/product/${id}`)
-// })
+export const getProducts = async (): Promise<FetchDataResult<IManyResult<IProductInList>>> => {
+  return await httpWithAuth.get<IManyResult<IProductInList>>('/admin/product')
+}
 
 export const getProduct = async (id: string): Promise<FetchDataResult<ISingleResult<IProduct>>> => {
   return await httpWithAuth.get<ISingleResult<IProduct>>(`/admin/product/${id}`)

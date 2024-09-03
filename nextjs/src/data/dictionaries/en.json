@@ -100,6 +100,7 @@
     "common": {
       "button": {
         "submit": "Hoàn tất",
+        "change": "Thay đổi",
         "cancel": "Hủy"
       }
     },
@@ -134,7 +135,8 @@
           "helperText": "Đơn vị tính của sản phẩm (Cái, chai, ly, ...)"
         },
         "manageStockQuantity": {
-          "label": "Quản lý số lượng tồn kho?"
+          "questionTitle": "Quản lý số lượng tồn kho?",
+          "label": "Số lượng tồn kho"
         },
         "productGroup": {
           "table": {
@@ -144,7 +146,54 @@
           "valueAttributePlaceholder": "Nhập giá trị và nhấn Enter để thêm",
           "addNewAttributeButton": "Thêm thuộc tính khác",
           "priceTitle": "Giá sản phẩm",
-          "wholesalePrice": "Giá bán sỉ"
+          "wholesalePrice": "Giá bán sỉ",
+          "productCost": "Giá nhập"
+        }
+      }
+    },
+    "order": {
+      "customerSelectionPanelTitle": "Thông tin khách hàng",
+      "additionalPanelTitle": "Thông tin bổ sung",
+      "productInformationPanelTitle": "Thông tin sản phẩm",
+      "field": {
+        "customerId": {
+          "label": "Tìm theo tên, SĐT hoặc Mã khách hàng ...",
+          "helperText": "Vui lòng chọn thông tin khác hàng",
+          "emptyCustomerList": "Danh sách khách hàng trống",
+          "changeCustomer": "Chọn lại khách hàng",
+          "details": {
+            "addressDelivery": "Địa chỉ giao hàng"
+          }
+        },
+        "orderCode": {
+          "label": "Mã đơn",
+          "placeholder": "Tự sinh nếu để trống"
+        },
+        "orderOriginId": {
+          "label": "Nguồn",
+          "addOrderOriginButton": "Thêm/Sửa nguồn"
+        },
+        "picStaffId": {
+          "label": "Người phụ trách"
+        },
+        "constructionStaffIds": {
+          "label": "Người thi công"
+        },
+        "orderAttributeId": {
+          "label": "Loại đơn hàng",
+          "manageOrderAttribute": "Quản lý đơn hàng"
+        },
+        "productSelectList": {
+          "label": "Tìm theo tên, Mã SKU",
+          "noPrice": "Không có giá",
+          "stockQuantity": "Tồn kho"
+        },
+        "note": {
+          "label": "Ghi chú đơn hàng",
+          "helperText": "Ghi chú cho tổng đơn hàng. Bạn cũng có thể ghi chú cho từng đơn hàng ở mỗi sản phẩm phía trên"
+        },
+        "tags": {
+          "label": "Thẻ (tag)"
         }
       }
     }

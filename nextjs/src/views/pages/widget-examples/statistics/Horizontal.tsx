@@ -12,7 +12,7 @@ const Horizontal = ({ data }: { data: CardStatsHorizontalProps[] }) => {
     return (
       <Grid container spacing={6}>
         {data.map((item, index) => (
-          <Grid item xs={12} sm={6} md={3} key={index}>
+          <Grid xs={12} sm={6} md={3} key={index}>
             <CardStatHorizontal {...item} />
           </Grid>
         ))}

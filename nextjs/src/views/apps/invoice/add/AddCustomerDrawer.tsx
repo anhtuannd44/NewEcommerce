@@ -60,14 +60,14 @@ const AddCustomerDrawer = ({ open, setOpen, onFormSubmit }: Props) => {
   }
 
   return (
-    <Drawer
-      open={open}
-      anchor='right'
-      variant='temporary'
-      onClose={handleReset}
-      ModalProps={{ keepMounted: true }}
-      sx={{ '& .MuiDrawer-paper': { width: { xs: 300, sm: 400 } } }}
-    >
+    (<Drawer
+          open={open}
+          anchor='right'
+          variant='temporary'
+          onClose={handleReset}
+          ModalProps={{ keepMounted: true }}
+          sx={{ '& .MuiDrawer-paper': { width: { xs: 300, sm: 400 } } }}
+        >
       <div className='flex items-center justify-between pli-5 plb-[15px]'>
         <Typography variant='h6'>Add New Customer</Typography>
         <IconButton onClick={handleReset}>
@@ -142,8 +142,8 @@ const AddCustomerDrawer = ({ open, setOpen, onFormSubmit }: Props) => {
           </div>
         </form>
       </div>
-    </Drawer>
-  )
+    </Drawer>)
+  );
 }
 
 export default AddCustomerDrawer

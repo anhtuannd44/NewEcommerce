@@ -96,7 +96,7 @@ const socialAccountsArr: SocialAccountsType[] = [
 const ConnectionsTab = () => {
   return (
     <Grid container spacing={6}>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <Card>
           <CardHeader
             title='Connected Accounts'
@@ -120,7 +120,7 @@ const ConnectionsTab = () => {
           </CardContent>
         </Card>
       </Grid>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <Card>
           <CardHeader title='Social Accounts' subheader='Display content from social accounts on your site' />
           <CardContent className='flex flex-col gap-4'>

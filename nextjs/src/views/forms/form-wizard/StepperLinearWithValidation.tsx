@@ -166,13 +166,13 @@ const StepperLinearWithValidation = () => {
         return (
           <form key={0} onSubmit={handleAccountSubmit(onSubmit)}>
             <Grid container spacing={5}>
-              <Grid item xs={12}>
+              <Grid xs={12}>
                 <Typography className='font-medium' color='text.primary'>
                   {steps[0].title}
                 </Typography>
                 <Typography variant='body2'>{steps[0].subtitle}</Typography>
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid xs={12} sm={6}>
                 <Controller
                   name='username'
                   control={accountControl}
@@ -188,7 +188,7 @@ const StepperLinearWithValidation = () => {
                   )}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid xs={12} sm={6}>
                 <Controller
                   name='email'
                   control={accountControl}
@@ -205,7 +205,7 @@ const StepperLinearWithValidation = () => {
                   )}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid xs={12} sm={6}>
                 <Controller
                   name='password'
                   control={accountControl}
@@ -237,7 +237,7 @@ const StepperLinearWithValidation = () => {
                   )}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid xs={12} sm={6}>
                 <Controller
                   name='confirmPassword'
                   control={accountControl}
@@ -272,7 +272,7 @@ const StepperLinearWithValidation = () => {
                   )}
                 />
               </Grid>
-              <Grid item xs={12} className='flex justify-between'>
+              <Grid xs={12} className='flex justify-between'>
                 <Button variant='outlined' disabled color='secondary'>
                   Back
                 </Button>
@@ -287,13 +287,13 @@ const StepperLinearWithValidation = () => {
         return (
           <form key={1} onSubmit={handlePersonalSubmit(onSubmit)}>
             <Grid container spacing={5}>
-              <Grid item xs={12}>
+              <Grid xs={12}>
                 <Typography className='font-medium' color='text.primary'>
                   {steps[1].title}
                 </Typography>
                 <Typography variant='body2'>{steps[1].subtitle}</Typography>
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid xs={12} sm={6}>
                 <Controller
                   name='firstName'
                   control={personalControl}
@@ -312,7 +312,7 @@ const StepperLinearWithValidation = () => {
                   )}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid xs={12} sm={6}>
                 <Controller
                   name='lastName'
                   control={personalControl}
@@ -331,7 +331,7 @@ const StepperLinearWithValidation = () => {
                   )}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid xs={12} sm={6}>
                 <FormControl fullWidth>
                   <InputLabel error={Boolean(personalErrors.country)}>Country</InputLabel>
                   <Controller
@@ -350,7 +350,7 @@ const StepperLinearWithValidation = () => {
                   {personalErrors.country && <FormHelperText error>country is a required field</FormHelperText>}
                 </FormControl>
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid xs={12} sm={6}>
                 <FormControl fullWidth>
                   <InputLabel error={Boolean(personalErrors.language)}>Language</InputLabel>
                   <Controller
@@ -376,7 +376,7 @@ const StepperLinearWithValidation = () => {
                   {personalErrors.language && <FormHelperText error>language is a required field</FormHelperText>}
                 </FormControl>
               </Grid>
-              <Grid item xs={12} className='flex justify-between'>
+              <Grid xs={12} className='flex justify-between'>
                 <Button variant='outlined' onClick={handleBack} color='secondary'>
                   Back
                 </Button>
@@ -391,13 +391,13 @@ const StepperLinearWithValidation = () => {
         return (
           <form key={2} onSubmit={handleSocialSubmit(onSubmit)}>
             <Grid container spacing={5}>
-              <Grid item xs={12}>
+              <Grid xs={12}>
                 <Typography className='font-medium' color='text.primary'>
                   {steps[2].title}
                 </Typography>
                 <Typography variant='body2'>{steps[2].subtitle}</Typography>
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid xs={12} sm={6}>
                 <Controller
                   name='twitter'
                   control={socialControl}
@@ -414,7 +414,7 @@ const StepperLinearWithValidation = () => {
                   )}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid xs={12} sm={6}>
                 <Controller
                   name='facebook'
                   control={socialControl}
@@ -431,7 +431,7 @@ const StepperLinearWithValidation = () => {
                   )}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid xs={12} sm={6}>
                 <Controller
                   name='google'
                   control={socialControl}
@@ -447,7 +447,7 @@ const StepperLinearWithValidation = () => {
                   )}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid xs={12} sm={6}>
                 <Controller
                   name='linkedIn'
                   control={socialControl}
@@ -463,7 +463,7 @@ const StepperLinearWithValidation = () => {
                   )}
                 />
               </Grid>
-              <Grid item xs={12} className='flex justify-between'>
+              <Grid xs={12} className='flex justify-between'>
                 <Button variant='outlined' onClick={handleBack} color='secondary'>
                   Back
                 </Button>

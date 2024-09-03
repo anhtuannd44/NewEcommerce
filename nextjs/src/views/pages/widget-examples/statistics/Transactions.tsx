@@ -65,7 +65,7 @@ const Transactions = () => {
       <CardContent>
         <Grid container spacing={2}>
           {data.map((item, index) => (
-            <Grid item xs={6} md={3} key={index}>
+            <Grid xs={6} md={3} key={index}>
               <div className='flex items-center gap-3'>
                 <CustomAvatar variant='rounded' color={item.color} className='shadow-xs'>
                   <i className={item.icon}></i>

@@ -34,7 +34,7 @@ const CurrentPlan = ({ data }: { data: PricingPlanType[] }) => {
       <CardHeader title='Current Plan' />
       <CardContent>
         <Grid container spacing={6}>
-          <Grid item xs={12} md={6} className='flex flex-col gap-4'>
+          <Grid xs={12} md={6} className='flex flex-col gap-4'>
             <div>
               <Typography className='font-medium text-textPrimary'>Your Current Plan is Basic</Typography>
               <Typography>A simple start for everyone</Typography>
@@ -55,7 +55,7 @@ const CurrentPlan = ({ data }: { data: PricingPlanType[] }) => {
               <Typography>Standard plan for small to medium businesses</Typography>
             </div>
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid xs={12} md={6}>
             <Alert severity='warning' onClose={() => {}} className='mbe-4'>
               <AlertTitle>We need your attention!</AlertTitle>
               Your plan requires update
@@ -71,7 +71,7 @@ const CurrentPlan = ({ data }: { data: PricingPlanType[] }) => {
             <LinearProgress variant='determinate' value={80} className='mlb-1 bs-2.5' />
             <Typography variant='body2'>Your plan requires update</Typography>
           </Grid>
-          <Grid item xs={12} className='flex gap-4 flex-wrap'>
+          <Grid xs={12} className='flex gap-4 flex-wrap'>
             <OpenDialogOnElementClick
               element={Button}
               elementProps={buttonProps('Upgrade plan', 'contained', 'primary')}

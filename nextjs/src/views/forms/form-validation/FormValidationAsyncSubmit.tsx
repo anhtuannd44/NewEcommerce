@@ -62,7 +62,7 @@ const FormValidationAsyncSubmit = () => {
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={5}>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <Controller
                 name='firstName'
                 control={control}
@@ -78,7 +78,7 @@ const FormValidationAsyncSubmit = () => {
                 )}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <Controller
                 name='lastName'
                 control={control}
@@ -94,7 +94,7 @@ const FormValidationAsyncSubmit = () => {
                 )}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <Controller
                 name='email'
                 control={control}
@@ -111,7 +111,7 @@ const FormValidationAsyncSubmit = () => {
                 )}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <Controller
                 name='password'
                 control={control}
@@ -143,7 +143,7 @@ const FormValidationAsyncSubmit = () => {
                 )}
               />
             </Grid>
-            <Grid item xs={12} className='flex gap-4'>
+            <Grid xs={12} className='flex gap-4'>
               <Button variant='contained' type='submit' className='gap-2'>
                 {loading && <CircularProgress size={20} color='inherit' />}
                 Submit

@@ -26,7 +26,7 @@ const AddActions = () => {
 
   return (
     <Grid container spacing={6}>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <Card>
           <CardContent className='flex flex-col gap-4'>
             <Button
@@ -56,7 +56,7 @@ const AddActions = () => {
         <SendInvoiceDrawer open={sendDrawerOpen} handleClose={() => setSendDrawerOpen(false)} />
       </Grid>
 
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <FormControl fullWidth className='mbe-4'>
           <InputLabel id='payment-select'>Accept payments via</InputLabel>
           <Select fullWidth defaultValue='Internet Banking' label='Accept payments via' labelId='payment-select'>

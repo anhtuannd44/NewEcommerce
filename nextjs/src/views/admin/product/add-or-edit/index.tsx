@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react'
 
 // MUI Imports
-import { Grid } from '@mui/material'
+import Grid from '@mui/material/Grid'
 
 // Third-party Imports
 import type { FieldErrors } from 'react-hook-form'
@@ -14,6 +14,9 @@ import { toast } from 'react-toastify'
 
 // APIs Request Imports
 import { getBrandList, getProduct, getProductCategoryList, getProductTags } from '@/services/admin/product'
+
+// Enum Imports
+import { ProductType } from '@/enums/product-enums'
 
 // Type Imports
 import type { Mode } from '@core/types'
@@ -26,13 +29,17 @@ import type { IProduct } from '@/interface/admin/product/IProduct'
 import { createOrUpdateProductSchema } from '@/form/admin/product/schema/createOrUpdateProductSchema'
 import { initProductDefaultValue } from '@/form/admin/product/default-value/productDefaultValue'
 
+// Context Imports
+import { useDictionary } from '@/contexts/dictionaryContext'
+
 // Component Imports
 import NotFound from '@/views/NotFound'
-import CreateOrEditProductLoadingBox from './CreateOrEditLoadingBox'
+import CreateOrEditProductLoadingBox from '@/views/shared/CreateOrEditLoadingBox'
 import GeneralInfoProduct from './GeneralInfoProduct'
 import ProductDescriptionBox from './ProductDescriptionBox'
 import PriceProduct from './price'
-import { useDictionary } from '@/contexts/dictionaryContext'
+import ProductAttributeCombinationBox from './price/product-group/ProductAttributeCombinationBox'
+import AdditionalProductBox from './AdditionalProductBox'
 
 interface IEditProductProps {
   id?: string
@@ -134,28 +141,34 @@ const AddOrEditProduct = (props: IEditProductProps) => {
     <FormProvider {...createOrUpdateProductForm}>
       <form onSubmit={createOrUpdateProductForm.handleSubmit(onSubmit, onError)}>
         <Grid container spacing={6}>
-          <Grid item xs={9}>
-            <GeneralInfoProduct />
-            <ProductDescriptionBox />
-            <PriceProduct />
+          <Grid xs={9}>
+            <Grid container spacing={6}>
+              <Grid xs={12}>
+                <GeneralInfoProduct />
+              </Grid>
+              <Grid xs={12}>
+                <ProductDescriptionBox />
+              </Grid>
+              <Grid xs={12}>
+                <PriceProduct />
+              </Grid>
+            </Grid>
           </Grid>
-          <Grid item xs={3}>
-            {/* <AdditionalProductBox
-              productCategoryList={productCategoryList.productCategories}
-              productTagList={productTagList.productTags}
-              brandList={productBrandList.brands}
-            /> */}
+          <Grid xs={3}>
+            <AdditionalProductBox
+              productCategoryList={productCategoryList?.data || []}
+              productTagList={productTagList?.data || []}
+              brandList={productBrandList?.data || []}
+            />
             {/* <ImageProductBox /> */}
           </Grid>
-        </Grid>
-        <Grid item xs={12}>
-          {/* {productType === ProductType.GroupedProduct && <ProductAttributeCombinationBox />} */}
-          {/* <BodyContentBox /> */}
+          <Grid xs={12}>
+            {productType === ProductType.GroupedProduct && <ProductAttributeCombinationBox />}
+            {/* <BodyContentBox /> */}
+          </Grid>
         </Grid>
         <Grid container>
-          <Grid item xs={12}>
-            {/* <ProductSelectionBox /> */}
-          </Grid>
+          <Grid xs={12}>{/* <ProductSelectionBox /> */}</Grid>
         </Grid>
       </form>
     </FormProvider>

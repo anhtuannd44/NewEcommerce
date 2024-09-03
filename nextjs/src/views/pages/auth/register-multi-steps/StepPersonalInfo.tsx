@@ -26,13 +26,13 @@ const StepPersonalInfo = ({ handleNext, handlePrev, activeStep }: StepPersonalIn
         <Typography>Enter Your Personal Information</Typography>
       </div>
       <Grid container spacing={5}>
-        <Grid item xs={12} sm={6}>
+        <Grid xs={12} sm={6}>
           <TextField fullWidth label='First Name' placeholder='John' />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid xs={12} sm={6}>
           <TextField fullWidth label='Last Name' placeholder='Doe' />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid xs={12} sm={6}>
           <TextField
             fullWidth
             type='number'
@@ -43,19 +43,19 @@ const StepPersonalInfo = ({ handleNext, handlePrev, activeStep }: StepPersonalIn
             }}
           />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid xs={12} sm={6}>
           <TextField fullWidth type='number' label='Pin Code' placeholder='689421' />
         </Grid>
-        <Grid item xs={12}>
+        <Grid xs={12}>
           <TextField fullWidth label='Address' placeholder='1456, Liberty Street' />
         </Grid>
-        <Grid item xs={12}>
+        <Grid xs={12}>
           <TextField fullWidth label='Landmark' placeholder='Nr. Wall Street' />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid xs={12} sm={6}>
           <TextField fullWidth label='City' placeholder='Miami' />
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid xs={12} md={6}>
           <FormControl fullWidth>
             <InputLabel>State</InputLabel>
             <Select label='State' defaultValue='new-york'>
@@ -67,7 +67,7 @@ const StepPersonalInfo = ({ handleNext, handlePrev, activeStep }: StepPersonalIn
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={12} className='flex justify-between'>
+        <Grid xs={12} className='flex justify-between'>
           <Button
             disabled={activeStep === 0}
             variant='outlined'

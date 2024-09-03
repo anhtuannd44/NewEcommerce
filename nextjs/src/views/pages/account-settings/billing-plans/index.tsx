@@ -36,16 +36,16 @@ const BillingPlans = async () => {
 
   return (
     <Grid container spacing={6}>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <CurrentPlan data={data} />
       </Grid>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <PaymentMethod />
       </Grid>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <Address />
       </Grid>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <InvoiceListTable invoiceData={invoiceData} />
       </Grid>
     </Grid>

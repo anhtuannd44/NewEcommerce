@@ -19,7 +19,7 @@ type Props = {
 const StepReview = ({ activeStep, handleNext, handlePrev, steps }: Props) => {
   return (
     <Grid container spacing={6} className='pbs-5'>
-      <Grid item xs={12} lg={6} className='flex flex-col gap-4'>
+      <Grid xs={12} lg={6} className='flex flex-col gap-4'>
         <Typography variant='h4'>Almost done! 🚀</Typography>
         <Typography>Confirm your deal details information and submit to create it.</Typography>
         <table>
@@ -68,12 +68,12 @@ const StepReview = ({ activeStep, handleNext, handlePrev, steps }: Props) => {
         </table>
         <FormControlLabel control={<Switch />} label='I have confirmed the deal details.' />
       </Grid>
-      <Grid item lg={6} xl={5} xs={12}>
+      <Grid lg={6} xl={5} xs={12}>
         <div className='flex justify-center items-end is-full bs-full border rounded'>
           <img alt='review-illustration' src='/images/illustrations/characters/6.png' height={305} />
         </div>
       </Grid>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <div className='flex items-center justify-between'>
           <Button
             variant='outlined'

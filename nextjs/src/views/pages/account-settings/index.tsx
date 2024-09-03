@@ -24,7 +24,7 @@ const AccountSettings = ({ tabContentList }: { tabContentList: { [key: string]: 
   return (
     <TabContext value={activeTab}>
       <Grid container spacing={6}>
-        <Grid item xs={12}>
+        <Grid xs={12}>
           <CustomTabList onChange={handleChange} variant='scrollable' pill='true'>
             <Tab
               label={
@@ -73,7 +73,7 @@ const AccountSettings = ({ tabContentList }: { tabContentList: { [key: string]: 
             />
           </CustomTabList>
         </Grid>
-        <Grid item xs={12}>
+        <Grid xs={12}>
           <TabPanel value={activeTab} className='p-0'>
             {tabContentList[activeTab]}
           </TabPanel>

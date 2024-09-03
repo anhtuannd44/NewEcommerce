@@ -102,10 +102,10 @@ const CardWidgetsSalesOverview = () => {
       />
       <CardContent>
         <Grid container>
-          <Grid item xs={12} sm={6} sx={{ mb: [3, 0] }}>
+          <Grid xs={12} sm={6} sx={{ mb: [3, 0] }}>
             <AppReactApexCharts type='donut' height={265} width='100%' series={[12, 25, 13, 50]} options={options} />
           </Grid>
-          <Grid item xs={12} sm={6} sx={{ my: 'auto' }}>
+          <Grid xs={12} sm={6} sx={{ my: 'auto' }}>
             <div className='flex items-center gap-3'>
               <CustomAvatar skin='light' color='primary' variant='rounded'>
                 <i className='ri-wallet-line text-primary' />
@@ -117,7 +117,7 @@ const CardWidgetsSalesOverview = () => {
             </div>
             <Divider className='mlb-6' />
             <Grid container spacing={6}>
-              <Grid item xs={6}>
+              <Grid xs={6}>
                 <div className='flex items-center gap-2 mbe-1'>
                   <div>
                     <i className='ri-circle-fill text-[10px] text-primary' />
@@ -126,7 +126,7 @@ const CardWidgetsSalesOverview = () => {
                 </div>
                 <Typography className='font-medium'>$12,150</Typography>
               </Grid>
-              <Grid item xs={6}>
+              <Grid xs={6}>
                 <div className='flex items-center gap-2 mbe-1'>
                   <div>
                     <i className='ri-circle-fill text-[10px] text-primary' />
@@ -135,7 +135,7 @@ const CardWidgetsSalesOverview = () => {
                 </div>
                 <Typography className='font-medium'>$24,900</Typography>
               </Grid>
-              <Grid item xs={6}>
+              <Grid xs={6}>
                 <div className='flex items-center gap-2 mbe-1'>
                   <div>
                     <i className='ri-circle-fill text-[10px] text-primary' />
@@ -144,7 +144,7 @@ const CardWidgetsSalesOverview = () => {
                 </div>
                 <Typography className='font-medium'>$12,750</Typography>
               </Grid>
-              <Grid item xs={6}>
+              <Grid xs={6}>
                 <div className='flex items-center gap-2 mbe-1'>
                   <div>
                     <i className='ri-circle-fill text-[10px] text-primary' />

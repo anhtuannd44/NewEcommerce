@@ -25,7 +25,7 @@ const UserRight = ({ tabContentList }: { tabContentList: { [key: string]: ReactE
     <>
       <TabContext value={activeTab}>
         <Grid container spacing={6}>
-          <Grid item xs={12}>
+          <Grid xs={12}>
             <CustomTabList onChange={handleChange} variant='scrollable' pill='true'>
               <Tab icon={<i className='ri-user-3-line' />} value='overview' label='Overview' iconPosition='start' />
               <Tab icon={<i className='ri-lock-line' />} value='security' label='Security' iconPosition='start' />
@@ -44,7 +44,7 @@ const UserRight = ({ tabContentList }: { tabContentList: { [key: string]: ReactE
               <Tab icon={<i className='ri-link-m' />} value='connections' label='Connections' iconPosition='start' />
             </CustomTabList>
           </Grid>
-          <Grid item xs={12}>
+          <Grid xs={12}>
             <TabPanel value={activeTab} className='p-0'>
               {tabContentList[activeTab]}
             </TabPanel>

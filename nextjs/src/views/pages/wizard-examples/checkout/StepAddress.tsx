@@ -169,7 +169,7 @@ const StepAddress = ({ handleNext }: { handleNext: () => void }) => {
 
   return (
     <Grid container spacing={6}>
-      <Grid item xs={12} lg={8} className='flex flex-col gap-6'>
+      <Grid xs={12} lg={8} className='flex flex-col gap-6'>
         <div className='flex flex-col items-start gap-4'>
           <Typography color='text.primary' className='font-medium'>
             Select your preferable address
@@ -216,7 +216,7 @@ const StepAddress = ({ handleNext }: { handleNext: () => void }) => {
           </Grid>
         </div>
       </Grid>
-      <Grid item xs={12} lg={4} className='flex flex-col gap-4'>
+      <Grid xs={12} lg={4} className='flex flex-col gap-4'>
         <div className='border rounded'>
           <CardContent className='flex flex-col gap-4'>
             <Typography className='font-medium' color='text.primary'>

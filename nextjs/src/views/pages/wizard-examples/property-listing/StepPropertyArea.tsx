@@ -31,7 +31,7 @@ const StepPropertyDetails = ({ activeStep, handleNext, handlePrev, steps }: Prop
 
   return (
     <Grid container spacing={5}>
-      <Grid item xs={12} md={6}>
+      <Grid xs={12} md={6}>
         <TextField
           fullWidth
           type='number'
@@ -42,7 +42,7 @@ const StepPropertyDetails = ({ activeStep, handleNext, handlePrev, steps }: Prop
           }}
         />
       </Grid>
-      <Grid item xs={12} md={6}>
+      <Grid xs={12} md={6}>
         <TextField
           fullWidth
           type='number'
@@ -53,7 +53,7 @@ const StepPropertyDetails = ({ activeStep, handleNext, handlePrev, steps }: Prop
           }}
         />
       </Grid>
-      <Grid item xs={12} md={6}>
+      <Grid xs={12} md={6}>
         <TextField
           fullWidth
           type='number'
@@ -64,7 +64,7 @@ const StepPropertyDetails = ({ activeStep, handleNext, handlePrev, steps }: Prop
           }}
         />
       </Grid>
-      <Grid item xs={12} md={6}>
+      <Grid xs={12} md={6}>
         <AppReactDatepicker
           selected={date}
           placeholderText='YYYY-MM-DD'
@@ -73,7 +73,7 @@ const StepPropertyDetails = ({ activeStep, handleNext, handlePrev, steps }: Prop
           customInput={<TextField fullWidth label='Available From' />}
         />
       </Grid>
-      <Grid item xs={12} md={6}>
+      <Grid xs={12} md={6}>
         <FormControl className='gap-2'>
           <FormLabel id='possession-status-radio'>Possession Status</FormLabel>
           <RadioGroup name='possession-status-group' defaultValue='under-construction'>
@@ -82,7 +82,7 @@ const StepPropertyDetails = ({ activeStep, handleNext, handlePrev, steps }: Prop
           </RadioGroup>
         </FormControl>
       </Grid>
-      <Grid item xs={12} md={6}>
+      <Grid xs={12} md={6}>
         <FormControl className='gap-2'>
           <FormLabel id='transaction-radio'>Transaction Type</FormLabel>
           <RadioGroup defaultValue='new-property' name='transaction-group' aria-labelledby='transaction-radio'>
@@ -91,7 +91,7 @@ const StepPropertyDetails = ({ activeStep, handleNext, handlePrev, steps }: Prop
           </RadioGroup>
         </FormControl>
       </Grid>
-      <Grid item xs={12} md={6}>
+      <Grid xs={12} md={6}>
         <FormControl className='gap-2'>
           <FormLabel id='main-road-radio'>Is Property Facing Main Road</FormLabel>
           <RadioGroup defaultValue='yes' name='main-road-group' aria-labelledby='main-road-radio'>
@@ -100,7 +100,7 @@ const StepPropertyDetails = ({ activeStep, handleNext, handlePrev, steps }: Prop
           </RadioGroup>
         </FormControl>
       </Grid>
-      <Grid item xs={12} md={6}>
+      <Grid xs={12} md={6}>
         <FormControl className='gap-2'>
           <FormLabel id='gated-colony-radio'>Gated Colony</FormLabel>
           <RadioGroup defaultValue='yes' name='gated-colony-group' aria-labelledby='gated-colony-radio'>
@@ -109,7 +109,7 @@ const StepPropertyDetails = ({ activeStep, handleNext, handlePrev, steps }: Prop
           </RadioGroup>
         </FormControl>
       </Grid>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <div className='flex items-center justify-between'>
           <Button
             variant='outlined'

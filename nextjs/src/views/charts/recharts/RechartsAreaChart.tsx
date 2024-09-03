@@ -13,7 +13,7 @@ import CardContent from '@mui/material/CardContent'
 import { useTheme } from '@mui/material/styles'
 
 // Component Imports
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from '@/libs/Recharts'
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid2 as Grid, Tooltip, ResponsiveContainer } from '@/libs/Recharts'
 import type { TooltipProps } from '@/libs/Recharts'
 
 // Styled Component Imports

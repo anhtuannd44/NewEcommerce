@@ -32,10 +32,10 @@ const FormLayoutsBasic = () => {
       <CardContent>
         <form onSubmit={e => e.preventDefault()}>
           <Grid container spacing={5}>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <TextField fullWidth label='Name' placeholder='John Doe' />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <TextField
                 fullWidth
                 type='email'
@@ -44,7 +44,7 @@ const FormLayoutsBasic = () => {
                 helperText='You can use letters, numbers & periods'
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <TextField
                 fullWidth
                 label='Password'
@@ -68,7 +68,7 @@ const FormLayoutsBasic = () => {
                 }}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <TextField
                 fullWidth
                 label='Confirm Password'
@@ -92,7 +92,7 @@ const FormLayoutsBasic = () => {
                 }}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <div className='flex items-center justify-between flex-wrap gap-5'>
                 <Button variant='contained' type='submit'>
                   Get Started!

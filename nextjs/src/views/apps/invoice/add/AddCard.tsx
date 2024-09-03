@@ -67,7 +67,7 @@ const AddAction = ({ invoiceData }: { invoiceData: InvoiceType[] }) => {
       <Card>
         <CardContent className='sm:!p-12'>
           <Grid container spacing={6}>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <div className='p-6 bg-actionHover rounded'>
                 <div className='flex justify-between gap-4 flex-col sm:flex-row'>
                   <div className='flex flex-col gap-6'>
@@ -132,7 +132,7 @@ const AddAction = ({ invoiceData }: { invoiceData: InvoiceType[] }) => {
               </div>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <div className='flex justify-between flex-col gap-4 flex-wrap sm:flex-row'>
                 <div className='flex flex-col gap-4'>
                   <Typography className='font-medium' color='text.primary'>
@@ -212,10 +212,10 @@ const AddAction = ({ invoiceData }: { invoiceData: InvoiceType[] }) => {
               </div>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <Divider className='border-dashed' />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               {Array.from(Array(count).keys()).map((item, index) => (
                 <div
                   key={index}
@@ -226,7 +226,7 @@ const AddAction = ({ invoiceData }: { invoiceData: InvoiceType[] }) => {
                   })}
                 >
                   <Grid container spacing={5} className='m-0 pbe-5'>
-                    <Grid item lg={6} md={5} xs={12}>
+                    <Grid lg={6} md={5} xs={12}>
                       <Typography className='font-medium md:absolute md:-top-8' color='text.primary'>
                         Item
                       </Typography>
@@ -238,7 +238,7 @@ const AddAction = ({ invoiceData }: { invoiceData: InvoiceType[] }) => {
                       </Select>
                       <TextField rows={2} fullWidth multiline size='small' defaultValue='Customization & Bug Fixes' />
                     </Grid>
-                    <Grid item lg={2} md={3} xs={12}>
+                    <Grid lg={2} md={3} xs={12}>
                       <Typography className='font-medium md:absolute md:-top-8'>Cost</Typography>
                       <TextField
                         {...(isBelowMdScreen && { fullWidth: true })}
@@ -270,7 +270,7 @@ const AddAction = ({ invoiceData }: { invoiceData: InvoiceType[] }) => {
                         </div>
                       </div>
                     </Grid>
-                    <Grid item md={2} xs={12}>
+                    <Grid md={2} xs={12}>
                       <Typography className='font-medium md:absolute md:-top-8'>Hours</Typography>
                       <TextField
                         {...(isBelowMdScreen && { fullWidth: true })}
@@ -281,7 +281,7 @@ const AddAction = ({ invoiceData }: { invoiceData: InvoiceType[] }) => {
                         InputProps={{ inputProps: { min: 0 } }}
                       />
                     </Grid>
-                    <Grid item md={2} xs={12}>
+                    <Grid md={2} xs={12}>
                       <Typography className='font-medium md:absolute md:-top-8'>Price</Typography>
                       <Typography>$24.00</Typography>
                     </Grid>
@@ -293,7 +293,7 @@ const AddAction = ({ invoiceData }: { invoiceData: InvoiceType[] }) => {
                   </div>
                 </div>
               ))}
-              <Grid item xs={12}>
+              <Grid xs={12}>
                 <Button
                   size='small'
                   variant='contained'
@@ -304,10 +304,10 @@ const AddAction = ({ invoiceData }: { invoiceData: InvoiceType[] }) => {
                 </Button>
               </Grid>
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <Divider className='border-dashed' />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <div className='flex justify-between flex-col gap-4 sm:flex-row'>
                 <div className='flex flex-col gap-4 order-2 sm:order-[unset]'>
                   <div className='flex items-center gap-2'>
@@ -347,10 +347,10 @@ const AddAction = ({ invoiceData }: { invoiceData: InvoiceType[] }) => {
                 </div>
               </div>
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <Divider className='border-dashed' />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <InputLabel htmlFor='invoice-note' className='inline-flex mbe-1 text-textPrimary'>
                 Note:
               </InputLabel>

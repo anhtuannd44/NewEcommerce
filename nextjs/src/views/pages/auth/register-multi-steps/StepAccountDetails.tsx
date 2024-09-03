@@ -37,13 +37,13 @@ const StepAccountDetails = ({ handleNext, activeStep }: StepAccountDetailsProps)
         <Typography>Enter Your Account Details</Typography>
       </div>
       <Grid container spacing={5}>
-        <Grid item xs={12} sm={6}>
+        <Grid xs={12} sm={6}>
           <TextField fullWidth label='Username' placeholder='johnDoe' />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid xs={12} sm={6}>
           <TextField fullWidth type='email' label='Email' placeholder='johndoe@gmail.com' />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid xs={12} sm={6}>
           <TextField
             fullWidth
             label='Password'
@@ -66,7 +66,7 @@ const StepAccountDetails = ({ handleNext, activeStep }: StepAccountDetailsProps)
             }}
           />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid xs={12} sm={6}>
           <TextField
             fullWidth
             label='Confirm Password'
@@ -89,10 +89,10 @@ const StepAccountDetails = ({ handleNext, activeStep }: StepAccountDetailsProps)
             }}
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid xs={12}>
           <TextField fullWidth label='Profile Link' placeholder='johndoe/profile' />
         </Grid>
-        <Grid item xs={12} className='flex justify-between'>
+        <Grid xs={12} className='flex justify-between'>
           <Button
             disabled={activeStep === 0}
             color='secondary'

@@ -105,7 +105,7 @@ const Login = ({ mode }: { mode: Mode }) => {
     if (res.data) {
       const redirectURL = searchParams.get('redirectTo') ?? '/'
 
-      router.push(getLocalizedUrl(redirectURL, locale as Locale))
+      router.push(redirectURL)
     } else {
       if (res?.error) {
         const error = JSON.parse(res.error.message)

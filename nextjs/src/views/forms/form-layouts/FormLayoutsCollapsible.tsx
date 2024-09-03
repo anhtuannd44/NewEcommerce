@@ -130,7 +130,7 @@ const FormLayoutsCollapsible = () => {
         <Divider />
         <AccordionDetails className='!pbs-5'>
           <Grid container spacing={5}>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <TextField
                 fullWidth
                 label='Full Name'
@@ -139,7 +139,7 @@ const FormLayoutsCollapsible = () => {
                 onChange={e => setCardData({ ...cardData, fullName: e.target.value })}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <TextField
                 fullWidth
                 label='Phone No.'
@@ -148,7 +148,7 @@ const FormLayoutsCollapsible = () => {
                 onChange={e => setCardData({ ...cardData, phone: e.target.value })}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <TextField
                 fullWidth
                 rows={4}
@@ -159,7 +159,7 @@ const FormLayoutsCollapsible = () => {
                 onChange={e => setCardData({ ...cardData, address: e.target.value })}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <TextField
                 fullWidth
                 type='number'
@@ -169,7 +169,7 @@ const FormLayoutsCollapsible = () => {
                 onChange={e => setCardData({ ...cardData, zipCode: e.target.value })}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <TextField
                 fullWidth
                 label='Landmark'
@@ -178,7 +178,7 @@ const FormLayoutsCollapsible = () => {
                 onChange={e => setCardData({ ...cardData, landmark: e.target.value })}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <TextField
                 fullWidth
                 label='City'
@@ -187,7 +187,7 @@ const FormLayoutsCollapsible = () => {
                 onChange={e => setCardData({ ...cardData, city: e.target.value })}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <FormControl fullWidth>
                 <InputLabel>Country</InputLabel>
                 <Select
@@ -202,7 +202,7 @@ const FormLayoutsCollapsible = () => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <FormLabel>Address Type</FormLabel>
               <RadioGroup
                 row
@@ -251,9 +251,9 @@ const FormLayoutsCollapsible = () => {
         <Divider />
         <AccordionDetails className='!pbs-5'>
           <Grid container>
-            <Grid item xs={12} md={6}>
+            <Grid xs={12} md={6}>
               <Grid container spacing={5}>
-                <Grid item xs={12}>
+                <Grid xs={12}>
                   <RadioGroup
                     row
                     name='payment-method-radio'
@@ -265,9 +265,9 @@ const FormLayoutsCollapsible = () => {
                   </RadioGroup>
                 </Grid>
                 {paymentMethod === 'credit' ? (
-                  <Grid item xs={12}>
+                  <Grid xs={12}>
                     <Grid container spacing={5}>
-                      <Grid item xs={12}>
+                      <Grid xs={12}>
                         <TextField
                           fullWidth
                           name='number'
@@ -278,7 +278,7 @@ const FormLayoutsCollapsible = () => {
                           onChange={e => setCardData({ ...cardData, number: e.target.value })}
                         />
                       </Grid>
-                      <Grid item xs={12}>
+                      <Grid xs={12}>
                         <TextField
                           fullWidth
                           name='name'
@@ -289,7 +289,7 @@ const FormLayoutsCollapsible = () => {
                           onChange={e => setCardData({ ...cardData, name: e.target.value })}
                         />
                       </Grid>
-                      <Grid item xs={6}>
+                      <Grid xs={6}>
                         <TextField
                           fullWidth
                           name='expiry'
@@ -300,7 +300,7 @@ const FormLayoutsCollapsible = () => {
                           onChange={e => setCardData({ ...cardData, expiry: e.target.value })}
                         />
                       </Grid>
-                      <Grid item xs={6}>
+                      <Grid xs={6}>
                         <TextField
                           fullWidth
                           name='cvv'

@@ -12,7 +12,7 @@ import RolesTable from './RolesTable'
 const Roles = ({ userData }: { userData?: UsersType[] }) => {
   return (
     <Grid container spacing={6}>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <Typography variant='h5' className='mbe-1'>
           Roles List
         </Typography>
@@ -21,16 +21,16 @@ const Roles = ({ userData }: { userData?: UsersType[] }) => {
           can have access to what he need
         </Typography>
       </Grid>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <RoleCards />
       </Grid>
-      <Grid item xs={12} className='!pbs-12'>
+      <Grid xs={12} className='!pbs-12'>
         <Typography variant='h5' className='mbe-1'>
           Total users with their roles
         </Typography>
         <Typography>Find all of your company&#39;s administrator accounts and their associate roles.</Typography>
       </Grid>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <RolesTable tableData={userData} />
       </Grid>
     </Grid>

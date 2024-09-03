@@ -88,13 +88,13 @@ const PaymentMethod = () => {
   })
 
   return (
-    <Card>
+    (<Card>
       <CardHeader title='Payment Method' />
       <CardContent>
         <Grid container spacing={6}>
-          <Grid item xs={12} md={6}>
+          <Grid xs={12} md={6}>
             <Grid container spacing={5}>
-              <Grid item xs={12}>
+              <Grid xs={12}>
                 <RadioGroup
                   row
                   name='payment-method-radio'
@@ -107,7 +107,7 @@ const PaymentMethod = () => {
               </Grid>
               {paymentMethod === 'credit' ? (
                 <>
-                  <Grid item xs={12}>
+                  <Grid xs={12}>
                     <TextField
                       fullWidth
                       name='number'
@@ -118,7 +118,7 @@ const PaymentMethod = () => {
                       onChange={e => setCardData({ ...cardData, cardNumber: e.target.value })}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={12} md={6}>
+                  <Grid xs={12} sm={12} md={6}>
                     <TextField
                       fullWidth
                       name='name'
@@ -129,7 +129,7 @@ const PaymentMethod = () => {
                       onChange={e => setCardData({ ...cardData, name: e.target.value })}
                     />
                   </Grid>
-                  <Grid item xs={6} md={3}>
+                  <Grid xs={6} md={3}>
                     <TextField
                       fullWidth
                       name='expiry'
@@ -140,7 +140,7 @@ const PaymentMethod = () => {
                       onChange={e => setCardData({ ...cardData, expiryDate: e.target.value })}
                     />
                   </Grid>
-                  <Grid item xs={6} md={3}>
+                  <Grid xs={6} md={3}>
                     <TextField
                       fullWidth
                       name='cvv'
@@ -151,12 +151,12 @@ const PaymentMethod = () => {
                       onChange={e => setCardData({ ...cardData, cardCvv: e.target.value })}
                     />
                   </Grid>
-                  <Grid item xs={12}>
+                  <Grid xs={12}>
                     <FormControlLabel control={<Switch defaultChecked />} label='Save Card for future billing?' />
                   </Grid>
                 </>
               ) : (
-                <Grid item xs={12}>
+                <Grid xs={12}>
                   <Typography color='text.primary'>
                     Cash on delivery is a mode of payment where you make the payment after the goods/services are
                     received.
@@ -166,7 +166,7 @@ const PaymentMethod = () => {
                   </Typography>
                 </Grid>
               )}
-              <Grid item xs={12} className='flex gap-4 flex-wrap'>
+              <Grid xs={12} className='flex gap-4 flex-wrap'>
                 <Button type='submit' variant='contained'>
                   Save Changes
                 </Button>
@@ -177,7 +177,7 @@ const PaymentMethod = () => {
             </Grid>
           </Grid>
 
-          <Grid item xs={12} md={6} className='flex flex-col gap-6'>
+          <Grid xs={12} md={6} className='flex flex-col gap-6'>
             <Typography className='font-medium' color='text.primary'>
               My Cards
             </Typography>
@@ -219,8 +219,8 @@ const PaymentMethod = () => {
           </Grid>
         </Grid>
       </CardContent>
-    </Card>
-  )
+    </Card>)
+  );
 }
 
 export default PaymentMethod

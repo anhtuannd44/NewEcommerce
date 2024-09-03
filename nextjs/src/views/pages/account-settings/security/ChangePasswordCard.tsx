@@ -30,7 +30,7 @@ const ChangePasswordCard = () => {
       <CardContent>
         <form>
           <Grid container spacing={6}>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <TextField
                 fullWidth
                 label='Current Password'
@@ -52,7 +52,7 @@ const ChangePasswordCard = () => {
             </Grid>
           </Grid>
           <Grid container className='mbs-0' spacing={5}>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <TextField
                 fullWidth
                 label='New Password'
@@ -72,7 +72,7 @@ const ChangePasswordCard = () => {
                 }}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid xs={12} sm={6}>
               <TextField
                 fullWidth
                 label='Confirm New Password'
@@ -92,7 +92,7 @@ const ChangePasswordCard = () => {
                 }}
               />
             </Grid>
-            <Grid item xs={12} className='flex flex-col gap-4'>
+            <Grid xs={12} className='flex flex-col gap-4'>
               <Typography variant='h6' color='text.secondary'>
                 Password Requirements:
               </Typography>
@@ -111,7 +111,7 @@ const ChangePasswordCard = () => {
                 </div>
               </div>
             </Grid>
-            <Grid item xs={12} className='flex gap-4'>
+            <Grid xs={12} className='flex gap-4'>
               <Button variant='contained'>Save Changes</Button>
               <Button variant='outlined' type='reset' color='secondary'>
                 Reset

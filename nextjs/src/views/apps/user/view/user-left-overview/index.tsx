@@ -8,10 +8,10 @@ import UserPlan from './UserPlan'
 const UserLeftOverview = () => {
   return (
     <Grid container spacing={6}>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <UserDetails />
       </Grid>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <UserPlan />
       </Grid>
     </Grid>

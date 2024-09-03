@@ -11,10 +11,10 @@ import InvoiceCard from './InvoiceCard'
 const InvoiceList = ({ invoiceData }: { invoiceData: InvoiceType[] }) => {
   return (
     <Grid container spacing={6}>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <InvoiceCard />
       </Grid>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <InvoiceListTable invoiceData={invoiceData} />
       </Grid>
     </Grid>

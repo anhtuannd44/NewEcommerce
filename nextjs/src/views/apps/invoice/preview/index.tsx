@@ -11,10 +11,10 @@ import PreviewCard from './PreviewCard'
 const Preview = ({ invoiceData, id }: { invoiceData: InvoiceType; id: string }) => {
   return (
     <Grid container spacing={6}>
-      <Grid item xs={12} md={9}>
+      <Grid xs={12} md={9}>
         <PreviewCard invoiceData={invoiceData} id={id} />
       </Grid>
-      <Grid item xs={12} md={3}>
+      <Grid xs={12} md={3}>
         <PreviewActions id={id} />
       </Grid>
     </Grid>

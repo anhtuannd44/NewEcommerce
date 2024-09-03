@@ -90,16 +90,16 @@ const StepPersonalDetails = ({ activeStep, handleNext, handlePrev, steps }: Prop
           />
         )
       })}
-      <Grid item xs={12} md={6}>
+      <Grid xs={12} md={6}>
         <TextField fullWidth label='First Name' placeholder='John' />
       </Grid>
-      <Grid item xs={12} md={6}>
+      <Grid xs={12} md={6}>
         <TextField fullWidth label='Last Name' placeholder='Doe' />
       </Grid>
-      <Grid item xs={12} md={6}>
+      <Grid xs={12} md={6}>
         <TextField fullWidth label='Username' placeholder='john.doe' />
       </Grid>
-      <Grid item xs={12} md={6}>
+      <Grid xs={12} md={6}>
         <TextField
           fullWidth
           label='Password'
@@ -122,10 +122,10 @@ const StepPersonalDetails = ({ activeStep, handleNext, handlePrev, steps }: Prop
           }}
         />
       </Grid>
-      <Grid item xs={12} md={6}>
+      <Grid xs={12} md={6}>
         <TextField fullWidth label='Email' placeholder='john.doe@gmail.com' />
       </Grid>
-      <Grid item xs={12} md={6}>
+      <Grid xs={12} md={6}>
         <TextField
           fullWidth
           label='Contact'
@@ -135,7 +135,7 @@ const StepPersonalDetails = ({ activeStep, handleNext, handlePrev, steps }: Prop
           }}
         />
       </Grid>
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <div className='flex items-center justify-between'>
           <Button
             variant='outlined'

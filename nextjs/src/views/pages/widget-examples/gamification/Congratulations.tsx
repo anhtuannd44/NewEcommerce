@@ -11,7 +11,7 @@ const Congratulations = () => {
     <Card className='relative overflow-visible self-end sm:mt-6 md:mt-0'>
       <CardContent className='!pbe-0 sm:!pbe-5'>
         <Grid container spacing={6}>
-          <Grid item xs={12} sm={6}>
+          <Grid xs={12} sm={6}>
             <Typography variant='h4' className='mbe-9'>
               Congratulations <span className='font-bold'>John!</span> 🎉
             </Typography>
@@ -19,7 +19,7 @@ const Congratulations = () => {
               You have done 72% 😎 more sales today. Check your new raising badge in your profile.
             </Typography>
           </Grid>
-          <Grid item xs={12} sm={6} className='flex justify-center sm:absolute sm:inline-end-11 sm:bottom-0'>
+          <Grid xs={12} sm={6} className='flex justify-center sm:absolute sm:inline-end-11 sm:bottom-0'>
             <img
               alt='Congratulations John'
               src='/images/illustrations/characters-with-objects/8.png'

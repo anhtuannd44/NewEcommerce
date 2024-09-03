@@ -1,5 +1,5 @@
 //MUI Imports
-import { Button, Card, Grid, Paper, TextField, Typography } from '@mui/material'
+import { Button, Card, CardContent, CardHeader, Grid2 as Grid, TextField } from '@mui/material'
 
 // Third-party Imports
 import { Controller, useFormContext } from 'react-hook-form'
@@ -8,8 +8,6 @@ import { Controller, useFormContext } from 'react-hook-form'
 import type { IProduct } from '@/interface/admin/product/IProduct'
 
 // Component Imports
-import PaperHeader from '@/components/paper/PaperHeader'
-import PaperContent from '@/components/paper/PaperContent'
 import { useDictionary } from '@/contexts/dictionaryContext'
 
 const GeneralInfoProduct = () => {
@@ -18,24 +16,25 @@ const GeneralInfoProduct = () => {
   const { dictionary } = useDictionary()
 
   return (
-    <Card>
-      <PaperHeader
-        leftHeader={<Typography variant='h6'>{dictionary.adminArea.product.generalInformationPanelTitle}</Typography>}
-        rightHeader={
-          <Button type='submit' variant='contained' color='success'>
+    (<Card>
+      <CardHeader
+        title={dictionary.adminArea.product.generalInformationPanelTitle}
+        action={
+          <Button type='submit' variant='contained' color='primary'>
             {dictionary.adminArea.common.button.submit}
           </Button>
         }
       />
-      <PaperContent>
+      <CardContent>
         <Grid container spacing={5}>
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Controller
               name='name'
               control={control}
               render={({ field: { onChange }, fieldState }) => (
                 <TextField
                   fullWidth
+                  size='small'
                   type='text'
                   label={dictionary.adminArea.product.field.name.label}
                   placeholder={dictionary.adminArea.product.field.name.placeholder}
@@ -46,47 +45,43 @@ const GeneralInfoProduct = () => {
               )}
             />
           </Grid>
-          <Grid item xs={4}>
+          <Grid size={4}>
             <Controller
               name='seoUrl'
               control={control}
               render={({ field: { onChange }, fieldState }) => (
                 <TextField
                   fullWidth
+                  size='small'
                   type='text'
                   label={dictionary.adminArea.product.field.seoUrl.label}
                   placeholder={dictionary.adminArea.product.field.seoUrl.placeholder}
-                  helperText={fieldState.error?.message || dictionary.adminArea.product.field.seoUrl.helperText}
-                  sx={{
-                    fontSize: '0.4rem !important'
-                  }}
+                  helperText={fieldState.error?.message}
                   error={!!fieldState.error}
                   onChange={onChange}
                 />
               )}
             />
           </Grid>
-          <Grid item xs={4}>
+          <Grid size={4}>
             <Controller
               name='sku'
               control={control}
               render={({ field: { onChange }, fieldState }) => (
                 <TextField
                   fullWidth
+                  size='small'
                   type='text'
-                  label={dictionary.adminArea.product.field.seoUrl.label}
-                  placeholder={dictionary.adminArea.product.field.seoUrl.placeholder}
-                  helperText={fieldState.error?.message || dictionary.adminArea.product.field.seoUrl.helperText}
-                  sx={{
-                    fontSize: '0.4rem !important'
-                  }}
+                  label={dictionary.adminArea.product.field.sku.label}
+                  placeholder={dictionary.adminArea.product.field.sku.placeholder}
+                  helperText={fieldState.error?.message}
                   error={!!fieldState.error}
                   onChange={onChange}
                 />
               )}
             />
           </Grid>
-          <Grid item xs={4}>
+          <Grid size={4}>
             <Controller
               name='unit'
               control={control}
@@ -94,12 +89,10 @@ const GeneralInfoProduct = () => {
                 <TextField
                   fullWidth
                   type='text'
-                  label={dictionary.adminArea.product.field.seoUrl.label}
-                  placeholder={dictionary.adminArea.product.field.seoUrl.placeholder}
-                  helperText={fieldState.error?.message || dictionary.adminArea.product.field.seoUrl.helperText}
-                  sx={{
-                    fontSize: '0.4rem !important'
-                  }}
+                  size='small'
+                  label={dictionary.adminArea.product.field.unit.label}
+                  placeholder={dictionary.adminArea.product.field.unit.placeholder}
+                  helperText={fieldState.error?.message}
                   error={!!fieldState.error}
                   onChange={onChange}
                 />
@@ -107,9 +100,9 @@ const GeneralInfoProduct = () => {
             />
           </Grid>
         </Grid>
-      </PaperContent>
-    </Card>
-  )
+      </CardContent>
+    </Card>)
+  );
 }
 
 export default GeneralInfoProduct
