@@ -17,9 +17,8 @@ export interface IOrder {
   deposit: number | null
   orderAttributeId?: string
   orderOriginId: string
-  discountType?: DiscountType
+  discountType: DiscountType
   discountValue?: number
-  discountPercent?: number
   discountNote?: string
   note?: string
   isComplain: boolean
@@ -43,7 +42,6 @@ export interface IProductItem {
   note?: string
   isVat: boolean
   vatValue: number
-  discountPercent: number
   imgUrl?: string
   name: string
   productCode: string

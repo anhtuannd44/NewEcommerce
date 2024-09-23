@@ -7,7 +7,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\ECommerce.Common.Domain\ECommerce.Common.Domain.csproj" />
-      <ProjectReference Include="..\ECommerce.Common.Persistence\ECommerce.Common.Persistence.csproj" />
     </ItemGroup>
 
     <ItemGroup>

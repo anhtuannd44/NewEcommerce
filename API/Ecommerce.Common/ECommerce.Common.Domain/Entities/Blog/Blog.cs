@@ -1,10 +1,11 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using ECommerce.Common.Domain.Entities.BaseEntity;
 using ECommerce.Common.Domain.Entities.Identity;
 using ECommerce.Common.Domain.Enum;
 
 namespace ECommerce.Common.Domain.Entities.Blog;
 
-public class Blog : AbstractEntity
+public class Blog : BaseEntity<Guid>, IAggregateRoot
 {
     /// <summary>
     /// Gets or sets the blog post title

@@ -1,8 +1,9 @@
-﻿using ECommerce.Common.Domain.Enum;
+﻿using ECommerce.Common.Domain.Entities.BaseEntity;
+using ECommerce.Common.Domain.Enum;
 
 namespace ECommerce.Common.Domain.Entities;
 
-public class Email : BaseEntity<Guid>
+public class Email : BaseEntity<Guid>, IAggregateRoot
 {
     public string Subject { get; set; }
     public EmailType MailType { get; set; }

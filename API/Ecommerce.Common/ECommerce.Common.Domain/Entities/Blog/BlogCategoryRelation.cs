@@ -1,6 +1,8 @@
+using ECommerce.Common.Domain.Entities.BaseEntity;
+
 namespace ECommerce.Common.Domain.Entities.Blog;
 
-public class BlogCategoryRelation : AbstractEntity
+public class BlogCategoryRelation : BaseEntity<Guid>, IAggregateRoot
 {
     /// <summary>
     /// Gets or sets the Blog Id

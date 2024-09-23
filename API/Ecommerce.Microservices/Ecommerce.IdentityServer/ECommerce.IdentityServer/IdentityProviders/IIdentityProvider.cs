@@ -1,0 +1,16 @@
+﻿namespace ECommerce.IdentityServer.IdentityProviders;
+
+public interface IIdentityProvider
+{
+    Task<IList<IUser>> GetUsersAsync();
+
+    Task<IUser> GetUserById(string userId);
+
+    Task<IUser> GetUserByUsernameAsync(string username);
+
+    Task CreateUserAsync(IUser user);
+
+    Task UpdateUserAsync(string userId, IUser user);
+
+    Task DeleteUserAsync(string userId);
+}

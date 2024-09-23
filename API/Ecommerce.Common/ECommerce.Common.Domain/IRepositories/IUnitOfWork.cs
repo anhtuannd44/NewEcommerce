@@ -1,15 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Data;
+﻿using System.Data;
 
 namespace ECommerce.Common.Domain.IRepositories;
 
 public interface IUnitOfWork
 {
-    DbSet<T> Repository<T>() where T : class;
-    int SaveChanges();
-    Task<int> SaveChangesAsync();
-    void BeginTransaction();
-    Task BeginTransactionAsync();
-    void CommitTransaction();
-    void RollBackTransaction();
+    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+
+    Task<IDisposable> BeginTransactionAsync(IsolationLevel isolationLevel = IsolationLevel.ReadCommitted, CancellationToken cancellationToken = default);
+
+    Task CommitTransactionAsync(CancellationToken cancellationToken = default);
 }

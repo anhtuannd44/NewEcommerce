@@ -1,17 +1,20 @@
 'use client'
 
 // React Imports
-import { useRef } from 'react'
+import { Fragment, useRef } from 'react'
 
 // MUI Imports
 import {
   Autocomplete,
-  Box,
+  Avatar,
   Card,
   CardContent,
   CardHeader,
   Divider,
   Grid2 as Grid,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
   TextField,
   Typography,
   createFilterOptions
@@ -41,11 +44,10 @@ import TotalBoxDetail from './total-box'
 interface IProductSelectionBoxProps {
   users: IUser[]
   products: IProductInList[]
-  orderTags: string[]
 }
 
 const ProductSelectionBox = (props: IProductSelectionBoxProps) => {
-  const { users, products, orderTags } = props
+  const { users, products } = props
 
   const { dictionary } = useDictionary()
   const { control, watch } = useFormContext<IOrder>()
@@ -67,7 +69,7 @@ const ProductSelectionBox = (props: IProductSelectionBoxProps) => {
   return (
     <Card>
       <CardHeader title={dictionary.adminArea.order.productInformationPanelTitle} />
-      <CardContent sx={{ paddingX: 0 }}>
+      <CardContent>
         <Grid container px={5}>
           <Grid size={9}>
             <Autocomplete
@@ -82,7 +84,7 @@ const ProductSelectionBox = (props: IProductSelectionBoxProps) => {
                   slotProps={{
                     input: {
                       ...params.InputProps,
-                      startAdornment: <Icon icon='mdi:magnify' style={{ marginRight: '8px' }} />
+                      startAdornment: <Icon icon='mdi:magnify' style={{ marginRight: '8px' }} fontSize='1.5em' />
                     }
                   }}
                 />
@@ -90,31 +92,14 @@ const ProductSelectionBox = (props: IProductSelectionBoxProps) => {
               filterOptions={filterProductOption}
               getOptionLabel={option => option.name}
               renderOption={(props, option) => (
-                <li
+                <ListItem
                   {...props}
                   key={option.id}
                   onMouseDown={() => {
                     handleSelectProduct(option)
                   }}
-                >
-                  <Grid container sx={{ width: '100%' }}>
-                    <Grid size={1}>
-                      <img
-                        src={
-                          option.imgUrl ??
-                          'https://sapo.dktcdn.net/100/689/126/variants/dinh-am-tuong-1675674468493.jpg'
-                        }
-                        width={40}
-                        height={40}
-                      />
-                    </Grid>
-                    <Grid size={7}>
-                      <Typography sx={{ fontWeight: 600 }}>{option.name}</Typography>
-                      <Typography variant='body2' sx={{ fontSize: '0.8rem', color: 'text.disabled' }}>
-                        {option.sku}
-                      </Typography>
-                    </Grid>
-                    <Grid textAlign='right' size={4}>
+                  secondaryAction={
+                    <Fragment>
                       <Typography sx={{ fontWeight: 600 }} color='success.main'>
                         {option.price
                           ? currencyVNDFormatter(option.price)
@@ -123,92 +108,57 @@ const ProductSelectionBox = (props: IProductSelectionBoxProps) => {
                       <Typography color='secondary'>
                         {dictionary.adminArea.order.field.productSelectList.stockQuantity}: {option.stockQuantity}
                       </Typography>
-                    </Grid>
-                  </Grid>
-                </li>
+                    </Fragment>
+                  }
+                >
+                  <ListItemAvatar>
+                    <Avatar
+                      variant='square'
+                      src={
+                        option.imgUrl ?? 'https://sapo.dktcdn.net/100/689/126/variants/dinh-am-tuong-1675674468493.jpg'
+                      }
+                    />
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={<Typography fontWeight={600}>{option.name}</Typography>}
+                    secondary={
+                      <Typography variant='body2' color='text.disabled'>
+                        {option.sku}
+                      </Typography>
+                    }
+                  />
+                </ListItem>
               )}
             />
           </Grid>
         </Grid>
         <Divider sx={{ mt: 5, mb: 0 }} />
         <OrderDetailsBox ref={childRef} />
-        <Divider sx={{ mt: 5, mb: 0 }} />
         <Grid container p={4} spacing={5}>
           <Grid size={8}>
-            {isComplainWatch && <OrderComplainBox users={users} />}
             <div>
               <Grid container spacing={5}>
-                <Grid size={6}>
+                <Grid size={12}>
                   <Controller
                     name='note'
                     control={control}
                     render={({ field: { onChange }, fieldState }) => (
                       <TextField
-                        rows={6}
+                        rows={3}
                         fullWidth
                         multiline
                         size='small'
                         type='text'
                         label={dictionary.adminArea.order.field.note.label}
-                        helperText={fieldState.error?.message || dictionary.adminArea.order.field.note.helperText}
+                        helperText={fieldState.error?.message}
                         error={!!fieldState.error}
                         onChange={onChange}
                       />
                     )}
                   />
                 </Grid>
-                <Grid size={6}>
-                  <Controller
-                    name='tags'
-                    control={control}
-                    render={({ field: { onChange }, fieldState }) => (
-                      <Autocomplete
-                        fullWidth
-                        size='small'
-                        multiple
-                        freeSolo
-                        options={orderTags}
-                        renderInput={params => (
-                          <TextField
-                            {...params}
-                            fullWidth
-                            error={!!fieldState.error}
-                            label={dictionary.adminArea.order.field.tags.label}
-                            helperText={fieldState.error?.message}
-                          />
-                        )}
-                        onChange={(event, newValue, reason) => {
-                          if (
-                            event.type === 'keydown' &&
-                            ((event as React.KeyboardEvent).key === 'Backspace' ||
-                              (event as React.KeyboardEvent).key === 'Delete') &&
-                            reason === 'removeOption'
-                          ) {
-                            return
-                          }
-
-                          onChange(newValue)
-                        }}
-                        getOptionLabel={option => option}
-                        renderOption={(props, option) => (
-                          <li {...props} key={option}>
-                            <Box
-                              sx={{
-                                display: 'flex',
-                                marginLeft: 3,
-                                alignItems: 'flex-start',
-                                flexDirection: 'column'
-                              }}
-                            >
-                              <Typography sx={{ fontWeight: 400, py: 1 }}>{option}</Typography>
-                            </Box>
-                          </li>
-                        )}
-                      />
-                    )}
-                  />
-                </Grid>
               </Grid>
+              {isComplainWatch && <OrderComplainBox users={users} />}
             </div>
           </Grid>
           <Grid size={4}>

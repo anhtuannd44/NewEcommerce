@@ -1,8 +1,9 @@
+using ECommerce.Common.Domain.Entities.BaseEntity;
 using ECommerce.Common.Domain.Enum;
 
 namespace ECommerce.Common.Domain.Entities.Blog;
 
-public class BlogCategory : AbstractEntity
+public class BlogCategory : BaseEntity<Guid>, IAggregateRoot
 {
     /// <summary>
     /// Gets or sets the blog post title

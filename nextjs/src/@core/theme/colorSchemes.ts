@@ -88,7 +88,7 @@ const colorSchemes = (skin: Skin): Theme['colorSchemes'] => {
           paperChannel: '255 255 255'
         },
         action: {
-          active: '`rgb(var(--mui-mainColorChannels-light) / 0.6)`',
+          active: `rgb(var(--mui-mainColorChannels-light) / 0.6)`,
           hover: `rgb(var(--mui-mainColorChannels-light) / 0.04)`,
           selected: `rgb(var(--mui-mainColorChannels-light) / 0.08)`,
           disabled: `rgb(var(--mui-mainColorChannels-light) / 0.3)`,

@@ -96,9 +96,17 @@
       }
     }
   },
+  "formValidation": {
+    "common": {
+      "required": "Không được để trống",
+      "min": "Giá trị phải lớn hơn {0}",
+      "max": "Giá trị không được lớn hơn {0}"
+    }
+  },
   "adminArea": {
     "common": {
       "button": {
+        "addNew": "Thêm mới",
         "submit": "Hoàn tất",
         "change": "Thay đổi",
         "cancel": "Hủy"
@@ -173,6 +181,9 @@
           "label": "Nguồn",
           "addOrderOriginButton": "Thêm/Sửa nguồn"
         },
+        "dateDelivery": {
+          "label": "Ngày hẹn giao"
+        },
         "picStaffId": {
           "label": "Người phụ trách"
         },
@@ -194,6 +205,91 @@
         },
         "tags": {
           "label": "Thẻ (tag)"
+        },
+        "problem": {
+          "label": "Vấn đề",
+          "helperText": "Ghi chú vấn đề gặp phải"
+        },
+        "rootCause": {
+          "label": "Nguyên nhân",
+          "helperText": "Ghi chú nguyên nhân"
+        },
+        "solution": {
+          "label": "Cách giải quyết",
+          "helperText": "Ghi chú cách giải quyết"
+        },
+        "responsibleStaffIds": {
+          "label": "Người chịu trách nhiệm"
+        }
+      },
+      "orderDetailsBox": {
+        "productListTable": {
+          "header": {
+            "no": "STT",
+            "picture": "Ảnh",
+            "productDetails": "Chi tiết sản phẩm",
+            "quantity": "Số lượng",
+            "price": "Đơn giá",
+            "sale": "Chiết khấu",
+            "total": "Thành tiền",
+            "VAT": "VAT"
+          },
+          "body": {
+            "show": "Hiển thị",
+            "hide": "Ẩn",
+            "note": "Ghi chú"
+          },
+          "noProductSelected": "Bạn chưa chọn sản phẩm, vui lòng tìm kiếm và chọn sản phẩm ở trên"
+        }
+      },
+      "orderOriginDialog": {
+        "cardHeaderTitle": "Thêm/Chỉnh sửa nguồn đơn hàng",
+        "noOrderOrigin": "Chưa có dữ liệu, vui lòng thêm mới nguồn ở trên",
+        "table": {
+          "header": {
+            "no": "STT",
+            "name": "Tên nguồn",
+            "status": "Trạng thái",
+            "action": "Hành động"
+          },
+          "body": {
+            "activeStatus": "Đang hiển thị",
+            "inactiveStatus": "Đang ẩn",
+            "show": "Hiển thị",
+            "hide": "Ẩn"
+          }
+        },
+        "createOrderOriginDialog": {
+          "field": {
+            "name": {
+              "label": "Tên nguồn"
+            },
+            "status": {
+              "label": "Trạng thái"
+            }
+          }
+        }
+      },
+      "totalBox": {
+        "field": {
+          "preTotal": "Tạm tính:",
+          "shippingFee": {
+            "label": "Phí giao hàng:"
+          },
+          "VAT": {
+            "label": "Thuế GTGT (VAT 8%):",
+            "vatList": {
+              "label": "SP Tính VAT:",
+              "noProductVAT": "Không có"
+            }
+          },
+          "discount": {
+            "label": "Chiết khấu đơn hàng:"
+          },
+          "deposit": {
+            "label": "Khách đã đặt cọc:"
+          },
+          "total": "Tổng khách phải trả:"
         }
       }
     }

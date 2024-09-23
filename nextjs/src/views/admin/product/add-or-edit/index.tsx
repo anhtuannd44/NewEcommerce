@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react'
 
 // MUI Imports
-import Grid from '@mui/material/Grid'
+import { Grid2 as Grid } from '@mui/material'
 
 // Third-party Imports
 import type { FieldErrors } from 'react-hook-form'
@@ -120,7 +120,8 @@ const AddOrEditProduct = (props: IEditProductProps) => {
   const productType = createOrUpdateProductForm.watch('productType')
 
   const onSubmit = (data: IProduct) => {
-    // console.log('data', data)
+    console.log('data', data)
+
     // createOrUpdateOrder(data)
   }
 
@@ -140,21 +141,21 @@ const AddOrEditProduct = (props: IEditProductProps) => {
   return (
     <FormProvider {...createOrUpdateProductForm}>
       <form onSubmit={createOrUpdateProductForm.handleSubmit(onSubmit, onError)}>
-        <Grid container spacing={6}>
-          <Grid xs={9}>
+        <Grid container spacing={6} columns={10}>
+          <Grid size={9}>
             <Grid container spacing={6}>
-              <Grid xs={12}>
+              <Grid size={12}>
                 <GeneralInfoProduct />
               </Grid>
-              <Grid xs={12}>
+              <Grid size={12}>
                 <ProductDescriptionBox />
               </Grid>
-              <Grid xs={12}>
+              <Grid size={12}>
                 <PriceProduct />
               </Grid>
             </Grid>
           </Grid>
-          <Grid xs={3}>
+          <Grid size={3}>
             <AdditionalProductBox
               productCategoryList={productCategoryList?.data || []}
               productTagList={productTagList?.data || []}
@@ -162,13 +163,17 @@ const AddOrEditProduct = (props: IEditProductProps) => {
             />
             {/* <ImageProductBox /> */}
           </Grid>
-          <Grid xs={12}>
+        </Grid>
+
+        <Grid container spacing={6}>
+          <Grid size={12}>
             {productType === ProductType.GroupedProduct && <ProductAttributeCombinationBox />}
             {/* <BodyContentBox /> */}
           </Grid>
         </Grid>
+
         <Grid container>
-          <Grid xs={12}>{/* <ProductSelectionBox /> */}</Grid>
+          <Grid size={12}>{/* <ProductSelectionBox /> */}</Grid>
         </Grid>
       </form>
     </FormProvider>

@@ -1,9 +1,10 @@
 using System.Collections;
+using ECommerce.Common.Domain.Entities.BaseEntity;
 using ECommerce.Common.Domain.Enum;
 
 namespace ECommerce.Common.Domain.Entities.Orders;
 
-public class Order : AbstractEntity
+public class Order : BaseEntity<Guid>, IAggregateRoot
 {
         /// <summary>
         /// Format: Year+Date

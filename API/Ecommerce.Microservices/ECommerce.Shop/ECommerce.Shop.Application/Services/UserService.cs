@@ -11,13 +11,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Shop.Application.Services;
 
-public class UserService : BaseService, IUserService
+public class UserService : BaseService<UserService>, IUserService
 {
     private readonly AppSettingConfiguration _appSetting = new();
 
     public UserService(IUnitOfWork unitOfWork,
         IConfiguration configuration,
-        ILogger<UserService> logger) : base(configuration, logger, unitOfWork)
+        ILogger<UserService> logger) : base(configuration, unitOfWork, logger)
     {
         configuration.Bind(_appSetting);
     }

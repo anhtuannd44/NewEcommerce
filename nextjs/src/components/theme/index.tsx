@@ -4,7 +4,7 @@
 import { useMemo } from 'react'
 
 // MUI Imports
-import { extendTheme, CssVarsProvider } from '@mui/material/styles'
+import { ThemeProvider, createTheme } from '@mui/material/styles'
 
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter'
 import CssBaseline from '@mui/material/CssBaseline'
@@ -61,7 +61,12 @@ const ThemeProviderWrapper = (props: Props) => {
   const theme = useMemo(() => {
     const coreTheme = mergedTheme(settings, currentMode, direction)
 
-    return extendTheme(coreTheme)
+    const theme1 = createTheme({
+      ...coreTheme,
+      cssVariables: true
+    })
+
+    return theme1
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [settings.primaryColor, settings.skin, currentMode])
@@ -76,7 +81,7 @@ const ThemeProviderWrapper = (props: Props) => {
         })
       }}
     >
-      <CssVarsProvider
+      <ThemeProvider
         theme={theme}
         modeStorageKey={`${themeConfig.templateName.toLowerCase().split(' ').join('-')}-mui-template-mode`}
       >
@@ -85,7 +90,7 @@ const ThemeProviderWrapper = (props: Props) => {
           <CssBaseline />
           {children}
         </>
-      </CssVarsProvider>
+      </ThemeProvider>
     </AppRouterCacheProvider>
   )
 }

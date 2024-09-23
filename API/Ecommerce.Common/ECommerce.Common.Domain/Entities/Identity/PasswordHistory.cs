@@ -1,4 +1,5 @@
 ﻿namespace ECommerce.Common.Domain.Entities.Identity;
+using ECommerce.Common.Domain.Entities.BaseEntity;
 
 public class PasswordHistory : BaseEntity<Guid>
 {

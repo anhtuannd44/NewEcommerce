@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Protobuf Include="..\..\..\Contracts\Notification\Protos\EmailMessage.proto" GrpcServices="Client" Link="Protos\EmailMessage.proto"/>
+        <Protobuf Include="..\..\..\Contracts\Notification\Protos\SmsMessage.proto" GrpcServices="Client" Link="Protos\SmsMessage.proto"/>
+        <FrameworkReference Include="Microsoft.AspNetCore.App"/>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0"/>
+        <PackageReference Include="Grpc.Tools" Version="2.60.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Graph" Version="5.37.0"/>
+        <PackageReference Include="Polly" Version="8.2.0"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\Ecommerce.Common\ECommerce.Common.Application\ECommerce.Common.Application.csproj"/>
+        <ProjectReference Include="..\..\..\Ecommerce.Common\ECommerce.Common.Infrastructure\ECommerce.Common.Infrastructure.csproj" />
+    </ItemGroup>
+
+</Project>

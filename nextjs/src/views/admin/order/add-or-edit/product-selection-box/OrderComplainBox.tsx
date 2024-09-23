@@ -1,10 +1,13 @@
 'use client'
 
 // MUI Imports
-import { Autocomplete, Avatar, Grid2 as Grid, TextField, Typography } from '@mui/material'
+import { Autocomplete, Avatar, Grid2 as Grid, ListItem, ListItemAvatar, ListItemText, TextField } from '@mui/material'
 
 // Third-party Imports
 import { Controller, useFormContext } from 'react-hook-form'
+
+// Context Imports
+import { useDictionary } from '@/contexts/dictionaryContext'
 
 // Type Imports
 import type { IOrder } from '@/interface/admin/order'
@@ -17,23 +20,25 @@ interface IOrderComplainBoxProps {
 const OrderComplainBox = (props: IOrderComplainBoxProps) => {
   const { users } = props
 
+  const { dictionary } = useDictionary()
   const { control } = useFormContext<IOrder>()
 
   return (
-    <Grid container spacing={5} mb={5}>
-      <Grid size={{ xs: 6 }}>
+    <Grid container spacing={5} mt={5}>
+      <Grid size={6}>
         <Controller
           name='problem'
           control={control}
           render={({ field: { onChange }, fieldState }) => (
             <TextField
+              fullWidth
               error={!!fieldState.error}
               multiline
+              size='small'
               rows={4}
-              label='Vấn đề'
-              placeholder='Vấn đề'
+              label={dictionary.adminArea.order.field.problem.label}
               onChange={onChange}
-              helperText={fieldState.error?.message || 'Ghi chú vấn đề gặp phải'}
+              helperText={fieldState.error?.message}
             />
           )}
         />
@@ -49,9 +54,8 @@ const OrderComplainBox = (props: IOrderComplainBoxProps) => {
               rows={4}
               size='small'
               type='text'
-              label='Nguyên nhân'
-              placeholder='Nguyên nhân'
-              helperText={fieldState.error?.message || 'Ghi chú nguyên nhân'}
+              label={dictionary.adminArea.order.field.rootCause.label}
+              helperText={fieldState.error?.message}
               onChange={onChange}
             />
           )}
@@ -68,9 +72,8 @@ const OrderComplainBox = (props: IOrderComplainBoxProps) => {
               rows={4}
               size='small'
               type='text'
-              label='Cách giải quyết'
-              placeholder='Cách giải quyết'
-              helperText={fieldState.error?.message || 'Ghi chú cách giải quyết'}
+              label={dictionary.adminArea.order.field.solution.label}
+              helperText={fieldState.error?.message}
               onChange={onChange}
             />
           )}
@@ -84,40 +87,29 @@ const OrderComplainBox = (props: IOrderComplainBoxProps) => {
             render={({ field: { onChange }, fieldState }) => (
               <Autocomplete
                 fullWidth
-                size='small'
                 id='responsibleStaffIds'
+                size='small'
                 multiple
                 options={users}
                 renderInput={params => (
                   <TextField
                     {...params}
                     error={!!fieldState.error}
-                    label='Người chịu trách nhiệm'
+                    label={dictionary.adminArea.order.field.responsibleStaffIds.label}
                     helperText={fieldState.error?.message}
                   />
                 )}
-                onChange={(event, newValue, reason) => {
-                  if (
-                    event.type === 'keydown' &&
-                    ((event as React.KeyboardEvent).key === 'Backspace' ||
-                      (event as React.KeyboardEvent).key === 'Delete') &&
-                    reason === 'removeOption'
-                  ) {
-                    return
-                  }
-
+                onChange={(event, newValue) => {
                   onChange(newValue.map(x => x.id))
                 }}
                 getOptionLabel={option => option.fullName}
                 renderOption={(props, option) => (
-                  <li {...props} key={option.id}>
-                    <div className='flex items-center plb-2 pli-4 gap-2'>
-                      <Avatar alt='John Doe' src='/images/avatars/1.png' sx={{ width: '2.5rem', height: '2.5rem' }} />
-                      <div className='flex items-start flex-col'>
-                        <Typography sx={{ fontWeight: 600 }}>{option.fullName}</Typography>
-                      </div>
-                    </div>
-                  </li>
+                  <ListItem {...props} key={option.id}>
+                    <ListItemAvatar>
+                      <Avatar src='/images/avatars/1.png' sx={{ width: '2.2rem', height: '2.2rem' }} />
+                    </ListItemAvatar>
+                    <ListItemText primary={option.fullName} />
+                  </ListItem>
                 )}
               />
             )}

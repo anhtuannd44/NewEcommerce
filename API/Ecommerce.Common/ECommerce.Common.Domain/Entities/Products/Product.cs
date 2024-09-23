@@ -1,11 +1,11 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using ECommerce.Common.Domain.Entities.Identity;
+using ECommerce.Common.Domain.Entities.BaseEntity;
 using ECommerce.Common.Domain.Entities.Media;
 using ECommerce.Common.Domain.Enum;
 
 namespace ECommerce.Common.Domain.Entities.Products;
 
-public class Product : AbstractEntity
+public class Product : BaseEntity<Guid>
 {
     public string Name { get; set; }
     public string ShortDescription { get; set; }
@@ -31,8 +31,7 @@ public class Product : AbstractEntity
     public Guid? BrandId { get; set; }
     public Guid? ProductCategoryId { get; set; }
 
-    [ForeignKey("FileId")]
-    public virtual Files MainPicture { get; set; }
+    [ForeignKey("FileId")] public virtual Files MainPicture { get; set; }
     public virtual ProductCategory ProductCategory { get; set; }
     public virtual Brand Brand { get; set; }
     public virtual IList<ProductAttribute> ProductAttributes { get; set; }

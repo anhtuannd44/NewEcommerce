@@ -1,6 +1,8 @@
+using ECommerce.Common.Domain.Entities.BaseEntity;
+
 namespace ECommerce.Common.Domain.Entities.Products;
 
-public class ProductCategory : AbstractEntity
+public class ProductCategory : BaseEntity<Guid>
 {
         /// <summary>
         /// Gets or sets the name

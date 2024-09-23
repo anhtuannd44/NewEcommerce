@@ -12,13 +12,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Shop.Application.Services;
 
-public class FileService : BaseService, IFileService
+public class FileService : BaseService<FileService>, IFileService
 {
     private readonly AppSettingConfiguration _appSetting = new();
 
     public FileService(IUnitOfWork unitOfWork,
         IConfiguration configuration,
-        ILogger<FileService> logger) : base(configuration, logger, unitOfWork)
+        ILogger<FileService> logger) : base(configuration, unitOfWork, logger)
     {
         configuration.Bind(_appSetting);
     }

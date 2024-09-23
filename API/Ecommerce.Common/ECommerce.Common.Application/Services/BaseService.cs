@@ -4,12 +4,10 @@ using Microsoft.Extensions.Logging;
 
 namespace ECommerce.Common.Application.Services;
 
-public class BaseService(
-    IConfiguration configuration,
-    ILogger logger,
-    IUnitOfWork unitOfWork)
+public abstract class BaseService<T>(IConfiguration configuration, IUnitOfWork unitOfWork, ILogger<T> logger)
+    where T : class
 {
     protected readonly IConfiguration _configuration = configuration;
     protected readonly IUnitOfWork _unitOfWork = unitOfWork;
-    protected readonly ILogger _logger = logger;
+    protected readonly ILogger<T> _logger = logger;
 }

@@ -1,6 +1,7 @@
 namespace ECommerce.Common.Domain.Entities.Identity;
+using ECommerce.Common.Domain.Entities.BaseEntity;
 
-public class Role : AbstractEntity
+public class Role :  BaseEntity<Guid>
 {
     public string Name { get; set; }
     public string Code { get; set; }

@@ -1,9 +1,11 @@
+using ECommerce.Common.Domain.Entities.BaseEntity;
+
 namespace ECommerce.Common.Domain.Entities.Products;
 
-public class ProductAttributeCombination : AbstractEntity
+public class ProductAttributeCombination : BaseEntity<Guid>
 {
     public Guid ProductId { get; set; }
-    public string AttributesJson { get; set; }
+    public string AttributesXml { get; set; }
     public decimal? Price { get; set; }
     public int? StockQuantity { get; set; }
     public string Sku { get; set; }

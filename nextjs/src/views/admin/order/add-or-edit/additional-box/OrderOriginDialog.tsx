@@ -2,6 +2,7 @@
 
 // React Imports
 import { useState, useEffect } from 'react'
+import type { SetStateAction } from 'react'
 
 // MUI Imports
 import {
@@ -19,8 +20,6 @@ import {
   Box,
   Typography,
   TablePagination,
-  Backdrop,
-  CircularProgress,
   Card,
   CardHeader,
   CardContent,
@@ -38,7 +37,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useDictionary } from '@/contexts/dictionaryContext'
 
 // Form Imports
-import { orderOriginSchema } from '@/form/admin/order/schema/createOrUpdateOrderOriginSchema'
+import orderOriginSchema from '@/form/admin/order/schema/createOrUpdateOrderOriginSchema'
 
 // Type Imports
 import type { IOrderOrigin, IOrderOriginRequest } from '@/interface/admin/order'
@@ -51,10 +50,12 @@ import EmptyBox from '@/views/shared/EmptyBox'
 
 // Style Imports
 import tableStyles from '@core/styles/table.module.css'
+import CreateOrderOriginDialog from './create-order-origin-dialog'
 
 interface IOrderOriginDialogProps {
   open: boolean
   setIsOpenOrderOriginDialog: (isOpen: boolean) => void
+  setLoading: (value: SetStateAction<boolean>) => void
 }
 
 interface IPaging {
@@ -63,17 +64,17 @@ interface IPaging {
 }
 
 const OrderOriginDialog = (props: IOrderOriginDialogProps) => {
-  const { open, setIsOpenOrderOriginDialog } = props
+  const { open, setIsOpenOrderOriginDialog, setLoading } = props
 
   const { dictionary } = useDictionary()
   const theme = useTheme()
 
   const [orderOrigins, setOrderOrigins] = useState<IOrderOrigin[]>([])
   const [editingId, setEditingId] = useState<string | null>(null)
-  const [loading, setLoading] = useState<boolean>(false)
+  const [openCreateOrderOriginDialog, setOpenCreateOrderOriginDialog] = useState<boolean>(false)
 
   const { control, handleSubmit, reset, setValue } = useForm<IOrderOriginRequest>({
-    resolver: yupResolver(orderOriginSchema)
+    resolver: yupResolver(orderOriginSchema(dictionary))
   })
 
   const [paging, setPaging] = useState<IPaging>({
@@ -87,6 +88,7 @@ const OrderOriginDialog = (props: IOrderOriginDialogProps) => {
 
     if (!response.data) {
       toast.error(response.error?.message || dictionary.messageNotification.apiMessageNotification.error.common)
+      setLoading(false)
 
       return
     }
@@ -116,15 +118,8 @@ const OrderOriginDialog = (props: IOrderOriginDialogProps) => {
     setValue('isActive', orderOrigin.isActive)
   }
 
-  const handleClickCreateOrderOrigin = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    event.preventDefault()
-
-    // setEditOriginDialog(prev => ({
-    //   ...prev,
-    //   edittingOrderOrigin: null,
-    //   orderOriginDialogOpen: true,
-    //   mode: 'create'
-    // }))
+  const handleClickCreateOrderOrigin = () => {
+    setOpenCreateOrderOriginDialog(true)
   }
 
   const handleEditOrderOriginSubmit = async (data: IOrderOriginRequest) => {
@@ -134,6 +129,8 @@ const OrderOriginDialog = (props: IOrderOriginDialogProps) => {
       isActive: data.isActive
     }
 
+    const isEdit = !!itemUpdate.id
+
     setLoading(true)
 
     try {
@@ -141,11 +138,14 @@ const OrderOriginDialog = (props: IOrderOriginDialogProps) => {
 
       if (response.error) {
         toast.error(response.error.message || dictionary.messageNotification.apiMessageNotification.error.common)
+        setLoading(false)
+
+        return
       }
 
-      response.data?.data && updateOrderOrigins(response.data?.data)
+      response.data?.data && updateOrderOrigins(response.data?.data, isEdit)
 
-      setEditingId(null)
+      isEdit && setEditingId(null)
 
       toast.success(dictionary.messageNotification.apiMessageNotification.success.commonUpdate)
     } catch {
@@ -155,13 +155,17 @@ const OrderOriginDialog = (props: IOrderOriginDialogProps) => {
     }
   }
 
-  const updateOrderOrigins = (data: IOrderOriginRequest) => {
+  const updateOrderOrigins = (data: IOrderOriginRequest, isEdit: boolean) => {
     const updateOrderOrigin = data as IOrderOrigin
 
-    orderOrigins &&
-      setOrderOrigins(prev =>
-        prev.map(orderOrigin => (orderOrigin.id === updateOrderOrigin.id ? updateOrderOrigin : orderOrigin))
-      )
+    if (isEdit) {
+      orderOrigins &&
+        setOrderOrigins(prev =>
+          prev.map(orderOrigin => (orderOrigin.id === updateOrderOrigin.id ? updateOrderOrigin : orderOrigin))
+        )
+    } else {
+      setOrderOrigins(prev => [...prev, updateOrderOrigin])
+    }
   }
 
   const handleSaveClick = () => {
@@ -181,9 +185,9 @@ const OrderOriginDialog = (props: IOrderOriginDialogProps) => {
 
   return (
     <Dialog fullWidth maxWidth='xl' open={open} onClose={handleCloseOrderOriginDialog}>
-      <Card sx={{ margin: 0 }}>
+      <Card>
         <CardHeader
-          title={'Thêm/Chỉnh sửa nguồn đơn hàng'}
+          title={dictionary.adminArea.order.orderOriginDialog.cardHeaderTitle}
           action={
             <IconButton
               onClick={() => {
@@ -196,8 +200,8 @@ const OrderOriginDialog = (props: IOrderOriginDialogProps) => {
         />
         <CardContent>
           <Box display='flex' justifyContent='flex-end'>
-            <Button variant='contained' onClick={handleClickCreateOrderOrigin}>
-              Thêm mới
+            <Button variant='contained' size='small' onClick={handleClickCreateOrderOrigin}>
+              {dictionary.adminArea.common.button.addNew}
             </Button>
           </Box>
           {orderOrigins.length > 0 ? (
@@ -214,16 +218,16 @@ const OrderOriginDialog = (props: IOrderOriginDialogProps) => {
                   <TableHead>
                     <TableRow>
                       <TableCell key={1} align='left' padding={'normal'} sx={{ width: '30px' }}>
-                        STT
+                        {dictionary.adminArea.order.orderOriginDialog.table.header.no}
                       </TableCell>
                       <TableCell key={2} align='left' padding={'normal'}>
-                        Tên Nguồn
+                        {dictionary.adminArea.order.orderOriginDialog.table.header.name}
                       </TableCell>
                       <TableCell key={3} align='center' padding={'normal'} sx={{ width: '150px' }}>
-                        Trạng thái
+                        {dictionary.adminArea.order.orderOriginDialog.table.header.status}
                       </TableCell>
                       <TableCell key={4} align='right' padding={'normal'} sx={{ width: '40px' }}>
-                        Hành động
+                        {dictionary.adminArea.order.orderOriginDialog.table.header.action}
                       </TableCell>
                     </TableRow>
                   </TableHead>
@@ -257,7 +261,15 @@ const OrderOriginDialog = (props: IOrderOriginDialogProps) => {
                             )}
                           </TableCell>
                           <TableCell key={`isActive-${index}`} align='center'>
-                            <Tooltip arrow title={row.isActive ? 'Đang hiển thị' : 'Đang ẩn'} placement='top'>
+                            <Tooltip
+                              arrow
+                              title={
+                                row.isActive
+                                  ? dictionary.adminArea.order.orderOriginDialog.table.body.activeStatus
+                                  : dictionary.adminArea.order.orderOriginDialog.table.body.inactiveStatus
+                              }
+                              placement='top'
+                            >
                               <Icon
                                 icon='mdi:circle'
                                 style={{
@@ -278,17 +290,25 @@ const OrderOriginDialog = (props: IOrderOriginDialogProps) => {
                                       handlClickUpdateOrderOrigin(row)
                                     }}
                                   >
-                                    <Icon icon='mdi:pencil' color='warning' />
+                                    <Icon icon='mdi:pencil' color={theme.palette.warning.main} fontSize='.9em' />
                                   </IconButton>
                                 </Tooltip>
-                                <Tooltip arrow title={row.isActive ? 'Ẩn' : 'Hiển thị'} placement='top'>
+                                <Tooltip
+                                  arrow
+                                  title={
+                                    row.isActive
+                                      ? dictionary.adminArea.order.orderOriginDialog.table.body.hide
+                                      : dictionary.adminArea.order.orderOriginDialog.table.body.show
+                                  }
+                                  placement='top'
+                                >
                                   <IconButton
                                     aria-label='eyecheck'
                                     onClick={() => {
                                       handleShowHideOrderOrigin(row, !row.isActive)
                                     }}
                                   >
-                                    <Icon icon={`mdi:eye-${row.isActive ? 'off' : 'check'}-outline`} />
+                                    <Icon icon={`mdi:eye-${row.isActive ? 'off' : 'check'}-outline`} fontSize='.9em' />
                                   </IconButton>
                                 </Tooltip>
                               </Stack>
@@ -296,12 +316,12 @@ const OrderOriginDialog = (props: IOrderOriginDialogProps) => {
                               <Stack direction='row' spacing={2} justifyContent='flex-end'>
                                 <Tooltip arrow title='Lưu lại' placement='top'>
                                   <IconButton aria-label='submit' onClick={handleSaveClick}>
-                                    <Icon icon='mdi:check' color='main.success' />
+                                    <Icon icon='mdi:check' color={theme.palette.success.main} fontSize='.9em' />
                                   </IconButton>
                                 </Tooltip>
                                 <Tooltip arrow title={'Hủy'} placement='top'>
                                   <IconButton aria-label='close' onClick={handleCancelClick}>
-                                    <Icon icon={'mdi:close'} />
+                                    <Icon icon={'mdi:close'} fontSize='.9em' />
                                   </IconButton>
                                 </Tooltip>
                               </Stack>
@@ -324,14 +344,17 @@ const OrderOriginDialog = (props: IOrderOriginDialogProps) => {
           ) : (
             <Box textAlign='center' py={20}>
               <EmptyBox />
-              <Typography variant='body2'>Chưa có dữ liệu, vui lòng thêm mới nguồn ở trên</Typography>
+              <Typography variant='body2'>{dictionary.adminArea.order.orderOriginDialog.noOrderOrigin}</Typography>
             </Box>
           )}
+          <CreateOrderOriginDialog
+            open={openCreateOrderOriginDialog}
+            setIsOpenOrderOriginDialog={setOpenCreateOrderOriginDialog}
+            setLoading={setLoading}
+            updateOrderOrigins={updateOrderOrigins}
+          />
         </CardContent>
       </Card>
-      <Backdrop sx={{ color: '#fff', zIndex: 99999 }} open={loading}>
-        <CircularProgress color='inherit' />
-      </Backdrop>
     </Dialog>
   )
 }

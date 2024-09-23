@@ -1,9 +1,10 @@
 using ECommerce.Common.Domain.Entities.Orders;
 using ECommerce.Common.Domain.Enum;
+using ECommerce.Common.Domain.Entities.BaseEntity;
 
 namespace ECommerce.Common.Domain.Entities.Identity;
 
-public class User : AbstractEntity
+public class User : BaseEntity<Guid>
 {
     public string Email { get; set; }
     public string UserName { get; set; }

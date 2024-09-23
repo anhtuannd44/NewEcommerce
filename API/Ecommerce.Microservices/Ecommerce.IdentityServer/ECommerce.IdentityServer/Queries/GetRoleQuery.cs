@@ -1,0 +1,37 @@
+﻿using ECommerce.Common.Application.Common.Queries;
+using ECommerce.IdentityServer.Entities;
+using ECommerce.IdentityServer.Repositories;
+
+namespace ECommerce.IdentityServer.Queries;
+
+public class GetRoleQuery : IQuery<Role>
+{
+    public Guid Id { get; set; }
+    public bool IncludeClaims { get; set; }
+    public bool IncludeUserRoles { get; set; }
+    public bool IncludeUsers { get; set; }
+    public bool AsNoTracking { get; set; }
+}
+
+public class GetRoleQueryHandler : IQueryHandler<GetRoleQuery, Role>
+{
+    private readonly IRoleRepository _roleRepository;
+
+    public GetRoleQueryHandler(IRoleRepository roleRepository)
+    {
+        _roleRepository = roleRepository;
+    }
+
+    public Task<Role> HandleAsync(GetRoleQuery query, CancellationToken cancellationToken = default)
+    {
+        var db = _roleRepository.Get(new RoleQueryOptions
+        {
+            IncludeClaims = query.IncludeClaims,
+            IncludeUserRoles = query.IncludeUserRoles,
+            IncludeUsers = query.IncludeUsers,
+            AsNoTracking = query.AsNoTracking,
+        });
+
+        return _roleRepository.FirstOrDefaultAsync(db.Where(x => x.Id == query.Id));
+    }
+}

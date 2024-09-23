@@ -15,13 +15,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Shop.Application.Services;
 
-public class ProductService : BaseService, IProductService
+public class ProductService : BaseService<ProductService>, IProductService
 {
     private readonly AppSettingConfiguration _appSetting = new();
 
     public ProductService(IUnitOfWork unitOfWork,
         IConfiguration configuration,
-        ILogger<ProductService> logger) : base(configuration, logger, unitOfWork)
+        ILogger<ProductService> logger) : base(configuration, unitOfWork, logger)
     {
         configuration.Bind(_appSetting);
     }
@@ -195,7 +195,7 @@ public class ProductService : BaseService, IProductService
                     StockQuantity = x.StockQuantity,
                     Sku = x.Sku,
                     BarCode = x.BarCode,
-                    AttributeJson = JsonSerializer.Deserialize<List<AttributesJsonDto>>(x.AttributesJson)
+                    AttributeJson = JsonSerializer.Deserialize<List<AttributesJsonDto>>(x.AttributesXml)
                 }).ToList()
             };
 
@@ -335,7 +335,7 @@ public class ProductService : BaseService, IProductService
                         StockQuantity = x.StockQuantity,
                         Sku = x.Sku,
                         BarCode = x.BarCode,
-                        AttributesJson = JsonSerializer.Serialize(x.AttributeJson)
+                        AttributesXml = JsonSerializer.Serialize(x.AttributeJson)
                     }))
                     {
                         await _unitOfWork.Repository<ProductAttributeCombination>().AddAsync(productAttributeCombination);

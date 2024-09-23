@@ -1,25 +1,27 @@
-# syntax=docker/dockerfile:1
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
+WORKDIR /ECommerece.Microservices
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-WORKDIR /app
+# Copy csproj and restore as distinct layers
+COPY ./Common/ECommerece.Application/*.csproj ./Common/ECommerece.Application/
+COPY ./Common/ECommerece.CrossCuttingConcerns/*.csproj ./Common/ECommerece.CrossCuttingConcerns/
+COPY ./Common/ECommerece.Domain/*.csproj ./Common/ECommerece.Domain/
+COPY ./Common/ECommerece.Infrastructure/*.csproj ./Common/ECommerece.Infrastructure/
+RUN dotnet restore ./Common/ECommerece.Application/ECommerece.Application.csproj
+RUN dotnet restore ./Common/ECommerece.Infrastructure/ECommerece.Infrastructure.csproj
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /src
-COPY ["src/microservices/IdentityMicroservice/IdentityMicroservice.csproj", "microservices/IdentityMicroservice/"]
-COPY src/middlewares middlewares/
-RUN dotnet restore "microservices/IdentityMicroservice/IdentityMicroservice.csproj"
+COPY ./Services.Identity/ECommerece.Services.Identity/*.csproj ./Services.Identity/ECommerece.Services.Identity/
+RUN dotnet restore ./Services.Identity/ECommerece.Services.Identity/ECommerece.Services.Identity.csproj
 
-WORKDIR "/src/microservices/IdentityMicroservice"
-COPY src/microservices/IdentityMicroservice .
-RUN dotnet build "IdentityMicroservice.csproj" -c Release -o /app/build
+COPY ./Services.Identity/ECommerece.Services.Identity.Api/*.csproj ./Services.Identity/ECommerece.Services.Identity.Api/
+RUN dotnet restore ./Services.Identity/ECommerece.Services.Identity.Api/ECommerece.Services.Identity.Api.csproj
 
-FROM build AS publish
-RUN dotnet publish "IdentityMicroservice.csproj" -c Release -o /app/publish
+# Copy everything else and build ECommerece
+COPY . ./
+RUN dotnet publish ./Services.Identity/ECommerece.Services.Identity.Api/ECommerece.Services.Identity.Api.csproj -c Release -o out
 
-FROM base AS final
-WORKDIR /app
-ENV ASPNETCORE_URLS=http://+:80
-EXPOSE 80
-EXPOSE 443
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "IdentityMicroservice.dll"]
+# Build runtime image
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+WORKDIR /ECommerece.Microservices
+COPY --from=build-env /ECommerece.Microservices/out .
+
+ENTRYPOINT ["dotnet", "ECommerece.Services.Identity.Api.dll"]

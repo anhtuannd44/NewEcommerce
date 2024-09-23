@@ -1,4 +1,5 @@
-﻿using ECommerce.Common.Domain.Entities.Products;
+﻿using ECommerce.Common.Domain.Entities.BaseEntity;
+using ECommerce.Common.Domain.Entities.Products;
 using ECommerce.Common.Domain.Enum;
 
 namespace ECommerce.Common.Domain.Entities.Media;
@@ -6,7 +7,7 @@ namespace ECommerce.Common.Domain.Entities.Media;
 /// <summary>
 /// Represents a file
 /// </summary>
-public class Files : AbstractEntity
+public class Files : BaseEntity<Guid>, IAggregateRoot
 {
     /// <summary>
     /// Gets or sets the file name

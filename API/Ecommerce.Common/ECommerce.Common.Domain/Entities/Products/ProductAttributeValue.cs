@@ -1,6 +1,8 @@
+using ECommerce.Common.Domain.Entities.BaseEntity;
+
 namespace ECommerce.Common.Domain.Entities.Products;
 
-public class ProductAttributeValue : AbstractEntity
+public class ProductAttributeValue : BaseEntity<Guid>
 {
         public Guid ProductAttributeId { get; set; }
         public string Name { get; set; }

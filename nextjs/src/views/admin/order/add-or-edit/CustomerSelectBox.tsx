@@ -3,7 +3,6 @@
 // MUI Imports
 import {
   Autocomplete,
-  Avatar,
   Box,
   Button,
   Card,
@@ -12,7 +11,12 @@ import {
   CardHeader,
   Link,
   TextField,
-  Typography
+  Typography,
+  ListItem,
+  ListItemAvatar,
+  Avatar,
+  ListItemText,
+  useTheme
 } from '@mui/material'
 
 import type { FilterOptionsState } from '@mui/material'
@@ -24,12 +28,14 @@ import { Icon } from '@iconify/react'
 // Type Imports
 import type { IOrder } from '@/interface/admin/order'
 import type { IUser } from '@/interface/admin/user'
+import type { IProductBorrowProps } from './ProductBorrowInfo'
+
+// Context Imports
+import { useDictionary } from '@/contexts/dictionaryContext'
 
 // Component Imports
-import type { IProductBorrowProps } from './ProductBorrowInfo'
-import ProductBorrowInfo from './ProductBorrowInfo'
 import EmptyBox from '@/views/shared/EmptyBox'
-import { useDictionary } from '@/contexts/dictionaryContext'
+import ProductBorrowInfo from './ProductBorrowInfo'
 
 interface ICustomerSelectBoxProps {
   filterUserOptions: (options: IUser[], state: FilterOptionsState<IUser>) => IUser[]
@@ -40,6 +46,7 @@ const CustomerSelectBox = (props: ICustomerSelectBoxProps) => {
   const { users, filterUserOptions } = props
 
   const { dictionary } = useDictionary()
+  const { palette } = useTheme()
 
   const { control, setValue } = useFormContext<IOrder>()
 
@@ -51,7 +58,7 @@ const CustomerSelectBox = (props: ICustomerSelectBoxProps) => {
   }
 
   return (
-    <Card>
+    <Card sx={{ height: '100%' }}>
       <CardHeader
         title={dictionary.adminArea.order.customerSelectionPanelTitle}
         action={
@@ -70,7 +77,7 @@ const CustomerSelectBox = (props: ICustomerSelectBoxProps) => {
         }
       />
       <CardContent>
-        {users.length > 0 ? (
+        {!!users.length ? (
           <Grid container spacing={12}>
             <Grid size={12}>
               <Controller
@@ -82,68 +89,45 @@ const CustomerSelectBox = (props: ICustomerSelectBoxProps) => {
                   setValue('deliveryAddress', user?.address || '', { shouldValidate: true })
 
                   return user ? (
-                    <>
-                      <Box mb={4}>
-                        <Typography sx={{ fontSize: '1rem' }}>
+                    <Grid container spacing={6}>
+                      <Grid size={12}>
+                        <Typography>
                           <Link color='primary' href={`admin/user/${value}`}>
                             {user.fullName}
-                          </Link>{' '}
-                          - {user.phoneNumber} {user.email && `- ${user.email}`}
+                          </Link>
+                          {` - ${user.phoneNumber} ${user.email && '-' + user.email}`}
                         </Typography>
-                      </Box>
-                      <Grid container spacing={5} mb={4}>
-                        <Grid size={8}>
-                          <Box
-                            component='section'
-                            sx={{
-                              p: 2,
-                              mb: 5,
-                              border: '1px dashed grey',
-                              borderRadius: 2
-                            }}
-                          >
-                            <Typography variant='h6' mb={2} sx={{ fontWeight: 500 }}>
-                              {dictionary.adminArea.order.field.customerId.details.addressDelivery}
-                            </Typography>
-                            <Typography variant='body1' mb={3}>
-                              {user.address}
-                            </Typography>
-                            <Button variant='contained' size='small' color='warning'>
-                              {dictionary.adminArea.common.button.change}
-                            </Button>
-                          </Box>
-                        </Grid>
-                        <Grid size={4}>
-                          <Box
-                            component='section'
-                            sx={{
-                              px: 4,
-                              py: 0,
-                              mb: 5,
-                              border: '1px dashed grey',
-                              borderRadius: 2
-                            }}
-                          >
-                            <ProductBorrowInfo {...productBorrowInfo} />
-                          </Box>
-                        </Grid>
                       </Grid>
-                      <Grid container>
-                        <Grid textAlign='center' size={12}>
-                          <Button
-                            variant='contained'
-                            size='small'
-                            onClick={() => {
-                              setValue('customerId', null, { shouldValidate: true })
-                            }}
-                          >
-                            {dictionary.adminArea.order.field.customerId.changeCustomer}
+                      <Grid size={8}>
+                        <Box component='section' borderRadius={1} p={4} mb={5} border='1px dashed grey'>
+                          <Typography variant='h6' mb={2} fontWeight={500}>
+                            {dictionary.adminArea.order.field.customerId.details.addressDelivery}
+                          </Typography>
+                          <Typography variant='body1' mb={3}>
+                            {user.address}
+                          </Typography>
+                          <Button variant='contained' size='small' color='warning'>
+                            {dictionary.adminArea.common.button.change}
                           </Button>
-                        </Grid>
+                        </Box>
                       </Grid>
-                    </>
+                      <Grid size={4}>
+                        <ProductBorrowInfo {...productBorrowInfo} />
+                      </Grid>
+                      <Grid textAlign='center' size={12}>
+                        <Button
+                          variant='contained'
+                          size='small'
+                          onClick={() => {
+                            setValue('customerId', null, { shouldValidate: true })
+                          }}
+                        >
+                          {dictionary.adminArea.order.field.customerId.changeCustomer}
+                        </Button>
+                      </Grid>
+                    </Grid>
                   ) : (
-                    <>
+                    <Box>
                       <Autocomplete
                         fullWidth
                         id='customerId'
@@ -154,51 +138,49 @@ const CustomerSelectBox = (props: ICustomerSelectBoxProps) => {
                             error={!!fieldState.error}
                             label={dictionary.adminArea.order.field.customerId.label}
                             helperText={fieldState.error?.message}
-                            InputProps={{
-                              ...params.InputProps,
-                              startAdornment: <Icon icon='mdi:magnify' style={{ marginRight: '8px' }} />
+                            slotProps={{
+                              input: {
+                                ...params.InputProps,
+                                startAdornment: (
+                                  <Icon
+                                    icon='mdi:magnify'
+                                    style={{ marginRight: '8px' }}
+                                    fontSize='1.5em'
+                                    color={!!fieldState.error ? palette.error.main : palette.text.secondary}
+                                  />
+                                )
+                              }
                             }}
                           />
                         )}
-                        onChange={(event, newValue, reason) => {
-                          if (
-                            event.type === 'keydown' &&
-                            ((event as React.KeyboardEvent).key === 'Backspace' ||
-                              (event as React.KeyboardEvent).key === 'Delete') &&
-                            reason === 'removeOption'
-                          ) {
-                            return
-                          }
-
+                        onChange={(event, newValue) => {
                           onChange(newValue?.id)
                         }}
                         filterOptions={filterUserOptions}
                         getOptionLabel={option => option.fullName}
                         renderOption={(props, option) => (
-                          <li {...props} key={option.id}>
-                            <div className='flex items-center plb-2 pli-4 gap-2'>
-                              <Avatar
-                                alt='John Doe'
-                                src='/images/avatars/1.png'
-                                sx={{ width: '2.5rem', height: '2.5rem' }}
-                              />
-                              <div className='flex items-start flex-col'>
-                                <Typography sx={{ fontWeight: 600 }}>{option.fullName}</Typography>
-                                <Typography variant='body2' sx={{ fontSize: '0.8rem', color: 'text.disabled' }}>
+                          <ListItem {...props} key={option.id}>
+                            <ListItemAvatar>
+                              <Avatar src='/images/avatars/1.png' sx={{ width: '2.5rem', height: '2.5rem' }} />
+                            </ListItemAvatar>
+                            <ListItemText
+                              primary={option.fullName}
+                              secondary={
+                                <Typography variant='body2' color='text.disabled' fontSize='.8rem'>
                                   {option.phoneNumber} - {option.email} - {option.address}
                                 </Typography>
-                              </div>
-                            </div>
-                          </li>
+                              }
+                            />
+                          </ListItem>
                         )}
                       />
-                      <Box pt={5} pb={5} textAlign='center'>
+                      <Box pt={12} pb={10} textAlign='center'>
                         <EmptyBox />
                         <Typography variant='body2'>
                           {dictionary.adminArea.order.field.customerId.helperText}
                         </Typography>
                       </Box>
-                    </>
+                    </Box>
                   )
                 }}
               />

@@ -77,7 +77,7 @@ const CreateOrUpdateOrderAdmin = () => {
   }, [])
 
   const createOrderForm = useForm<IOrder>({
-    resolver: yupResolver<IOrder>(orderRequestSchema),
+    resolver: yupResolver<IOrder>(orderRequestSchema(dictionary)),
     mode: 'onChange',
     reValidateMode: 'onChange',
     progressive: true
@@ -103,27 +103,28 @@ const CreateOrUpdateOrderAdmin = () => {
   }
 
   return (
-    (<FormProvider {...createOrderForm}>
+    <FormProvider {...createOrderForm}>
       <form onSubmit={createOrderForm.handleSubmit(onSubmit, onError)}>
-        <Grid container spacing={6}>
-          <Grid size={9}>
+        <Grid container spacing={6} columns={20}>
+          <Grid size={13.5}>
             <CustomerSelectBox filterUserOptions={filterUserOptions} users={users} />
           </Grid>
-          <Grid size={3}>
+          <Grid size={6.5}>
             <AdditionalInfoBox
               users={users}
               orderAttributes={orderAttributes}
               orderOrigins={orderOrigins}
+              orderTags={orderTags}
               filterUserOptions={filterUserOptions}
             />
           </Grid>
-          <Grid size={12}>
-            <ProductSelectionBox users={users} orderTags={orderTags} products={products} />
+          <Grid size={20}>
+            <ProductSelectionBox users={users} products={products} />
           </Grid>
         </Grid>
       </form>
-    </FormProvider>)
-  );
+    </FormProvider>
+  )
 }
 
 export default CreateOrUpdateOrderAdmin

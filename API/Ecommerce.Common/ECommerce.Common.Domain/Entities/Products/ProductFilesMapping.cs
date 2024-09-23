@@ -1,8 +1,9 @@
+using ECommerce.Common.Domain.Entities.BaseEntity;
 using ECommerce.Common.Domain.Entities.Media;
 
 namespace ECommerce.Common.Domain.Entities.Products;
 
-public class ProductFilesMapping : AbstractEntity
+public class ProductFilesMapping : BaseEntity<Guid>
 {
         /// <summary>
         /// Gets or sets the product id

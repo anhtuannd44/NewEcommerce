@@ -13,13 +13,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Shop.Application.Services;
 
-public class BlogCategoryService : BaseService, IBlogCategoryService
+public class BlogCategoryService : BaseService<BlogCategoryService>, IBlogCategoryService
 {
     private readonly AppSettingConfiguration _appSetting = new();
 
     public BlogCategoryService(IUnitOfWork unitOfWork,
         IConfiguration configuration,
-        ILogger<BlogCategoryService> logger) : base(configuration, logger, unitOfWork)
+        ILogger<BlogCategoryService> logger) : base(configuration, unitOfWork, logger)
     {
         configuration.Bind(_appSetting);
     }

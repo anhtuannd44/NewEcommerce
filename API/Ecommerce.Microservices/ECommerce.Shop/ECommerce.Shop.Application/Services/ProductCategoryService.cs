@@ -14,13 +14,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Shop.Application.Services;
 
-public class ProductCategoryService : BaseService, IProductCategoryService
+public class ProductCategoryService : BaseService<ProductCategoryService>, IProductCategoryService
 {
     private readonly AppSettingConfiguration _appSetting = new();
 
     public ProductCategoryService(IUnitOfWork unitOfWork,
         IConfiguration configuration,
-        ILogger<ProductCategoryService> logger) : base(configuration, logger, unitOfWork)
+        ILogger<ProductCategoryService> logger) : base(configuration, unitOfWork, logger)
     {
         configuration.Bind(_appSetting);
     }

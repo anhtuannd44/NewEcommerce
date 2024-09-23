@@ -14,11 +14,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Shop.Application.Services;
 
-public class OrderService : BaseService, IOrderService
+public class OrderService : BaseService<OrderService>, IOrderService
 {
     public OrderService(IUnitOfWork unitOfWork,
         IConfiguration configuration,
-        ILogger<OrderService> logger) : base(configuration, logger, unitOfWork)
+        ILogger<OrderService> logger) : base(configuration, unitOfWork, logger)
     {
     }
 
@@ -169,12 +169,12 @@ public class OrderService : BaseService, IOrderService
             {
                 ProductId = x.ProductId,
                 Price = x.Price,
-                ProductName = currentProduct?.Name,
+                Name = currentProduct?.Name,
                 DiscountType = (DiscountType)x.DiscountType,
                 DiscountValue = x.DiscountValue,
                 Quantity = x.Quantity,
                 PreTotal = preTotal,
-                PriceAfterDiscount = total,
+                TotalPriceAfterDiscount = total,
                 Note = x.Note,
                 OrderId = order.Id
             });

@@ -1,235 +1,321 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using System.Globalization;
+using System.Reflection;
+using Amazon.Runtime;
+using AWS.Logger;
+using AWS.Logger.SeriLog;
+using Azure.Monitor.OpenTelemetry.Exporter;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.EventLog;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Resources;
 using Serilog;
+using Serilog.Events;
 using Serilog.Exceptions;
-using Serilog.Sinks.Elasticsearch;
-using System.Reflection;
+using Serilog.Formatting.Json;
 
-namespace ECommerce.Common.Infrastructure.Logging
+namespace ECommerce.Common.Infrastructure.Logging;
+
+public static class LoggingExtensions
 {
-    public static class LoggingExtensions
+    private static void UseECommerceLogger(this IWebHostEnvironment env, LoggingOptions options)
     {
-        private static void UseEcommerceLogger(this IWebHostEnvironment env, LoggingOptions options)
+        var assemblyName = Assembly.GetEntryAssembly()?.GetName().Name;
+
+        var logsPath = Path.Combine(env.ContentRootPath, "logs");
+        Directory.CreateDirectory(logsPath);
+        var loggerConfiguration = new LoggerConfiguration();
+
+        foreach (var logLevel in options.LogLevel)
         {
-            var assemblyName = Assembly.GetEntryAssembly()?.GetName().Name;
+            var serilogLevel = ConvertToSerilogLevel(logLevel.Value);
 
-            var logsPath = Path.Combine(env.ContentRootPath, "logs");
-            Directory.CreateDirectory(logsPath);
-            var loggerConfiguration = new LoggerConfiguration();
-
-            loggerConfiguration = loggerConfiguration
-                .MinimumLevel.Debug()
-                .Enrich.FromLogContext()
-                .Enrich.With<ActivityEnricher>()
-                .Enrich.WithMachineName()
-                .Enrich.WithEnvironmentUserName()
-                .Enrich.WithProperty("Assembly", assemblyName)
-                .Enrich.WithProperty("Application", env.ApplicationName)
-                .Enrich.WithProperty("EnvironmentName", env.EnvironmentName)
-                .Enrich.WithProperty("ContentRootPath", env.ContentRootPath)
-                .Enrich.WithProperty("WebRootPath", env.WebRootPath)
-                .Enrich.WithExceptionDetails()
-                .Filter.ByIncludingOnly((logEvent) =>
-                {
-                    if (logEvent.Level < options.File.MinimumLogEventLevel
-                        && logEvent.Level < options.Elasticsearch.MinimumLogEventLevel)
-                    {
-                        return false;
-                    }
-                    var sourceContext = logEvent.Properties.ContainsKey("SourceContext")
-                        ? logEvent.Properties["SourceContext"].ToString()
-                        : null;
-
-                    var logLevel = GetLogLevel(sourceContext, options);
-
-                    return logEvent.Level >= logLevel;
-
-                })
-                .WriteTo.Console()
-                .WriteTo.File(Path.Combine(logsPath, "log.txt"),
-                    fileSizeLimitBytes: 10 * 1024 * 1024,
-                    rollOnFileSizeLimit: true,
-                    shared: true,
-                    flushToDiskInterval: TimeSpan.FromSeconds(1),
-                    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] [{SourceContext}] [TraceId: {TraceId}] {Message:lj}{NewLine}{Exception}",
-                    restrictedToMinimumLevel: options.File.MinimumLogEventLevel);
-
-            if (options.Elasticsearch is { IsEnabled: true })
+            if (logLevel.Key == "Default")
             {
-                loggerConfiguration = loggerConfiguration
-                    .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(options.Elasticsearch.Host))
-                    {
-                        MinimumLogEventLevel = options.Elasticsearch.MinimumLogEventLevel,
-                        AutoRegisterTemplate = true,
-                        AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv6,
-                        IndexFormat = options.Elasticsearch.IndexFormat + "-{0:yyyy.MM.dd}",
-                        InlineFields = true,
-                        EmitEventFailure = EmitEventFailureHandling.WriteToFailureSink
-                    })
-                    .WriteTo.File(Path.Combine(logsPath, "elasticsearch-failures.txt"), rollingInterval: RollingInterval.Day);
+                loggerConfiguration.MinimumLevel.Is(serilogLevel);
+                continue;
             }
 
-            Log.Logger = loggerConfiguration.CreateLogger();
+            loggerConfiguration.MinimumLevel.Override(logLevel.Key, serilogLevel);
         }
 
-        private static void UseEcommerceLogger(this IHostEnvironment env, LoggingOptions options)
+        loggerConfiguration = loggerConfiguration
+            .Enrich.FromLogContext()
+            .Enrich.WithMachineName()
+            .Enrich.WithEnvironmentUserName()
+            .Enrich.WithProperty("ProcessId", Environment.ProcessId)
+            .Enrich.WithProperty("Assembly", assemblyName)
+            .Enrich.WithProperty("Application", env.ApplicationName)
+            .Enrich.WithProperty("EnvironmentName", env.EnvironmentName)
+            .Enrich.WithProperty("ContentRootPath", env.ContentRootPath)
+            .Enrich.WithProperty("WebRootPath", env.WebRootPath)
+            .Enrich.WithExceptionDetails()
+            .Filter.ByIncludingOnly((_) => true)
+            .WriteTo.File(Path.Combine(logsPath, "log.txt"),
+                formatProvider: CultureInfo.InvariantCulture,
+                fileSizeLimitBytes: 10 * 1024 * 1024,
+                rollOnFileSizeLimit: true,
+                shared: true,
+                flushToDiskInterval: TimeSpan.FromSeconds(1),
+                outputTemplate:
+                "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] [{SourceContext}] [TraceId: {TraceId}] [MachineName: {MachineName}] [ProcessId: {ProcessId}] {Message:lj}{NewLine}{Exception}",
+                restrictedToMinimumLevel: options.File.MinimumLogEventLevel);
+
+        if (options.AwsCloudWatch?.IsEnabled ?? false)
         {
-            var assemblyName = Assembly.GetEntryAssembly()?.GetName().Name;
-
-            var logsPath = Path.Combine(env.ContentRootPath, "logs");
-            Directory.CreateDirectory(logsPath);
-            var loggerConfiguration = new LoggerConfiguration();
-
-            loggerConfiguration = loggerConfiguration
-                .MinimumLevel.Debug()
-                .Enrich.FromLogContext()
-                .Enrich.With<ActivityEnricher>()
-                .Enrich.WithMachineName()
-                .Enrich.WithEnvironmentUserName()
-                .Enrich.WithProperty("Assembly", assemblyName)
-                .Enrich.WithProperty("Application", env.ApplicationName)
-                .Enrich.WithProperty("EnvironmentName", env.EnvironmentName)
-                .Enrich.WithProperty("ContentRootPath", env.ContentRootPath)
-                .Enrich.WithExceptionDetails()
-                .Filter.ByIncludingOnly((logEvent) =>
-                {
-                    if (logEvent.Level >= options.File.MinimumLogEventLevel
-                    || logEvent.Level >= options.Elasticsearch.MinimumLogEventLevel)
+            loggerConfiguration
+                .WriteTo.AWSSeriLog(new AWSLoggerConfig(options.AwsCloudWatch.LogGroup)
                     {
-                        var sourceContext = logEvent.Properties.ContainsKey("SourceContext")
-                             ? logEvent.Properties["SourceContext"].ToString()
-                             : null;
-
-                        var logLevel = GetLogLevel(sourceContext, options);
-
-                        return logEvent.Level >= logLevel;
-                    }
-
-                    return false;
-                })
-                .WriteTo.File(Path.Combine(logsPath, "log.txt"),
-                    fileSizeLimitBytes: 10 * 1024 * 1024,
-                    rollOnFileSizeLimit: true,
-                    shared: true,
-                    flushToDiskInterval: TimeSpan.FromSeconds(1),
-                    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] [{SourceContext}] [TraceId: {TraceId}] {Message:lj}{NewLine}{Exception}",
-                    restrictedToMinimumLevel: options.File.MinimumLogEventLevel);
-
-            if (options.Elasticsearch != null && options.Elasticsearch.IsEnabled)
-            {
-                loggerConfiguration = loggerConfiguration
-                    .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(options.Elasticsearch.Host))
-                    {
-                        MinimumLogEventLevel = options.Elasticsearch.MinimumLogEventLevel,
-                        AutoRegisterTemplate = true,
-                        AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv6,
-                        IndexFormat = options.Elasticsearch.IndexFormat + "-{0:yyyy.MM.dd}",
-                        InlineFields = true,
-                        EmitEventFailure = EmitEventFailureHandling.WriteToFailureSink
-                    }).WriteTo.File(Path.Combine(logsPath, "elasticsearch-failures.txt"), rollingInterval: RollingInterval.Day);
-            }
-
-            Log.Logger = loggerConfiguration.CreateLogger();
+                        LogStreamNamePrefix = options.AwsCloudWatch.LogStreamNamePrefix,
+                        Region = options.AwsCloudWatch.Region,
+                        Credentials = new BasicAWSCredentials(options.AwsCloudWatch.AccessKey, options.AwsCloudWatch.SecretKey),
+                    },
+                    iFormatProvider: null,
+                    textFormatter: new JsonFormatter());
         }
 
-        private static LoggingOptions SetDefault(LoggingOptions options)
+        Log.Logger = loggerConfiguration.CreateLogger();
+    }
+
+    private static LoggingOptions SetDefault(LoggingOptions options)
+    {
+        options ??= new LoggingOptions();
+
+        options.LogLevel ??= new Dictionary<string, LogLevel>();
+
+        options.LogLevel.TryAdd("Default", LogLevel.Warning);
+
+        options.File ??= new LoggingOptions.FileOptions
         {
-            options ??= new LoggingOptions();
+            MinimumLogEventLevel = LogEventLevel.Warning,
+        };
 
-            options.LogLevel ??= new Dictionary<string, string>();
-
-            options.LogLevel.TryAdd("Default", "Warning");
-
-            options.File ??= new FileOptions
-            {
-                MinimumLogEventLevel = Serilog.Events.LogEventLevel.Warning,
-            };
-
-            options.Elasticsearch ??= new ElasticsearchOptions
-            {
-                IsEnabled = false,
-                MinimumLogEventLevel = Serilog.Events.LogEventLevel.Warning,
-            };
-
-            options.EventLog ??= new EventLogOptions
-            {
-                IsEnabled = false,
-            };
-            return options;
-        }
-
-        private static Serilog.Events.LogEventLevel GetLogLevel(string context, LoggingOptions options)
+        options.EventLog ??= new LoggingOptions.EventLogOptions
         {
-            context = context.Replace("\"", string.Empty);
-            var level = "Default";
-            var matches = options.LogLevel.Keys.Where(k => context.StartsWith(k)).ToList();
+            IsEnabled = false,
+        };
 
-            if (matches.Count > 0)
-            {
-                level = matches.Max();
-            }
+        return options;
+    }
 
-            return (Serilog.Events.LogEventLevel)Enum.Parse(typeof(Serilog.Events.LogEventLevel), options.LogLevel[level], true);
-        }
-
-        public static IWebHostBuilder UseEcommerceLogger(this IWebHostBuilder builder, Func<IConfiguration, LoggingOptions> logOptions)
+    public static IWebHostBuilder UseECommerceLogger(this IWebHostBuilder builder, Func<IConfiguration, LoggingOptions> logOptions)
+    {
+        builder.ConfigureLogging((context, logging) =>
         {
-            builder.ConfigureLogging((context, logging) =>
+            logging.Configure(_ => { });
+
+            logging.AddAzureWebAppDiagnostics();
+
+            logging.AddSerilog();
+
+            var options = SetDefault(logOptions(context.Configuration));
+
+            if (options.EventLog.IsEnabled && OperatingSystem.IsWindows())
             {
-                logging.Configure(_ =>
+                logging.AddEventLog(configure =>
                 {
-                    // options.ActivityTrackingOptions = ActivityTrackingOptions.SpanId |
-                    // ActivityTrackingOptions.TraceId | ActivityTrackingOptions.ParentId;
+#pragma warning disable CA1416
+                    configure.LogName = options.EventLog.LogName;
+                    configure.SourceName = options.EventLog.SourceName;
+#pragma warning restore CA1416
                 });
+            }
 
-                logging.AddSerilog();
+            if (options.ApplicationInsights?.IsEnabled ?? false)
+            {
+                logging.AddApplicationInsights(
+                    configureTelemetryConfiguration: config => { config.ConnectionString = options.ApplicationInsights.InstrumentationKey; },
+                    configureApplicationInsightsLoggerOptions: _ => { });
+            }
 
-                var options = SetDefault(logOptions(context.Configuration));
-#if WINDOWS
-                if (options.EventLog is { IsEnabled: true })
+            if (options.OpenTelemetry?.IsEnabled ?? false)
+            {
+                var resourceBuilder = ResourceBuilder.CreateDefault().AddService(options.OpenTelemetry.ServiceName);
+
+                logging.AddOpenTelemetry(configure =>
                 {
-                    logging.AddEventLog(new EventLogSettings
+                    configure.SetResourceBuilder(resourceBuilder);
+
+                    if (options.OpenTelemetry?.Otlp?.IsEnabled ?? false)
                     {
-                        LogName = options.EventLog.LogName,
-                        SourceName = options.EventLog.SourceName,
+                        configure.AddOtlpExporter(otlpOptions => { otlpOptions.Endpoint = new Uri(options.OpenTelemetry.Otlp.Endpoint); });
+                    }
+
+                    if (options.OpenTelemetry?.AzureMonitor?.IsEnabled ?? false)
+                    {
+                        configure.AddAzureMonitorLogExporter(opts => { opts.ConnectionString = options.OpenTelemetry.AzureMonitor.ConnectionString; });
+                    }
+                });
+            }
+
+            context.HostingEnvironment.UseECommerceLogger(options);
+        });
+
+        return builder;
+    }
+
+    public static IHostBuilder UseECommerceLogger(this IHostBuilder builder, Func<IConfiguration, LoggingOptions> logOptions)
+    {
+        builder.ConfigureLogging((context, logging) =>
+        {
+            logging.Configure(_ => { });
+
+            logging.AddAzureWebAppDiagnostics();
+
+            logging.AddSerilog();
+
+            var options = SetDefault(logOptions(context.Configuration));
+
+            if (OperatingSystem.IsWindows())
+            {
+                if (options.EventLog.IsEnabled)
+                {
+                    logging.AddEventLog(configure =>
+                    {
+#pragma warning disable CA1416
+                        configure.LogName = options.EventLog.LogName;
+                        configure.SourceName = options.EventLog.SourceName;
+#pragma warning restore CA1416
+                    });
+
+                    logging.Services.Configure<LoggerFilterOptions>(option =>
+                    {
+                        // remove the logging.AddFilter<EventLogLoggerProvider>(level => level >= LogLevel.Warning); added by calling Host.CreateDefaultBuilder(args)
+                        // remember to review this in any future update
+                        var toRemove = option.Rules.FirstOrDefault(rule => rule.ProviderName == "Microsoft.Extensions.Logging.EventLog.EventLogLoggerProvider");
+
+                        if (toRemove is not null)
+                        {
+                            option.Rules.Remove(toRemove);
+                        }
                     });
                 }
-#endif
-                context.HostingEnvironment.UseEcommerceLogger(options);
-            });
-
-            return builder;
-        }
-
-        public static IHostBuilder UseEcommerceLogger(this IHostBuilder builder, Func<IConfiguration, LoggingOptions> logOptions)
-        {
-            builder.ConfigureLogging((context, logging) =>
-            {
-                logging.Configure(_ =>
+                else
                 {
-                    // options.ActivityTrackingOptions = ActivityTrackingOptions.SpanId |
-                    // ActivityTrackingOptions.TraceId | ActivityTrackingOptions.ParentId;
-                });
-
-                logging.AddSerilog();
-
-                var options = SetDefault(logOptions(context.Configuration));
-#if WINDOWS
-                if (options.EventLog?.IsEnabled == true)
-                {
-                    logging.AddEventLog(new EventLogSettings
-                    {
-                        LogName = options.EventLog.LogName,
-                        SourceName = options.EventLog.SourceName,
-                    });
+                    // remove the EventLogLoggerProvider added by calling Host.CreateDefaultBuilder(args) or UseWindowsService()
+                    // remember to review this in any future update
+                    logging.RemoveEventLog();
                 }
-#endif
-                context.HostingEnvironment.UseEcommerceLogger(options);
-            });
+            }
 
-            return builder;
+            if (options?.ApplicationInsights?.IsEnabled ?? false)
+            {
+                logging.AddApplicationInsights(
+                    configureTelemetryConfiguration: config => { config.ConnectionString = options.ApplicationInsights.InstrumentationKey; },
+                    configureApplicationInsightsLoggerOptions: _ => { });
+            }
+
+            if (options?.OpenTelemetry?.IsEnabled ?? false)
+            {
+                var resourceBuilder = ResourceBuilder.CreateDefault().AddService(options.OpenTelemetry.ServiceName);
+
+                logging.AddOpenTelemetry(configure =>
+                {
+                    configure.SetResourceBuilder(resourceBuilder);
+
+                    if (options.OpenTelemetry?.Otlp?.IsEnabled ?? false)
+                    {
+                        configure.AddOtlpExporter(otlpOptions => { otlpOptions.Endpoint = new Uri(options.OpenTelemetry.Otlp.Endpoint); });
+                    }
+
+                    if (options.OpenTelemetry?.AzureMonitor?.IsEnabled ?? false)
+                    {
+                        configure.AddAzureMonitorLogExporter(opts => { opts.ConnectionString = options.OpenTelemetry.AzureMonitor.ConnectionString; });
+                    }
+                });
+            }
+
+            context.HostingEnvironment.UseECommerceLogger(options);
+        });
+
+        return builder;
+    }
+
+    private static void UseECommerceLogger(this IHostEnvironment env, LoggingOptions options)
+    {
+        var assemblyName = Assembly.GetEntryAssembly()?.GetName().Name;
+
+        var logsPath = Path.Combine(env.ContentRootPath, "logs");
+        Directory.CreateDirectory(logsPath);
+        var loggerConfiguration = new LoggerConfiguration();
+
+        foreach (var logLevel in options.LogLevel)
+        {
+            var serilogLevel = ConvertToSerilogLevel(logLevel.Value);
+
+            if (logLevel.Key == "Default")
+            {
+                loggerConfiguration.MinimumLevel.Is(serilogLevel);
+                continue;
+            }
+
+            loggerConfiguration.MinimumLevel.Override(logLevel.Key, serilogLevel);
         }
+
+        loggerConfiguration = loggerConfiguration
+            .Enrich.FromLogContext()
+            .Enrich.WithMachineName()
+            .Enrich.WithEnvironmentUserName()
+            .Enrich.WithProperty("ProcessId", Environment.ProcessId)
+            .Enrich.WithProperty("Assembly", assemblyName)
+            .Enrich.WithProperty("Application", env.ApplicationName)
+            .Enrich.WithProperty("EnvironmentName", env.EnvironmentName)
+            .Enrich.WithProperty("ContentRootPath", env.ContentRootPath)
+            .Enrich.WithExceptionDetails()
+            .Filter.ByIncludingOnly(_ => true)
+            .WriteTo.File(Path.Combine(logsPath, "log.txt"),
+                formatProvider: CultureInfo.InvariantCulture,
+                fileSizeLimitBytes: 10 * 1024 * 1024,
+                rollOnFileSizeLimit: true,
+                shared: true,
+                flushToDiskInterval: TimeSpan.FromSeconds(1),
+                outputTemplate:
+                "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] [{SourceContext}] [TraceId: {TraceId}] [MachineName: {MachineName}] [ProcessId: {ProcessId}] {Message:lj}{NewLine}{Exception}",
+                restrictedToMinimumLevel: options.File.MinimumLogEventLevel);
+
+        if (options.AwsCloudWatch?.IsEnabled ?? false)
+        {
+            loggerConfiguration
+                .WriteTo.AWSSeriLog(new AWSLoggerConfig(options.AwsCloudWatch.LogGroup)
+                    {
+                        LogStreamName = options.AwsCloudWatch.LogStreamNamePrefix,
+                        Region = options.AwsCloudWatch.Region,
+                        Credentials = new BasicAWSCredentials(options.AwsCloudWatch.AccessKey, options.AwsCloudWatch.SecretKey),
+                    },
+                    iFormatProvider: null,
+                    textFormatter: new JsonFormatter());
+        }
+
+        Log.Logger = loggerConfiguration.CreateLogger();
+    }
+
+    private static LogEventLevel ConvertToSerilogLevel(LogLevel logLevel)
+    {
+        return logLevel switch
+        {
+            LogLevel.Trace => LogEventLevel.Verbose,
+            LogLevel.Debug => LogEventLevel.Debug,
+            LogLevel.Information => LogEventLevel.Information,
+            LogLevel.Warning => LogEventLevel.Warning,
+            LogLevel.Error => LogEventLevel.Error,
+            LogLevel.Critical => LogEventLevel.Fatal,
+            LogLevel.None => LogEventLevel.Fatal,
+            _ => LogEventLevel.Fatal
+        };
+    }
+
+    public static ILoggingBuilder RemoveEventLog(this ILoggingBuilder builder)
+    {
+        var providers = builder.Services.Where(x => x.ServiceType == typeof(ILoggerProvider)).ToList();
+
+        foreach (var provider in providers.Where(provider => provider.ImplementationType == typeof(EventLogLoggerProvider)))
+        {
+            builder.Services.Remove(provider);
+        }
+
+        return builder;
     }
 }

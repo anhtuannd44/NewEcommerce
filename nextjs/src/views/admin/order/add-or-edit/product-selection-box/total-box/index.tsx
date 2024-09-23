@@ -4,22 +4,15 @@
 import { useEffect, useState } from 'react'
 
 // MUI Imports
-import {
-  Box,
-  FormControl,
-  FormHelperText,
-  List,
-  ListItem,
-  ListItemText,
-  TextField,
-  Tooltip,
-  Typography
-} from '@mui/material'
+import { Box, Divider, List, ListItem, ListItemText, TextField, Tooltip, Typography } from '@mui/material'
 
 // Third-party Imports
 import { NumericFormat } from 'react-number-format'
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import type { NumberFormatValues } from 'react-number-format'
+
+// Context Imports
+import { useDictionary } from '@/contexts/dictionaryContext'
 
 // Util Imports
 import { currencyWithoutVNDFormatter } from '@/utils/formatCurrency'
@@ -37,55 +30,51 @@ interface IVatInfo {
 }
 
 const TotalBoxDetail = () => {
+  const { dictionary } = useDictionary()
   const { control, setValue, getValues } = useFormContext<IOrder>()
 
   const itemsWatch = useWatch<IOrder>({ name: 'items' }) as IProductItem[]
+  const preTotal = (useWatch<IOrder>({ name: 'preTotal' }) as number) ?? 0
   const totalPriceAfterDiscount = (useWatch<IOrder>({ name: 'totalPriceAfterDiscount' }) as number) ?? 0
 
   const [vatInfo, setVatInfo] = useState<IVatInfo>({ vat: 0, productList: [] })
+  const [discountPercent, setDiscountPercent] = useState<number>(0)
 
   useEffect(() => {
     let calVat = 0
-    let preTotal = 0
     const calProductList: string[] = []
 
-    itemsWatch &&
-      itemsWatch.length > 0 &&
-      itemsWatch?.map(item => {
-        if (item.isVat) {
-          calVat += (item.totalPriceAfterDiscount / 100) * 8
-          calProductList.push(item.name)
-        }
+    itemsWatch?.map(item => {
+      if (item.isVat && item.price && item.quantity > 0) {
+        calVat += (item.price / 100) * 8 * item.quantity
 
-        preTotal += item.totalPriceAfterDiscount
-      })
+        calProductList.push(item.name)
+      }
+    })
     setVatInfo({ vat: calVat, productList: calProductList })
-    setValue('preTotal', preTotal)
     handleCalculateTotal(calVat)
   }, [itemsWatch])
 
   const handleCalculateTotal = (calVat?: number) => {
     const formValues = getValues()
 
-    const discount =
-      formValues.discountType === DiscountType.Percent
-        ? ((formValues.discountValue ?? 0) * formValues.preTotal) / 100
-        : formValues.discountValue
+    let finalTotal =
+      formValues.preTotal + (formValues.shippingFee ?? 0) + (calVat ?? vatInfo.vat) - (formValues.deposit ?? 0)
 
-    const discountPercent =
-      formValues.discountType === DiscountType.Percent
-        ? formValues.discountValue
-        : ((formValues.discountValue || 0) * 100) / formValues.preTotal
+    const discountValue = formValues.discountValue
 
-    const finalTotal =
-      formValues.preTotal -
-      (discount ?? 0) +
-      (formValues.shippingFee ?? 0) +
-      (calVat ?? vatInfo.vat) -
-      (formValues.deposit ?? 0)
+    if (discountValue) {
+      const discount =
+        formValues.discountType === DiscountType.Percent ? (discountValue * formValues.preTotal) / 100 : discountValue
+
+      const discountPercent = (discount * 100) / formValues.preTotal
+
+      finalTotal -= discount
+
+      setDiscountPercent(discountPercent)
+    }
 
     setValue('totalPriceAfterDiscount', finalTotal)
-    setValue('discountPercent', discountPercent)
   }
 
   const handleDepositChange = (values: NumberFormatValues) => {
@@ -103,34 +92,22 @@ const TotalBoxDetail = () => {
   }
 
   return (
-    <Box
-      component='section'
-      sx={{
-        p: 2,
-        mb: 5,
-        border: '1px dashed grey',
-        borderRadius: 2
-      }}
-    >
-      <List>
+    <Box p={5} border='1px dashed grey' borderRadius={1}>
+      <List disablePadding>
         <ListItem
+          disablePadding
+          disableGutters
           key={1}
           sx={{
             height: 35
           }}
-          secondaryAction={
-            <Controller
-              name='preTotal'
-              control={control}
-              render={({ field: { value } }) => (
-                <Typography variant='body1'>{currencyWithoutVNDFormatter(value)}</Typography>
-              )}
-            />
-          }
+          secondaryAction={<Typography variant='body1'>{currencyWithoutVNDFormatter(preTotal)}</Typography>}
         >
-          <ListItemText primary={`Tạm tính:`} />
+          <ListItemText primary={dictionary.adminArea.order.totalBox.field.preTotal} />
         </ListItem>
         <ListItem
+          disablePadding
+          disableGutters
           key={2}
           sx={{
             height: 35
@@ -140,31 +117,34 @@ const TotalBoxDetail = () => {
               name='shippingFee'
               control={control}
               render={({ field: { value }, fieldState }) => (
-                <FormControl error={!!fieldState.error?.message} variant='standard' fullWidth>
-                  <NumericFormat
-                    value={value ?? 0}
-                    variant='standard'
-                    type='text'
-                    inputProps={{
-                      min: 0,
+                <NumericFormat
+                  fullWidth
+                  value={value ?? 0}
+                  variant='standard'
+                  type='text'
+                  slotProps={{
+                    htmlInput: {
                       style: { textAlign: 'right' }
-                    }}
-                    onValueChange={values => handleShippingFeeChange(values)}
-                    customInput={TextField}
-                    decimalScale={2}
-                    thousandSeparator=','
-                    allowLeadingZeros={false}
-                    allowNegative={false}
-                  />
-                  <FormHelperText>{fieldState.error?.message}</FormHelperText>
-                </FormControl>
+                    }
+                  }}
+                  onValueChange={values => handleShippingFeeChange(values)}
+                  customInput={TextField}
+                  decimalScale={2}
+                  thousandSeparator=','
+                  allowLeadingZeros={false}
+                  allowNegative={false}
+                  error={!!fieldState.error?.message}
+                  helperText={fieldState.error?.message}
+                />
               )}
             />
           }
         >
-          <ListItemText primary={'Phí giao hàng:'} />
+          <ListItemText primary={dictionary.adminArea.order.totalBox.field.shippingFee.label} />
         </ListItem>
         <ListItem
+          disablePadding
+          disableGutters
           key={5}
           sx={{
             height: 35
@@ -173,13 +153,18 @@ const TotalBoxDetail = () => {
             <Tooltip
               title={
                 <>
-                  <Typography color='white'>SP Tính VAT:</Typography>
-                  {vatInfo.productList.length > 0 &&
+                  <Typography color='white'>{dictionary.adminArea.order.totalBox.field.VAT.vatList.label}</Typography>
+                  {!!vatInfo.productList.length ? (
                     vatInfo.productList.map(item => (
                       <Typography color='white' key={item}>
                         {item}
                       </Typography>
-                    ))}
+                    ))
+                  ) : (
+                    <Typography color='white'>
+                      {dictionary.adminArea.order.totalBox.field.VAT.vatList.noProductVAT}
+                    </Typography>
+                  )}
                 </>
               }
               placement='top'
@@ -188,19 +173,26 @@ const TotalBoxDetail = () => {
             </Tooltip>
           }
         >
-          <ListItemText primary={'Thuế GTGT (VAT 8%):'} />
+          <ListItemText primary={dictionary.adminArea.order.totalBox.field.VAT.label} />
         </ListItem>
         <ListItem
+          disablePadding
+          disableGutters
           key={3}
           sx={{
+            marginBottom: 1,
             height: 35
           }}
-          secondaryAction={<DiscountTotalBoxPopover handleCalculateTotal={handleCalculateTotal} />}
+          secondaryAction={
+            <DiscountTotalBoxPopover handleCalculateTotal={handleCalculateTotal} discountPercent={discountPercent} />
+          }
         >
-          <ListItemText primary={'Chiết khấu đơn hàng:'} />
+          <ListItemText primary={dictionary.adminArea.order.totalBox.field.discount.label} />
         </ListItem>
 
         <ListItem
+          disablePadding
+          disableGutters
           key={4}
           sx={{
             height: 35
@@ -210,43 +202,56 @@ const TotalBoxDetail = () => {
               name='deposit'
               control={control}
               render={({ field: { value }, fieldState }) => (
-                <FormControl error={!!fieldState.error?.message} variant='standard' fullWidth>
-                  <NumericFormat
-                    value={value ?? 0}
-                    variant='standard'
-                    type='text'
-                    inputProps={{
-                      min: 0,
+                <NumericFormat
+                  fullWidth
+                  value={value ?? 0}
+                  variant='standard'
+                  type='text'
+                  slotProps={{
+                    htmlInput: {
                       style: { textAlign: 'right' }
-                    }}
-                    onValueChange={values => handleDepositChange(values)}
-                    customInput={TextField}
-                    decimalScale={2}
-                    thousandSeparator=','
-                    allowLeadingZeros={false}
-                    allowNegative={false}
-                  />
-                  <FormHelperText>{fieldState.error?.message}</FormHelperText>
-                </FormControl>
+                    }
+                  }}
+                  onValueChange={values => handleDepositChange(values)}
+                  customInput={TextField}
+                  decimalScale={2}
+                  thousandSeparator=','
+                  allowLeadingZeros={false}
+                  allowNegative={false}
+                  error={!!fieldState.error?.message}
+                  helperText={fieldState.error?.message}
+                />
               )}
             />
           }
         >
-          <ListItemText primary={'Khách đã đặt cọc:'} />
+          <ListItemText primary={dictionary.adminArea.order.totalBox.field.deposit.label} />
         </ListItem>
-
+        <Divider
+          sx={{
+            marginY: 2
+          }}
+        />
         <ListItem
+          disablePadding
+          disableGutters
           key={6}
           sx={{
             height: 35
           }}
           secondaryAction={
-            <Typography fontWeight={600} variant='body1'>
+            <Typography fontWeight={600} variant='h6'>
               {currencyWithoutVNDFormatter(totalPriceAfterDiscount)}
             </Typography>
           }
         >
-          <ListItemText primary={'Tổng khách phải trả:'} />
+          <ListItemText
+            primary={
+              <Typography variant='h6' fontWeight={600}>
+                {dictionary.adminArea.order.totalBox.field.total}
+              </Typography>
+            }
+          />
         </ListItem>
       </List>
     </Box>

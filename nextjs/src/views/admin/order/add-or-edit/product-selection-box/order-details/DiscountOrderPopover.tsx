@@ -20,10 +20,11 @@ import type { IProductItem } from '@/interface/admin/order'
 interface IDiscountOrderPopover {
   index: number
   handleUpdateItem: (index: number, newValue: Partial<IProductItem>) => void
+  discountPercent: number
 }
 
 const DiscountOrderPopover = (props: IDiscountOrderPopover) => {
-  const { index, handleUpdateItem } = props
+  const { index, handleUpdateItem, discountPercent } = props
   const { control, watch } = useFormContext()
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
@@ -59,17 +60,19 @@ const DiscountOrderPopover = (props: IDiscountOrderPopover) => {
       <NumericFormat
         variant='standard'
         type='text'
-        inputProps={{
-          min: 0,
-          style: { textAlign: 'right' },
-          readOnly: true
+        slotProps={{
+          htmlInput: {
+            min: 0,
+            style: { textAlign: 'right' },
+            readOnly: true
+          }
         }}
         valueIsNumericString={true}
         min={0}
         value={
           fieldWatch.discountType === DiscountType.Value
             ? fieldWatch.discountValue
-            : ((fieldWatch.price ?? 0) / 100) * (fieldWatch.discountValue ?? 0)
+            : ((fieldWatch.price ?? 0) / 100) * fieldWatch.discountValue
         }
         customInput={TextField}
         onClick={handleClick}
@@ -78,9 +81,13 @@ const DiscountOrderPopover = (props: IDiscountOrderPopover) => {
         allowLeadingZeros={false}
         allowNegative={false}
       />
-      {(fieldWatch.discountValue ?? 0) > 0 && (fieldWatch.quantity ?? 0) > 0 && (
-        <Typography color={(fieldWatch.totalPriceAfterDiscount || 0) < 0 ? 'error' : 'success'} fontSize='0.725rem'>
-          {`${fieldWatch.discountPercent?.toFixed(2)} %`}
+      {fieldWatch.discountValue > 0 && fieldWatch.quantity > 0 && (
+        <Typography
+          textAlign='right'
+          color={fieldWatch.totalPriceAfterDiscount < 0 ? 'error' : 'success'}
+          fontSize='0.725rem'
+        >
+          {`${discountPercent.toFixed(2)} %`}
         </Typography>
       )}
       <Popover
@@ -136,17 +143,17 @@ const DiscountOrderPopover = (props: IDiscountOrderPopover) => {
           <Controller
             name={`items.${index}.discountValue`}
             control={control}
-            render={({ field: { value } }) => {
-              return (
-                <NumericFormat
-                  value={value}
-                  variant='standard'
-                  type='text'
-                  customInput={TextField}
-                  sx={{
-                    verticalAlign: 'baseline'
-                  }}
-                  inputProps={{
+            render={({ field: { value } }) => (
+              <NumericFormat
+                value={value}
+                variant='standard'
+                type='text'
+                customInput={TextField}
+                sx={{
+                  verticalAlign: 'baseline'
+                }}
+                slotProps={{
+                  htmlInput: {
                     min: 0,
                     style: {
                       textAlign: 'right',
@@ -163,17 +170,17 @@ const DiscountOrderPopover = (props: IDiscountOrderPopover) => {
 
                       event.target.value = String(valueNumber)
                     }
-                  }}
-                  onValueChange={value => {
-                    handleUpdateItem(index, { discountValue: value.floatValue ?? 0 })
-                  }}
-                  decimalScale={2}
-                  thousandSeparator=','
-                  allowLeadingZeros={false}
-                  allowNegative={false}
-                />
-              )
-            }}
+                  }
+                }}
+                onValueChange={value => {
+                  handleUpdateItem(index, { discountValue: value.floatValue ?? 0 })
+                }}
+                decimalScale={2}
+                thousandSeparator=','
+                allowLeadingZeros={false}
+                allowNegative={false}
+              />
+            )}
           />
         </Box>
       </Popover>

@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace ECommerce.Shop.Application.Services;
 
-public class EmailSenderService : BaseService, IEmailSenderService
+public class EmailSenderService : BaseService<EmailSenderService>, IEmailSenderService
 {
     private readonly IEmailSenderServiceBase _sender;
     private readonly IDateTimeServiceProvider _dateTimeServiceProvider;
@@ -23,7 +23,7 @@ public class EmailSenderService : BaseService, IEmailSenderService
         IEmailSenderServiceBase sender,
         IDateTimeServiceProvider dateTimeServiceProvider,
         ILogger<EmailSenderService> logger,
-        IUnitOfWork unitOfWork) : base(configuration, logger, unitOfWork)
+        IUnitOfWork unitOfWork) : base(configuration, unitOfWork, logger)
     {
         _sender = sender;
         _dateTimeServiceProvider = dateTimeServiceProvider;
@@ -86,7 +86,7 @@ public class EmailSenderService : BaseService, IEmailSenderService
             }
 
             await _sender.SendEmailAsync(_smtpServer, emailInfoForSending);
-            
+
             _logger.LogInformation($"Send email successfully - From {email.MailFrom} to {emailInfoForSending.Tos}");
             return true;
         }

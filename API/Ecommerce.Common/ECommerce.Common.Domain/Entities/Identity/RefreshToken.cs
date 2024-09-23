@@ -1,6 +1,7 @@
 ﻿namespace ECommerce.Common.Domain.Entities.Identity;
+using ECommerce.Common.Domain.Entities.BaseEntity;
 
-public class RefreshToken : AbstractEntity
+public class RefreshToken : BaseEntity<Guid>
 {
     public string Key { get; set; }
 

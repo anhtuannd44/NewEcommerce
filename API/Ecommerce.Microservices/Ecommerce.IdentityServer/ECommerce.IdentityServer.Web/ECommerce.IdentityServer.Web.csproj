@@ -1,46 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(RunConfiguration)' == 'IdentityMicroservice' " />
+    <ItemGroup>
+        <PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="8.0.1"/>
+        <PackageReference Include="AspNetCore.HealthChecks.UI" Version="8.0.0"/>
+        <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="8.0.0"/>
+        <PackageReference Include="AspNetCore.HealthChecks.UI.InMemory.Storage" Version="8.0.0"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
+    </ItemGroup>
+    
+    <PropertyGroup>
+        <NoWarn>$(NoWarn);NETSDK1206;AD0001</NoWarn>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Repository\**" />
-    <Content Remove="Repository\**" />
-    <EmbeddedResource Remove="Repository\**" />
-    <None Remove="Repository\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="Controllers\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\..\..\.dockerignore" Link=".dockerignore">
-      <DependentUpon>Dockerfile</DependentUpon>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="8.0.1" />
-    <PackageReference Include="AspNetCore.HealthChecks.UI" Version="8.0.0" />
-    <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="8.0.0" />
-    <PackageReference Include="AspNetCore.HealthChecks.UI.InMemory.Storage" Version="8.0.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\ECommerce.Common\ECommerce.Common.Infrastructure\ECommerce.Common.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\..\Ecommerce.Common\ECommerce.Common.Cryptography\ECommerce.Common.Cryptography.csproj" />
-    <ProjectReference Include="..\..\..\ECommerce.Common\ECommerce.Common.Domain\ECommerce.Common.Domain.csproj" />
-    <ProjectReference Include="..\..\..\Ecommerce.Common\ECommerce.Common.Middleware\ECommerce.Common.Middleware.csproj" />
-    <ProjectReference Include="..\..\..\Ecommerce.Common\ECommerce.Common.Persistence\ECommerce.Common.Persistence.csproj" />
-    <ProjectReference Include="..\ECommerce.IdentityServer.Application\ECommerce.IdentityServer.Application.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Extensions\" />
-    <Folder Include="Filters\" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\ECommerce.IdentityServer\ECommerce.IdentityServer.csproj"/>
+    </ItemGroup>
 </Project>

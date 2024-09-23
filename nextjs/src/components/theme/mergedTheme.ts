@@ -17,10 +17,24 @@ import type { SystemMode } from '@core/types'
 // Core Theme Imports
 import coreTheme from '@core/theme'
 
+// Custom Part Imports
+import typographyCustom from './typographyCustom'
+
 const mergedTheme = (settings: Settings, mode: SystemMode, direction: Theme['direction']) => {
   // Vars
   const userTheme = {
     // Write your overrides here.
+    shape: {
+      borderRadius: 4,
+      customBorderRadius: {
+        xs: 2,
+        sm: 4,
+        md: 6,
+        lg: 8,
+        xl: 10
+      }
+    },
+    typography: typographyCustom(),
     colorSchemes: {
       light: {
         palette: {
@@ -66,6 +80,9 @@ const mergedTheme = (settings: Settings, mode: SystemMode, direction: Theme['dir
           },
           customColors: {
             tableHeaderBg: '#F6FBF6'
+          },
+          action: {
+            active: `rgb(var(--mui-mainColorChannels-light) / 0.4)`
           }
         }
       },
@@ -101,9 +118,18 @@ const mergedTheme = (settings: Settings, mode: SystemMode, direction: Theme['dir
           },
           customColors: {
             tableHeaderBg: '#2d3d39'
+          },
+          action: {
+            active: `rgb(var(--mui-mainColorChannels-dard) / 0.4)`
           }
         }
       }
+    },
+    mainColorChannels: {
+      light: '57 64 56',
+      dark: '232 252 227',
+      lightShadow: '36 41 40',
+      darkShadow: '19 17 32'
     }
   } as Theme
 

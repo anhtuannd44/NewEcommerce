@@ -1,4 +1,5 @@
 using ECommerce.Common.Domain.Entities.Identity;
+using ECommerce.Common.Domain.Entities.BaseEntity;
 
 namespace ECommerce.Common.Domain.Entities;
 
