@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using static ECommerce.IdentityServer.Notification.Grpc.Sms;
+using static ECommerce.Notification.Grpc.Sms;
 
 namespace ECommerce.IdentityServer.Commands.SmsMessage;
 

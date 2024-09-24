@@ -9,7 +9,7 @@ namespace ECommerce.Common.Infrastructure.Monitoring.OpenTelemetry;
 
 public static class OpenTelemetryExtensions
 {
-    public static IServiceCollection AddClassifiedAdsOpenTelemetry(this IServiceCollection services, OpenTelemetryOptions options = null)
+    public static IServiceCollection AddECommerceOpenTelemetry(this IServiceCollection services, OpenTelemetryOptions options = null)
     {
         if (options == null || !options.IsEnabled)
         {

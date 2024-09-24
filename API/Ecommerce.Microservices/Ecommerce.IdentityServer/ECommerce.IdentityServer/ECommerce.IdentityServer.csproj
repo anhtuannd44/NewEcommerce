@@ -6,14 +6,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Protobuf Include="..\..\..\Contracts\Notification\Protos\EmailMessage.proto" GrpcServices="Client" Link="Protos\EmailMessage.proto"/>
-        <Protobuf Include="..\..\..\Contracts\Notification\Protos\SmsMessage.proto" GrpcServices="Client" Link="Protos\SmsMessage.proto"/>
-        <FrameworkReference Include="Microsoft.AspNetCore.App"/>
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0"/>
         <PackageReference Include="Grpc.Tools" Version="2.60.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <Protobuf Include="..\..\..\Contracts\Notification\Protos\EmailMessage.proto" GrpcServices="Client" Link="Protos\EmailMessage.proto"/>
+        <Protobuf Include="..\..\..\Contracts\Notification\Protos\SmsMessage.proto" GrpcServices="Client" Link="Protos\SmsMessage.proto"/>
+        <FrameworkReference Include="Microsoft.AspNetCore.App"/>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0"/>       
         <PackageReference Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore" Version="8.0.0" />
         <PackageReference Include="Microsoft.Graph" Version="5.37.0"/>
         <PackageReference Include="Polly" Version="8.2.0"/>

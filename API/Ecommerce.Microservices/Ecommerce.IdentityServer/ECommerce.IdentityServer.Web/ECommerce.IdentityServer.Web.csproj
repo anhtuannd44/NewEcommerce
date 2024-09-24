@@ -24,4 +24,16 @@
     <ItemGroup>
         <ProjectReference Include="..\ECommerce.IdentityServer\ECommerce.IdentityServer.csproj"/>
     </ItemGroup>
+
+    <ItemGroup>
+        <None Update="Certs\ecommerce.identityserver.pfx">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Certs\ecommerce.identityserver.pub.cer">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Certs\ecommerce.secretsencryption.pfx">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
 </Project>

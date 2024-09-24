@@ -22,7 +22,7 @@ public static class MonitoringExtensions
 
         if (monitoringOptions?.OpenTelemetry?.IsEnabled ?? false)
         {
-            services.AddClassifiedAdsOpenTelemetry(monitoringOptions.OpenTelemetry);
+            services.AddECommerceOpenTelemetry(monitoringOptions.OpenTelemetry);
         }
 
         return services;

@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <IsAspireHost>true</IsAspireHost>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Aspire.Hosting.AppHost" Version="8.2.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Ecommerce.Gateways\ECommerce.Gateways.WebAPI\Ecommerce.Gateways.WebAPI.csproj" />
+        <ProjectReference Include="..\Ecommerce.Microservices\ECommerce.AuditLog\ECommerce.AuditLog.Api\ECommerce.AuditLog.Api.csproj" />
+        <ProjectReference Include="..\ECommerce.Microservices\ECommerce.Configuration\ECommerce.Configuration.Api\ECommerce.Configuration.Api.csproj" />
+        <ProjectReference Include="..\ECommerce.Microservices\ECommerce.IdentityServer\ECommerce.IdentityServer.Web\ECommerce.IdentityServer.Web.csproj" />
+        <ProjectReference Include="..\Ecommerce.Microservices\ECommerce.Notification\ECommerce.Notification.Api\ECommerce.Notification.Api.csproj" />
+    </ItemGroup>
+
+</Project>

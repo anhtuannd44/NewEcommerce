@@ -9,6 +9,7 @@ using ECommerce.IdentityServer.ConfigurationOptions;
 using ECommerce.IdentityServer.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
@@ -26,6 +27,9 @@ var appSettings = new AppSettings();
 configuration.Bind(appSettings);
 
 appSettings.ConnectionStrings.MigrationsAssembly = Assembly.GetExecutingAssembly().GetName().Name;
+
+IdentityModelEventSource.ShowPII = true;
+IdentityModelEventSource.LogCompleteSecurityArtifact = true;
 
 Console.Write(Assembly.GetExecutingAssembly().GetName().Name);
 
@@ -54,7 +58,7 @@ services.AddHostedServicesIdentityModule();
 services.AddDataProtection()
     .PersistKeysToDbContext<IdentityDbContext>()
     .SetApplicationName("ECommerce");
-
+IdentityModelEventSource.ShowPII = true;
 services.AddAuthentication(options =>
     {
         options.DefaultScheme = appSettings.IdentityServerAuthentication.Provider switch
@@ -179,8 +183,7 @@ Policy.Handle<Exception>().WaitAndRetry(new[]
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseDeveloperExceptionPage();
-}
+    app.UseDeveloperExceptionPage();}
 
 app.UseExceptionHandler(_ => { });
 
