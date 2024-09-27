@@ -18,6 +18,7 @@
         <ProjectReference Include="..\ECommerce.Microservices\ECommerce.Configuration\ECommerce.Configuration.Api\ECommerce.Configuration.Api.csproj" />
         <ProjectReference Include="..\ECommerce.Microservices\ECommerce.IdentityServer\ECommerce.IdentityServer.Web\ECommerce.IdentityServer.Web.csproj" />
         <ProjectReference Include="..\Ecommerce.Microservices\ECommerce.Notification\ECommerce.Notification.Api\ECommerce.Notification.Api.csproj" />
+        <ProjectReference Include="..\Ecommerce.Microservices\ECommerce.Storage\ECommerce.Storage.Api\ECommerce.Storage.Api.csproj" />
     </ItemGroup>
 
 </Project>

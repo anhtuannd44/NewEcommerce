@@ -10,7 +10,7 @@ public class Dispatcher
 {
     private readonly IServiceProvider _provider;
 
-    private static List<Type> _eventHandlers = new List<Type>();
+    private static List<Type> _eventHandlers = [];
 
     public static void RegisterEventHandlers(Assembly assembly, IServiceCollection services)
     {
@@ -33,19 +33,25 @@ public class Dispatcher
 
     public async Task DispatchAsync(ICommand command, CancellationToken cancellationToken = default)
     {
-        Type type = typeof(ICommandHandler<>);
-        Type[] typeArgs = { command.GetType() };
-        Type handlerType = type.MakeGenericType(typeArgs);
+        var type = typeof(ICommandHandler<>);
+        Type[] typeArgs = [command.GetType()];
+        var handlerType = type.MakeGenericType(typeArgs);
 
         dynamic handler = _provider.GetService(handlerType);
+        
+        if (handler == null)
+        {
+            return;
+        }
+        
         await handler.HandleAsync((dynamic)command, cancellationToken);
     }
 
     public async Task<T> DispatchAsync<T>(IQuery<T> query, CancellationToken cancellationToken = default)
     {
-        Type type = typeof(IQueryHandler<,>);
-        Type[] typeArgs = { query.GetType(), typeof(T) };
-        Type handlerType = type.MakeGenericType(typeArgs);
+        var type = typeof(IQueryHandler<,>);
+        Type[] typeArgs = [query.GetType(), typeof(T)];
+        var handlerType = type.MakeGenericType(typeArgs);
 
         dynamic handler = _provider.GetService(handlerType);
         Task<T> result = handler.HandleAsync((dynamic)query, cancellationToken);
@@ -55,18 +61,12 @@ public class Dispatcher
 
     public async Task DispatchAsync(IDomainEvent domainEvent, CancellationToken cancellationToken = default)
     {
-        foreach (Type handlerType in _eventHandlers)
+        foreach (var handler in from handlerType in _eventHandlers let canHandleEvent = handlerType.GetInterfaces()
+                     .Any(x => x.IsGenericType
+                               && x.GetGenericTypeDefinition() == typeof(IDomainEventHandler<>)
+                               && x.GenericTypeArguments[0] == domainEvent.GetType()) where canHandleEvent select _provider.GetService(handlerType))
         {
-            bool canHandleEvent = handlerType.GetInterfaces()
-                .Any(x => x.IsGenericType
-                          && x.GetGenericTypeDefinition() == typeof(IDomainEventHandler<>)
-                          && x.GenericTypeArguments[0] == domainEvent.GetType());
-
-            if (canHandleEvent)
-            {
-                dynamic handler = _provider.GetService(handlerType);
-                await handler.HandleAsync((dynamic)domainEvent, cancellationToken);
-            }
+            await ((dynamic)handler).HandleAsync((dynamic)domainEvent, cancellationToken);
         }
     }
 }

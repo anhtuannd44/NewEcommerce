@@ -90,12 +90,12 @@ services.AddAuthentication(options =>
 services.AddSwaggerGen(setupAction =>
 {
     setupAction.SwaggerDoc(
-        $"ClassifiedAds",
+        $"ECommerce",
         new OpenApiInfo()
         {
-            Title = "ClassifiedAds API",
+            Title = "ECommerce API",
             Version = "1",
-            Description = "ClassifiedAds API Specification.",
+            Description = "ECommerce API Specification.",
             Contact = new OpenApiContact
             {
                 Email = "abc.xyz@gmail.com",
@@ -130,7 +130,7 @@ services.AddSwaggerGen(setupAction =>
                 {
                             { "openid", "OpenId" },
                             { "profile", "Profile" },
-                            { "ClassifiedAds.WebAPI", "ClassifiedAds WebAPI" },
+                            { "ECommerce.WebAPI", "ECommerce WebAPI" },
                 },
             },
             ClientCredentials = new OpenApiOAuthFlow
@@ -138,7 +138,7 @@ services.AddSwaggerGen(setupAction =>
                 TokenUrl = new Uri(appSettings.IdentityServerAuthentication.Authority + "/connect/token", UriKind.Absolute),
                 Scopes = new Dictionary<string, string>
                 {
-                            { "ClassifiedAds.WebAPI", "ClassifiedAds WebAPI" },
+                            { "ECommerce.WebAPI", "ECommerce WebAPI" },
                 },
             },
         },
@@ -205,8 +205,8 @@ app.UseSwaggerUI(setupAction =>
     setupAction.OAuthUsePkce();
 
     setupAction.SwaggerEndpoint(
-        "/swagger/ClassifiedAds/swagger.json",
-        "ClassifiedAds API");
+        "/swagger/ECommerce/swagger.json",
+        "ECommerce API");
 
     setupAction.RoutePrefix = string.Empty;
 

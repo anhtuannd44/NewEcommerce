@@ -44,7 +44,7 @@ public class ConfigurationEntriesController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ConfigurationEntryModel>>> Get()
     {
-        var entities = await _dispatcher.DispatchAsync(new GetEntititesQuery<ConfigurationEntry>());
+        var entities = await _dispatcher.DispatchAsync(new GetEntitiesQuery<ConfigurationEntry>());
         var model = entities.OrderBy(x => x.Key).ToModels();
         return Ok(model);
     }
@@ -124,7 +124,7 @@ public class ConfigurationEntriesController : ControllerBase
     [HttpGet("ExportAsExcel")]
     public async Task<IActionResult> ExportAsExcel()
     {
-        var entries = await _dispatcher.DispatchAsync(new GetEntititesQuery<ConfigurationEntry>());
+        var entries = await _dispatcher.DispatchAsync(new GetEntitiesQuery<ConfigurationEntry>());
         using var stream = new MemoryStream();
         _configurationEntriesExcelWriter.Write(entries, stream);
         return File(stream.ToArray(), MediaTypeNames.Application.Octet, "ConfigurationEntries.xlsx");

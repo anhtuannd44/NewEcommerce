@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option csharp_namespace = "ClassifiedAds.Services.Identity.Grpc";
+option csharp_namespace = "ECommerce.Services.Identity.Grpc";
 
 package user;
 

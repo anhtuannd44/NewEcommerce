@@ -26,6 +26,6 @@ where TEntity : BaseEntity<Guid>, IAggregateRoot
 
     public async Task HandleAsync(AddOrUpdateEntityCommand<TEntity> command, CancellationToken cancellationToken = default)
     {
-        await _crudService.AddOrUpdateAsync(command.Entity);
+        if (_crudService != null) await _crudService.AddOrUpdateAsync(command.Entity, cancellationToken);
     }
 }

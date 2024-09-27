@@ -21,7 +21,7 @@ public static class AuditLogModuleServiceCollectionExtensions
 {
     public static IServiceCollection AddAuditLogModule(this IServiceCollection services, AppSettings appSettings)
     {
-        services.AddDbContext<AuditLogDbContext>(options => options.UseSqlServer(appSettings.ConnectionStrings.ClassifiedAds, sql =>
+        services.AddDbContext<AuditLogDbContext>(options => options.UseSqlServer(appSettings.ConnectionStrings.ECommerce, sql =>
         {
             if (!string.IsNullOrEmpty(appSettings.ConnectionStrings.MigrationsAssembly))
             {

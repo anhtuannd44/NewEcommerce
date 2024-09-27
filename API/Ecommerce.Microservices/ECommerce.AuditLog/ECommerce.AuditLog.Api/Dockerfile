@@ -1,27 +1,27 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
-WORKDIR /ClassifiedAds.Microservices
+WORKDIR /ECommerce.Microservices
 
 # Copy csproj and restore as distinct layers
-COPY ./Common/ClassifiedAds.Application/*.csproj ./Common/ClassifiedAds.Application/
-COPY ./Common/ClassifiedAds.CrossCuttingConcerns/*.csproj ./Common/ClassifiedAds.CrossCuttingConcerns/
-COPY ./Common/ClassifiedAds.Domain/*.csproj ./Common/ClassifiedAds.Domain/
-COPY ./Common/ClassifiedAds.Infrastructure/*.csproj ./Common/ClassifiedAds.Infrastructure/
-RUN dotnet restore ./Common/ClassifiedAds.Application/ClassifiedAds.Application.csproj
-RUN dotnet restore ./Common/ClassifiedAds.Infrastructure/ClassifiedAds.Infrastructure.csproj
+COPY ./Common/ECommerce.Application/*.csproj ./Common/ECommerce.Application/
+COPY ./Common/ECommerce.CrossCuttingConcerns/*.csproj ./Common/ECommerce.CrossCuttingConcerns/
+COPY ./Common/ECommerce.Domain/*.csproj ./Common/ECommerce.Domain/
+COPY ./Common/ECommerce.Infrastructure/*.csproj ./Common/ECommerce.Infrastructure/
+RUN dotnet restore ./Common/ECommerce.Application/ECommerce.Application.csproj
+RUN dotnet restore ./Common/ECommerce.Infrastructure/ECommerce.Infrastructure.csproj
 
-COPY ./Services.AuditLog/ClassifiedAds.Services.AuditLog/*.csproj ./Services.AuditLog/ClassifiedAds.Services.AuditLog/
-RUN dotnet restore ./Services.AuditLog/ClassifiedAds.Services.AuditLog/ClassifiedAds.Services.AuditLog.csproj
+COPY ./Services.AuditLog/ECommerce.Services.AuditLog/*.csproj ./Services.AuditLog/ECommerce.Services.AuditLog/
+RUN dotnet restore ./Services.AuditLog/ECommerce.Services.AuditLog/ECommerce.Services.AuditLog.csproj
 
-COPY ./Services.AuditLog/ClassifiedAds.Services.AuditLog.Api/*.csproj ./Services.AuditLog/ClassifiedAds.Services.AuditLog.Api/
-RUN dotnet restore ./Services.AuditLog/ClassifiedAds.Services.AuditLog.Api/ClassifiedAds.Services.AuditLog.Api.csproj
+COPY ./Services.AuditLog/ECommerce.Services.AuditLog.Api/*.csproj ./Services.AuditLog/ECommerce.Services.AuditLog.Api/
+RUN dotnet restore ./Services.AuditLog/ECommerce.Services.AuditLog.Api/ECommerce.Services.AuditLog.Api.csproj
 
-# Copy everything else and build ClassifiedAds
+# Copy everything else and build ECommerce
 COPY . ./
-RUN dotnet publish ./Services.AuditLog/ClassifiedAds.Services.AuditLog.Api/ClassifiedAds.Services.AuditLog.Api.csproj -c Release -o out
+RUN dotnet publish ./Services.AuditLog/ECommerce.Services.AuditLog.Api/ECommerce.Services.AuditLog.Api.csproj -c Release -o out
 
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
-WORKDIR /ClassifiedAds.Microservices
-COPY --from=build-env /ClassifiedAds.Microservices/out .
+WORKDIR /ECommerce.Microservices
+COPY --from=build-env /ECommerce.Microservices/out .
 
-ENTRYPOINT ["dotnet", "ClassifiedAds.Services.AuditLog.Api.dll"]
+ENTRYPOINT ["dotnet", "ECommerce.Services.AuditLog.Api.dll"]

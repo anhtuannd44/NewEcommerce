@@ -2,7 +2,7 @@ syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
 
-option csharp_namespace = "ClassifiedAds.Services.AuditLog.Grpc";
+option csharp_namespace = "ECommerce.AuditLog.Grpc";
 
 package AuditLogPackage;
 

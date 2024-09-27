@@ -6,10 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="8.0.1"/>
-        <PackageReference Include="AspNetCore.HealthChecks.UI" Version="8.0.0"/>
-        <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="8.0.0"/>
-        <PackageReference Include="AspNetCore.HealthChecks.UI.InMemory.Storage" Version="8.0.0"/>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -35,5 +32,9 @@
         <None Update="Certs\ecommerce.secretsencryption.pfx">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Migrations\Properties\launchSettings.json" />
     </ItemGroup>
 </Project>

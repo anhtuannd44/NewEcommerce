@@ -27,21 +27,28 @@ public sealed class AuditLogAggregationConsumer : IMessageBusConsumer<AuditLogAg
         var dispatcher = _serviceProvider.GetRequiredService<Dispatcher>();
         var idempotentRequestRepository = _serviceProvider.GetRequiredService<IRepository<IdempotentRequest, Guid>>();
 
-        var requestType = "ADD_AUDIT_LOG_ENTRY";
-
-        var requestProcessed = await idempotentRequestRepository.GetQueryableSet().AnyAsync(x => x.RequestType == requestType && x.RequestId == metaData.MessageId);
+        const string requestType = "ADD_AUDIT_LOG_ENTRY";
+        
+        if (idempotentRequestRepository == null)
+        {
+            return;
+        }
+        
+        var requestProcessed = await idempotentRequestRepository.GetQueryableSet()
+            .AnyAsync(x => x.RequestType == requestType && x.RequestId == metaData.MessageId, cancellationToken: cancellationToken);
 
         if (requestProcessed)
         {
             return;
         }
-
+        
         var uow = idempotentRequestRepository.UnitOfWork;
 
-        await uow.BeginTransactionAsync();
+        await uow.BeginTransactionAsync(cancellationToken: cancellationToken);
 
         data.AuditLog.Id = Guid.Empty;
-        await dispatcher.DispatchAsync(new AddOrUpdateEntityCommand<AuditLogEntry>(data.AuditLog));
+        if (dispatcher != null)
+            await dispatcher.DispatchAsync(new AddOrUpdateEntityCommand<AuditLogEntry>(data.AuditLog), cancellationToken);
 
         _logger.LogInformation(data.AuditLog.Action);
 
@@ -49,10 +56,10 @@ public sealed class AuditLogAggregationConsumer : IMessageBusConsumer<AuditLogAg
         {
             RequestType = requestType,
             RequestId = metaData.MessageId,
-        });
+        }, cancellationToken);
 
-        await uow.SaveChangesAsync();
+        await uow.SaveChangesAsync(cancellationToken);
 
-        await uow.CommitTransactionAsync();
+        await uow.CommitTransactionAsync(cancellationToken);
     }
 }

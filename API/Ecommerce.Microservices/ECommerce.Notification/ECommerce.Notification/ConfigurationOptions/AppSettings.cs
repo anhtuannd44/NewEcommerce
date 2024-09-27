@@ -26,7 +26,7 @@ public class AppSettings
 
 public class ConnectionStrings
 {
-    public string ClassifiedAds { get; set; }
+    public string ECommerce { get; set; }
 
     public string MigrationsAssembly { get; set; }
 }

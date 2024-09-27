@@ -16,7 +16,7 @@ public static class NotificationModuleServiceCollectionExtensions
     public static IServiceCollection AddNotificationModule(this IServiceCollection services, AppSettings appSettings)
     {
         services
-            .AddDbContext<NotificationDbContext>(options => options.UseSqlServer(appSettings.ConnectionStrings.ClassifiedAds, sql =>
+            .AddDbContext<NotificationDbContext>(options => options.UseSqlServer(appSettings.ConnectionStrings.ECommerce, sql =>
             {
                 if (!string.IsNullOrEmpty(appSettings.ConnectionStrings.MigrationsAssembly))
                 {

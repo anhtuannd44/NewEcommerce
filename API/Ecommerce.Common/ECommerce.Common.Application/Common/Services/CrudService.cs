@@ -9,8 +9,8 @@ public class CrudService<T> : ICrudService<T>
     where T : BaseEntity<Guid>, IAggregateRoot
 {
     private readonly IUnitOfWork _unitOfWork;
-    protected readonly IRepository<T, Guid> _repository;
-    protected readonly Dispatcher _dispatcher;
+    private readonly IRepository<T, Guid> _repository;
+    private readonly Dispatcher _dispatcher;
 
     public CrudService(IRepository<T, Guid> repository, Dispatcher dispatcher)
     {
@@ -35,11 +35,10 @@ public class CrudService<T> : ICrudService<T>
         if (entity.Id.Equals(default))
         {
             await AddAsync(entity, cancellationToken);
+            return;
         }
-        else
-        {
-            await UpdateAsync(entity, cancellationToken);
-        }
+        
+        await UpdateAsync(entity, cancellationToken);
     }
 
     public async Task AddAsync(T entity, CancellationToken cancellationToken = default)
