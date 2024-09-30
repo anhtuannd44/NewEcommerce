@@ -15,10 +15,12 @@
     <ItemGroup>
         <ProjectReference Include="..\Ecommerce.Gateways\ECommerce.Gateways.WebAPI\Ecommerce.Gateways.WebAPI.csproj" />
         <ProjectReference Include="..\Ecommerce.Microservices\ECommerce.AuditLog\ECommerce.AuditLog.Api\ECommerce.AuditLog.Api.csproj" />
+        <ProjectReference Include="..\Ecommerce.Microservices\ECommerce.AuditLog\ECommerce.AuditLog.Grpc\ECommerce.AuditLog.Grpc.csproj" />
         <ProjectReference Include="..\ECommerce.Microservices\ECommerce.Configuration\ECommerce.Configuration.Api\ECommerce.Configuration.Api.csproj" />
         <ProjectReference Include="..\ECommerce.Microservices\ECommerce.IdentityServer\ECommerce.IdentityServer.Web\ECommerce.IdentityServer.Web.csproj" />
         <ProjectReference Include="..\Ecommerce.Microservices\ECommerce.Notification\ECommerce.Notification.Api\ECommerce.Notification.Api.csproj" />
         <ProjectReference Include="..\Ecommerce.Microservices\ECommerce.Storage\ECommerce.Storage.Api\ECommerce.Storage.Api.csproj" />
+        <ProjectReference Include="..\Ecommerce.Microservices\ECommerce.Store\ECommerce.Store.Api\ECommerce.Store.Api.csproj" />
     </ItemGroup>
 
 </Project>

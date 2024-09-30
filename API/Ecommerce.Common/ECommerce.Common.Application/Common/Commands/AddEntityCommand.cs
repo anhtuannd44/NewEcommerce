@@ -26,6 +26,6 @@ internal class AddEntityCommandHandler<TEntity> : ICommandHandler<AddEntityComma
 
     public async Task HandleAsync(AddEntityCommand<TEntity> command, CancellationToken cancellationToken = default)
     {
-        await _crudService.AddAsync(command.Entity);
+        await _crudService.AddAsync(command.Entity, cancellationToken);
     }
 }

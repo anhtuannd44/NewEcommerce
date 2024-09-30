@@ -5,10 +5,13 @@ var apiGateway = builder.AddProject<Projects.Ecommerce_Gateways_WebAPI>("Ecommer
 var identityApi = builder.AddProject<Projects.ECommerce_IdentityServer_Web>("ECommerce-IdentityServer-Web");
 
 var auditLogApi = builder.AddProject<Projects.ECommerce_AuditLog_Api>("ECommerce-AuditLog-Api");
+var auditLogGrpc = builder.AddProject<Projects.ECommerce_AuditLog_Grpc>("ECommerce-AuditLog-Grpc");
 
 var notificationApi = builder.AddProject<Projects.ECommerce_Notification_Api>("ECommerce-Notification-Api");
 
 var configurationApi = builder.AddProject<Projects.ECommerce_Configuration_Api>("ECommerce-Configuration-Api");
+
+var storeApi = builder.AddProject<Projects.ECommerce_Store_Api>("ECommerce-Store-Api");
 
 var storageApi = builder.AddProject<Projects.ECommerce_Storage_Api>("ECommerce-Storage-Api");
 
