@@ -21,7 +21,7 @@ public class CircuitBreakerManager : ICircuitBreakerManager, IDisposable
     {
         CircuitBreaker GetCircuitBreakerByName()
         {
-            return _dbContext.Set<CircuitBreaker>().Where(x => x.Name.Equals(name)).FirstOrDefault();
+            return _dbContext.Set<CircuitBreaker>().FirstOrDefault(x => x.Name.Equals(name, StringComparison.Ordinal));
         }
 
         var circuitBreaker = GetCircuitBreakerByName();
@@ -31,10 +31,7 @@ public class CircuitBreakerManager : ICircuitBreakerManager, IDisposable
             {
                 circuitBreaker = new CircuitBreaker
                 {
-                    Name = name,
-                    Status = CircuitStatus.Closed,
-                    CreatedDateTime = _dateTimeProvider.Now,
-                    LastStatusUpdated = _dateTimeProvider.Now,
+                    Name = name, Status = CircuitStatus.Closed, CreatedDateTime = _dateTimeProvider.Now, LastStatusUpdated = _dateTimeProvider.Now,
                 };
 
                 _dbContext.Set<CircuitBreaker>().Add(circuitBreaker);
@@ -77,8 +74,8 @@ public class CircuitBreakerManager : ICircuitBreakerManager, IDisposable
         if (circuitBreaker.Status == CircuitStatus.Closed)
         {
             var sinceLastTime = _dateTimeProvider.OffsetNow - period;
-            var numberOfFailures = _dbContext.Set<CircuitBreakerLog>().Where(x => x.CircuitBreakerId == ((CircuitBreaker)circuitBreaker).Id
-            && x.Succeeded == false && x.CreatedDateTime >= sinceLastTime).Count();
+            var numberOfFailures = _dbContext.Set<CircuitBreakerLog>().Count(x => x.CircuitBreakerId == ((CircuitBreaker)circuitBreaker).Id
+                                                                                  && x.Succeeded == false && x.CreatedDateTime >= sinceLastTime);
 
             UpdateCircuitBreakerStatus(circuitBreaker, numberOfFailures >= maximumNumberOfFailures, CircuitStatus.Open);
 
@@ -112,8 +109,10 @@ public class CircuitBreakerManager : ICircuitBreakerManager, IDisposable
         circuitBreaker.LastStatusUpdated = _dateTimeProvider.OffsetNow;
     }
 
+#pragma warning disable CA1816
     public void Dispose()
     {
         _dbContext.Dispose();
     }
+#pragma warning restore CA1816
 }

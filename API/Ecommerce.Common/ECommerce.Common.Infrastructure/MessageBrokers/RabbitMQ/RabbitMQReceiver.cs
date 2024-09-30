@@ -14,7 +14,7 @@ public class RabbitMQReceiver<TConsumer, T> : IMessageReceiver<TConsumer, T>, ID
     private readonly RabbitMQReceiverOptions _options;
     private readonly IConnection _connection;
     private IModel _channel;
-    private string _queueName;
+    private readonly string _queueName;
 
     public RabbitMQReceiver(RabbitMQReceiverOptions options)
     {
@@ -89,11 +89,11 @@ public class RabbitMQReceiver<TConsumer, T> : IMessageReceiver<TConsumer, T>, ID
         _channel.BasicQos(prefetchSize: 0, prefetchCount: 1, global: false);
 
         var consumer = new AsyncEventingBasicConsumer(_channel);
-        consumer.Received += async (model, ea) =>
+        consumer.Received += async (_, ea) =>
         {
             try
             {
-                var bodyText = string.Empty;
+                string bodyText;
 
                 if (_options.MessageEncryptionEnabled)
                 {
@@ -103,11 +103,11 @@ public class RabbitMQReceiver<TConsumer, T> : IMessageReceiver<TConsumer, T>, ID
                     var encryptedBytes = parts[1].FromBase64String();
 
                     bodyText = encryptedBytes.UseAES(_options.MessageEncryptionKey.FromBase64String())
-                    .WithCipher(CipherMode.CBC)
-                    .WithIV(iv)
-                    .WithPadding(PaddingMode.PKCS7)
-                    .Decrypt()
-                    .GetString();
+                        .WithCipher(CipherMode.CBC)
+                        .WithIV(iv)
+                        .WithPadding(PaddingMode.PKCS7)
+                        .Decrypt()
+                        .GetString();
                 }
                 else
                 {
@@ -120,24 +120,26 @@ public class RabbitMQReceiver<TConsumer, T> : IMessageReceiver<TConsumer, T>, ID
 
                 _channel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // TODO: log here
-                await Task.Delay(1000);
+                await Task.Delay(1000, cancellationToken);
                 _channel.BasicNack(deliveryTag: ea.DeliveryTag, multiple: false, requeue: _options.RequeueOnFailure);
             }
         };
 
         _channel.BasicConsume(queue: _queueName,
-                             autoAck: false,
-                             consumer: consumer);
+            autoAck: false,
+            consumer: consumer);
 
         return Task.CompletedTask;
     }
 
+#pragma warning disable CA1816
     public void Dispose()
     {
         _channel?.Dispose();
         _connection?.Dispose();
     }
+#pragma warning restore CA1816
 }

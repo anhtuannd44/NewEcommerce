@@ -6,7 +6,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\ECommerce.Common.Cryptography\ECommerce.Common.Cryptography.csproj"/>
         <ProjectReference Include="..\ECommerce.Common.Domain\ECommerce.Common.Domain.csproj"/>
     </ItemGroup>
 

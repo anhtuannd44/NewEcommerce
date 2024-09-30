@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using ECommerce.Common.Infrastructure.Logging;
+﻿using ECommerce.Common.Infrastructure.Logging;
 using Ecommerce.Gateways.WebAPI.ConfigurationOptions;
 using Ecommerce.Gateways.WebAPI.HttpMessageHandlers;
-using Microsoft.AspNetCore.Builder;
 using Ocelot.Configuration.File;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;

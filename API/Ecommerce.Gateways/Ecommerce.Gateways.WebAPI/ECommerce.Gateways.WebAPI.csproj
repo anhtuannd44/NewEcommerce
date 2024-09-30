@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <UserSecretsId>4a8b7447-cb04-4631-8420-8ac41700e230</UserSecretsId>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,6 +15,18 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Ecommerce.Common\ECommerce.Common.Infrastructure\ECommerce.Common.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Ecommerce.Gateways.WebAPI\bin\Debug\net8.0\appsettings.Development.json" />
+    <_ContentIncludedByDefault Remove="Ecommerce.Gateways.WebAPI\bin\Debug\net8.0\appsettings.json" />
+    <_ContentIncludedByDefault Remove="Ecommerce.Gateways.WebAPI\bin\Debug\net8.0\Ecommerce.Gateways.WebAPI.deps.json" />
+    <_ContentIncludedByDefault Remove="Ecommerce.Gateways.WebAPI\bin\Debug\net8.0\Ecommerce.Gateways.WebAPI.runtimeconfig.json" />
+    <_ContentIncludedByDefault Remove="Ecommerce.Gateways.WebAPI\obj\Debug\net8.0\Ecommerce.Gateways.WebAPI.sourcelink.json" />
+    <_ContentIncludedByDefault Remove="Ecommerce.Gateways.WebAPI\obj\Debug\net8.0\staticwebassets.build.json" />
+    <_ContentIncludedByDefault Remove="Ecommerce.Gateways.WebAPI\obj\Ecommerce.Gateways.WebAPI.csproj.nuget.dgspec.json" />
+    <_ContentIncludedByDefault Remove="Ecommerce.Gateways.WebAPI\obj\project.assets.json" />
+    <_ContentIncludedByDefault Remove="Ecommerce.Gateways.WebAPI\obj\project.packagespec.json" />
   </ItemGroup>
 
 </Project>

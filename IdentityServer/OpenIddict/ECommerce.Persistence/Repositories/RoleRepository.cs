@@ -35,7 +35,7 @@ public class RoleRepository : Repository<Role, Guid>, IRoleRepository
 
         if (queryOptions.AsNoTracking)
         {
-            query = query = query.AsNoTracking();
+            query = query.AsNoTracking();
         }
 
         return query;

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ECommerce.Migrator.Migrations.OpenIddictDb
 {
     [DbContext(typeof(OpenIddictDbContext))]
-    [Migration("20240923071223_Init")]
+    [Migration("20240927173927_Init")]
     partial class Init
     {
         /// <inheritdoc />

@@ -37,7 +37,7 @@ public class ECommerceDbContext : DbContext, IUnitOfWork, IDataProtectionKeyCont
         var lockScope = sqlLock.Acquire(lockName);
         if (lockScope == null)
         {
-            throw new Exception($"Could not acquire lock: {lockName}");
+            throw new ArgumentNullException($"Could not acquire lock: {lockName}");
         }
 
         return _dbContextTransaction;
@@ -48,9 +48,9 @@ public class ECommerceDbContext : DbContext, IUnitOfWork, IDataProtectionKeyCont
         await _dbContextTransaction.CommitAsync(cancellationToken);
     }
 
-    protected override void OnModelCreating(ModelBuilder builder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        base.OnModelCreating(builder);
-        builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
 }

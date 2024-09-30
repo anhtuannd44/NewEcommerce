@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Ecommerce.Gateways.WebAPI.ConfigurationOptions;
+﻿namespace Ecommerce.Gateways.WebAPI.ConfigurationOptions;
 
 public class OcelotOptions
 {

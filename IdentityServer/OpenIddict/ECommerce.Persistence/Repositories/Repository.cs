@@ -42,11 +42,10 @@ public class Repository<T, TKey> : IRepository<T, TKey>
         if (entity.Id.Equals(default(TKey)))
         {
             await AddAsync(entity, cancellationToken);
+            return;
         }
-        else
-        {
-            await UpdateAsync(entity, cancellationToken);
-        }
+
+        await UpdateAsync(entity, cancellationToken);
     }
 
     public async Task AddAsync(T entity, CancellationToken cancellationToken = default)
@@ -106,7 +105,8 @@ public class Repository<T, TKey> : IRepository<T, TKey>
         _dbContext.BulkDelete(entities);
     }
 
-    public void BulkMerge(IEnumerable<T> entities, Expression<Func<T, object>> idSelector, Expression<Func<T, object>> updateColumnNamesSelector, Expression<Func<T, object>> insertColumnNamesSelector)
+    public void BulkMerge(IEnumerable<T> entities, Expression<Func<T, object>> idSelector, Expression<Func<T, object>> updateColumnNamesSelector,
+        Expression<Func<T, object>> insertColumnNamesSelector)
     {
         _dbContext.BulkMerge(entities, idSelector, updateColumnNamesSelector, insertColumnNamesSelector);
     }

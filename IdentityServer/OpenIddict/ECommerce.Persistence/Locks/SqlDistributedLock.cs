@@ -41,19 +41,16 @@ public class SqlDistributedLock : IDistributedLock
 
     public IDistributedLockScope Acquire(string lockName)
     {
-        SqlParameter returnValue;
-        var acquireCommand = CreateAcquireCommand(0, lockName, -1, out returnValue);
+        var acquireCommand = CreateAcquireCommand(0, lockName, -1, out var returnValue);
 
         acquireCommand.ExecuteNonQuery();
 
-        if (ParseReturnCode((int)returnValue.Value))
+        if (returnValue.Value != null && ParseReturnCode((int)returnValue.Value))
         {
             return new SqlDistributedLockScope(_connection, _transaction, lockName);
         }
-        else
-        {
-            return null;
-        }
+
+        return null;
     }
 
     public IDistributedLockScope TryAcquire(string lockName)
@@ -63,14 +60,12 @@ public class SqlDistributedLock : IDistributedLock
 
         acquireCommand.ExecuteNonQuery();
 
-        if (ParseReturnCode((int)returnValue.Value))
+        if (returnValue.Value != null && ParseReturnCode((int)returnValue.Value))
         {
             return new SqlDistributedLockScope(_connection, _transaction, lockName);
         }
-        else
-        {
-            return null;
-        }
+
+        return null;
     }
 
     private SqlCommand CreateAcquireCommand(int commandTimeout, string lockName, int lockTimeout, out SqlParameter returnValue)
@@ -81,12 +76,14 @@ public class SqlDistributedLock : IDistributedLock
         command.Transaction = _transaction;
 
         returnValue = command.Parameters.Add(new SqlParameter { ParameterName = "Result", DbType = DbType.Int32, Direction = ParameterDirection.Output });
+#pragma warning disable CA2100
         command.CommandText =
             $@"IF APPLOCK_MODE('public', @Resource, @LockOwner) != 'NoLock' {(HasTransaction ? " OR APPLOCK_MODE('public', @Resource, 'Session') != 'NoLock'" : string.Empty)}
                             SET @Result = {AlreadyHeldReturnCode}
                         ELSE
                             EXEC @Result = dbo.sp_getapplock @Resource = @Resource, @LockMode = @LockMode, @LockOwner = @LockOwner, @LockTimeout = @LockTimeout, @DbPrincipal = 'public'"
-                  ;
+#pragma warning restore CA2100
+            ;
 
         command.CommandTimeout = commandTimeout;
 
@@ -116,7 +113,9 @@ public class SqlDistributedLock : IDistributedLock
             case -2:
                 throw new OperationCanceledException("The lock request was canceled.");
             case -3:
+#pragma warning disable CA2201
                 throw new Exception("The lock request was chosen as a deadlock victim.");
+#pragma warning restore CA2201
             case -999:
                 throw new ArgumentException("parameter validation or other error");
             case AlreadyHeldReturnCode:
@@ -131,6 +130,7 @@ public class SqlDistributedLock : IDistributedLock
         return false;
     }
 
+#pragma warning disable CA1816
     public void Dispose()
     {
         if (!string.IsNullOrEmpty(_connectionString))
@@ -138,4 +138,5 @@ public class SqlDistributedLock : IDistributedLock
             _connection.Dispose();
         }
     }
+#pragma warning restore CA1816
 }

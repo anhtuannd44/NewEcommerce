@@ -1,8 +1,4 @@
-﻿using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace Ecommerce.Gateways.WebAPI.HttpMessageHandlers;
+﻿namespace Ecommerce.Gateways.WebAPI.HttpMessageHandlers;
 
 public class DebuggingHandler : DelegatingHandler
 {

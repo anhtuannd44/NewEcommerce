@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using ECommerce.Common.Infrastructure.YarpSwagger;
 using Microsoft.OpenApi.Models;
 using Yarp.ReverseProxy.Transforms;

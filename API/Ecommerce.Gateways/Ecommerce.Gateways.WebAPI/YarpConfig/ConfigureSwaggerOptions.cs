@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using ECommerce.Common.Infrastructure.YarpSwagger;
 using Ecommerce.Gateways.WebAPI.Extensions;
 using Microsoft.Extensions.Options;

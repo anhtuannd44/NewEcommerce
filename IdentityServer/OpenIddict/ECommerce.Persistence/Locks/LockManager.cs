@@ -1,9 +1,9 @@
-﻿using ECommerce.CrossCuttingConcerns.Locks;
+﻿using System;
+using System.Data;
 using ECommerce.CrossCuttingConcerns.DateTimes;
+using ECommerce.CrossCuttingConcerns.Locks;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Data;
 
 namespace ECommerce.Persistence.Locks;
 
@@ -20,7 +20,7 @@ public class LockManager : ILockManager
 
     private void CreateLock(string entityName, string entityId)
     {
-        string sql = @"
+        const string sql = @"
             merge into 
                 [dbo].[Locks] with (holdlock) t  
             using 
@@ -32,8 +32,8 @@ public class LockManager : ILockManager
             ";
 
         _dbContext.Database.ExecuteSqlRaw(sql,
-              new SqlParameter("entityName", entityName),
-              new SqlParameter("entityId", entityId));
+            new SqlParameter("entityName", entityName),
+            new SqlParameter("entityId", entityId));
     }
 
     public bool AcquireLock(string entityName, string entityId, string ownerId, TimeSpan expirationIn)
@@ -48,20 +48,20 @@ public class LockManager : ILockManager
         var now = _dateTimeProvider.OffsetNow;
         var expired = now + expirationIn;
 
-        string sql = @"
-            Update Locks set OwnerId = @OwnerId, 
-            AcquiredDateTime = @AcquiredDateTime,
-            ExpiredDateTime = @ExpiredDateTime
-            where EntityId = @EntityId 
-            and EntityName = @EntityName 
-            and (OwnerId is NULL or ExpiredDateTime < @AcquiredDateTime)";
+        const string sql = @"-- noinspection SqlResolveForFile
+                    Update Locks set OwnerId = @OwnerId, AcquiredDateTime = @AcquiredDateTime,
+                    ExpiredDateTime = @ExpiredDateTime
+                    where EntityId = @EntityId 
+                    and EntityName = @entityName 
+                    and (OwnerId is NULL or ExpiredDateTime < @AcquiredDateTime)
+                    ";
 
         var rs = _dbContext.Database.ExecuteSqlRaw(sql,
-              new SqlParameter("EntityName", entityName),
-              new SqlParameter("EntityId", entityId),
-              new SqlParameter("OwnerId", ownerId),
-              new SqlParameter("AcquiredDateTime", SqlDbType.DateTimeOffset) { Value = now },
-              new SqlParameter("ExpiredDateTime", SqlDbType.DateTimeOffset) { Value = expired });
+            new SqlParameter("entityName", entityName),
+            new SqlParameter("EntityId", entityId),
+            new SqlParameter("OwnerId", ownerId),
+            new SqlParameter("AcquiredDateTime", SqlDbType.DateTimeOffset) { Value = now },
+            new SqlParameter("ExpiredDateTime", SqlDbType.DateTimeOffset) { Value = expired });
 
         return rs > 0;
     }
@@ -71,24 +71,24 @@ public class LockManager : ILockManager
         var now = _dateTimeProvider.OffsetNow;
         var expired = now + expirationIn;
 
-        string sql = @"
-            Update Locks set ExpiredDateTime = @ExpiredDateTime
-            where EntityId = @EntityId 
-            and EntityName = @EntityName 
-            and OwnerId = @OwnerId";
+        const string sql = @"-- noinspection SqlResolveForFile
+                    Update Locks set ExpiredDateTime = @ExpiredDateTime
+                    where EntityId = @EntityId 
+                    and EntityName = @EntityName 
+                    and OwnerId = @OwnerId";
 
         var rs = _dbContext.Database.ExecuteSqlRaw(sql,
-              new SqlParameter("EntityName", entityName),
-              new SqlParameter("EntityId", entityId),
-              new SqlParameter("OwnerId", ownerId),
-              new SqlParameter("ExpiredDateTime", SqlDbType.DateTimeOffset) { Value = expired });
+            new SqlParameter("EntityName", entityName),
+            new SqlParameter("EntityId", entityId),
+            new SqlParameter("OwnerId", ownerId),
+            new SqlParameter("ExpiredDateTime", SqlDbType.DateTimeOffset) { Value = expired });
 
         return rs > 0;
     }
 
     public bool ReleaseLock(string entityName, string entityId, string ownerId)
     {
-        string sql = @"
+        const string sql = @"
             Update Locks set OwnerId = NULL, 
             AcquiredDateTime = NULL,
             ExpiredDateTime = NULL
@@ -97,23 +97,23 @@ public class LockManager : ILockManager
             and OwnerId = @OwnerId";
 
         _ = _dbContext.Database.ExecuteSqlRaw(sql,
-              new SqlParameter("EntityName", entityName),
-              new SqlParameter("EntityId", entityId),
-              new SqlParameter("OwnerId", ownerId));
+            new SqlParameter("EntityName", entityName),
+            new SqlParameter("EntityId", entityId),
+            new SqlParameter("OwnerId", ownerId));
 
         return true;
     }
 
     public bool ReleaseLocks(string ownerId)
     {
-        string sql = @"
+        const string sql = @"
             Update Locks set OwnerId = NULL, 
             AcquiredDateTime = NULL,
             ExpiredDateTime = NULL
             where OwnerId = @OwnerId";
 
         _ = _dbContext.Database.ExecuteSqlRaw(sql,
-              new SqlParameter("OwnerId", ownerId));
+            new SqlParameter("OwnerId", ownerId));
 
         return true;
     }
@@ -122,14 +122,14 @@ public class LockManager : ILockManager
     {
         var now = _dateTimeProvider.OffsetNow;
 
-        string sql = @"
+        const string sql = @"
             Update Locks set OwnerId = NULL, 
             AcquiredDateTime = NULL,
             ExpiredDateTime = NULL
             where ExpiredDateTime < @now";
 
         _ = _dbContext.Database.ExecuteSqlRaw(sql,
-              new SqlParameter("now", SqlDbType.DateTimeOffset) { Value = now });
+            new SqlParameter("now", SqlDbType.DateTimeOffset) { Value = now });
 
         return true;
     }

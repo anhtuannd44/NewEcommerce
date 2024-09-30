@@ -37,7 +37,7 @@ public class SqlDistributedLockScope : IDistributedLockScope
         var releaseCommand = CreateReleaseCommand(_lockName, false, out returnValue);
         releaseCommand.ExecuteNonQuery();
 
-        if (ParseReturnCode((int)returnValue.Value))
+        if (returnValue.Value != null && ParseReturnCode((int)returnValue.Value))
         {
         }
     }
