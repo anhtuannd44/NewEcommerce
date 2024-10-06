@@ -4,9 +4,7 @@ using ECommerce.Common.Domain.IRepositories;
 namespace ECommerce.Common.Application.Common.Queries;
 
 public class GetEntitiesQuery<TEntity> : IQuery<List<TEntity>>
-     where TEntity : BaseEntity<Guid>, IAggregateRoot
-{
-}
+     where TEntity : BaseEntity<Guid>, IAggregateRoot;
 
 internal class GetEntitiesQueryHandler<TEntity> : IQueryHandler<GetEntitiesQuery<TEntity>, List<TEntity>>
 where TEntity : BaseEntity<Guid>, IAggregateRoot

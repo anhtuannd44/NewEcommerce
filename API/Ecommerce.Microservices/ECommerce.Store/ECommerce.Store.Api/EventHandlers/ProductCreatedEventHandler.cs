@@ -9,19 +9,28 @@ using MediatR;
 
 namespace ECommerce.Store.Api.EventHandlers;
 
-public class ProductCreatedEventHandler(
-    IMediator dispatcher,
-    ICurrentUser currentUser,
-    IRepository<OutboxEvent, Guid> outboxEventRepository)
-    : IDomainEventHandler<EntityCreatedEvent<Product>>
+public class ProductCreatedEventHandler : IDomainEventHandler<EntityCreatedEvent<Product>>
 {
+    private readonly ISender _dispatcher;
+    private readonly ICurrentUser _currentUser;
+    private readonly IRepository<OutboxEvent, Guid> _outboxEventRepository;
+
+    public ProductCreatedEventHandler(ISender dispatcher,
+        ICurrentUser currentUser,
+        IRepository<OutboxEvent, Guid> outboxEventRepository)
+    {
+        _dispatcher = dispatcher;
+        _currentUser = currentUser;
+        _outboxEventRepository = outboxEventRepository;
+    }
+
     public async Task HandleAsync(EntityCreatedEvent<Product> domainEvent, CancellationToken cancellationToken = default)
     {
-        await dispatcher.Send(new AddAuditLogEntryCommand
+        await _dispatcher.Send(new AddAuditLogEntryCommand
         {
             AuditLogEntry = new AuditLogEntry
             {
-                UserId = currentUser.IsAuthenticated ? currentUser.UserId : Guid.Empty,
+                UserId = _currentUser.IsAuthenticated ? _currentUser.UserId : Guid.Empty,
                 CreatedDateTime = domainEvent.EventDateTime,
                 Action = "CREATED_PRODUCT",
                 ObjectId = domainEvent.Entity.Id.ToString(),
@@ -29,16 +38,16 @@ public class ProductCreatedEventHandler(
             },
         }, cancellationToken);
 
-        await outboxEventRepository.AddOrUpdateAsync(new OutboxEvent
+        await _outboxEventRepository.AddOrUpdateAsync(new OutboxEvent
         {
             EventType = EventTypeConstants.ProductCreated,
-            TriggeredById = currentUser.UserId,
+            TriggeredById = _currentUser.UserId,
             CreatedDateTime = domainEvent.EventDateTime,
             ObjectId = domainEvent.Entity.Id.ToString(),
             Message = domainEvent.Entity.AsJsonString(),
             Published = false,
         }, cancellationToken);
 
-        await outboxEventRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
+        await _outboxEventRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

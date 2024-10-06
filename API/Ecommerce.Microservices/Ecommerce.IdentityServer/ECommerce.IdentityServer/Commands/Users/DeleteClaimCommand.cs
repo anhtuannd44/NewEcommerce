@@ -1,6 +1,5 @@
 ﻿using ECommerce.Common.Application.Common.Commands;
 using ECommerce.IdentityServer.Entities;
-using ECommerce.IdentityServer.Entities;
 using ECommerce.IdentityServer.Repositories;
 
 namespace ECommerce.IdentityServer.Commands.Users;

@@ -7,30 +7,32 @@ using ECommerce.Notification.Background.HostedServices;
 using ECommerce.Notification.Background.Identity;
 using ECommerce.Notification.ConfigurationOptions;
 
-CreateHostBuilder(args).Build().Run();
+var builder = Host.CreateDefaultBuilder(args);
 
-static IHostBuilder CreateHostBuilder(string[] args) =>
-       Host.CreateDefaultBuilder(args)
-       .UseWindowsService()
-       .UseECommerceLogger(configuration =>
-       {
-           var appSettings = new AppSettings();
-           configuration.Bind(appSettings);
-           return appSettings.Logging;
-       })
-       .ConfigureServices((hostContext, services) =>
-       {
-           var serviceProvider = services.BuildServiceProvider();
-           var configuration = serviceProvider.GetService<IConfiguration>();
+var appSettings = new AppSettings();
 
-           var appSettings = new AppSettings();
-           configuration.Bind(appSettings);
+builder.UseWindowsService();
 
-           services.AddDateTimeProvider();
-           services.AddApplicationServices();
-           services.AddNotificationModule(appSettings);
+builder.UseECommerceLogger(configuration =>
+{
+    configuration.Bind(appSettings);
+    return appSettings.Logging;
+});
 
-           services.AddScoped<ICurrentUser, CurrentUser>();
-           services.AddHostedService<SendEmailWorker>();
-           services.AddHostedService<SendSmsWorker>();
-       });
+builder.ConfigureServices((_, services) =>
+{
+    var serviceProvider = services.BuildServiceProvider();
+    var configuration = serviceProvider.GetService<IConfiguration>();
+
+    configuration.Bind(appSettings);
+
+    services.AddDateTimeProvider();
+    services.AddApplicationServices();
+    services.AddNotificationModule(appSettings);
+
+    services.AddScoped<ICurrentUser, CurrentUser>();
+    services.AddHostedService<SendEmailWorker>();
+    services.AddHostedService<SendSmsWorker>();
+});
+
+builder.Build().Run();

@@ -9,7 +9,7 @@ using MediatR;
 
 namespace ECommerce.Store.Api.EventHandlers;
 
-public class ProductUpdatedEventHandler : IDomainEventHandler<EntityUpdatedEvent<Entities.Product>>
+public class ProductUpdatedEventHandler : IDomainEventHandler<EntityUpdatedEvent<Product>>
 {
     private readonly IMediator _dispatcher;
     private readonly ICurrentUser _currentUser;
@@ -24,7 +24,7 @@ public class ProductUpdatedEventHandler : IDomainEventHandler<EntityUpdatedEvent
         _outboxEventRepository = outboxEventRepository;
     }
 
-    public async Task HandleAsync(EntityUpdatedEvent<Entities.Product> domainEvent, CancellationToken cancellationToken = default)
+    public async Task HandleAsync(EntityUpdatedEvent<Product> domainEvent, CancellationToken cancellationToken = default)
     {
         await _dispatcher.Send(new AddAuditLogEntryCommand
         {
@@ -36,7 +36,7 @@ public class ProductUpdatedEventHandler : IDomainEventHandler<EntityUpdatedEvent
                 ObjectId = domainEvent.Entity.Id.ToString(),
                 Log = domainEvent.Entity.AsJsonString(),
             },
-        });
+        }, cancellationToken);
 
         await _outboxEventRepository.AddOrUpdateAsync(new OutboxEvent
         {

@@ -45,7 +45,7 @@ public class PublishEventWorker : BackgroundService
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"");
+                _logger.LogError(ex, "PublishEventWorker error: ");
                 await Task.Delay(10000, stoppingToken);
             }
         }

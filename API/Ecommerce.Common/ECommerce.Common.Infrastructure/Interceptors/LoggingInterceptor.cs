@@ -18,7 +18,7 @@ public class LoggingInterceptor : IInterceptor
     public void Intercept(IInvocation invocation)
     {
         var method = invocation.Method;
-        var className = method.DeclaringType.Name;
+        var className = method.DeclaringType?.Name ?? "className";
         var methodName = method.Name;
 
         var arguments = JsonSerializer.Serialize(invocation.Arguments.Where(x => x.GetType() != typeof(CancellationToken)), new JsonSerializerOptions()
@@ -51,7 +51,7 @@ public class LoggingInterceptor : IInterceptor
         }
     }
 
-    private void InterceptResult(object returnValue, Stopwatch watch, string className, string methodName)
+    private void InterceptResult(object _, Stopwatch watch, string className, string methodName)
     {
         watch.Stop();
 
@@ -69,7 +69,7 @@ public class LoggingInterceptor : IInterceptor
 
     private async Task<T> InterceptResultAsync<T>(Task<T> task, Stopwatch watch, string className, string methodName)
     {
-        T result = await task.ConfigureAwait(false);
+        var result = await task.ConfigureAwait(false);
 
         watch.Stop();
 

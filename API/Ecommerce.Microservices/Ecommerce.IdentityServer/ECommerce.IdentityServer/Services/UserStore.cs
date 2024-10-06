@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.IdentityServer.Services;
 
-public class UserStore : IUserStore<User>,
+public class UserStore :
     IUserPasswordStore<User>,
     IUserSecurityStampStore<User>,
     IUserEmailStore<User>,

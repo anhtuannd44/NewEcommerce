@@ -12,92 +12,81 @@ namespace ECommerce.Common.Infrastructure.MessageBrokers;
 
 public static class MessageBrokersCollectionExtensions
 {
-    public static IServiceCollection AddAzureEventGridSender<T>(this IServiceCollection services, AzureEventGridOptions options)
+    private static void AddAzureEventGridSender<T>(this IServiceCollection services, AzureEventGridOptions options)
     {
         services.AddSingleton<IMessageSender<T>>(new AzureEventGridSender<T>(
-                            options.DomainEndpoint,
-                            options.DomainKey,
-                            options.Topics[typeof(T).Name]));
-        return services;
+            options.DomainEndpoint,
+            options.DomainKey,
+            options.Topics[typeof(T).Name]));
     }
 
-    public static IServiceCollection AddAzureEventHubSender<T>(this IServiceCollection services, AzureEventHubOptions options)
+    private static void AddAzureEventHubSender<T>(this IServiceCollection services, AzureEventHubOptions options)
     {
         services.AddSingleton<IMessageSender<T>>(new AzureEventHubSender<T>(
-                            options.ConnectionString,
-                            options.Hubs[typeof(T).Name]));
-        return services;
+            options.ConnectionString,
+            options.Hubs[typeof(T).Name]));
     }
 
-    public static IServiceCollection AddAzureEventHubReceiver<TConsumer, T>(this IServiceCollection services, AzureEventHubOptions options)
+    private static void AddAzureEventHubReceiver<TConsumer, T>(this IServiceCollection services, AzureEventHubOptions options)
     {
-        services.AddTransient<IMessageReceiver<TConsumer, T>>(x => new AzureEventHubReceiver<TConsumer, T>(
-                            options.ConnectionString,
-                            options.Hubs[typeof(T).Name],
-                            options.StorageConnectionString,
-                            options.StorageContainerNames[typeof(T).Name]));
-        return services;
+        services.AddTransient<IMessageReceiver<TConsumer, T>>(_ => new AzureEventHubReceiver<TConsumer, T>(
+            options.ConnectionString,
+            options.Hubs[typeof(T).Name],
+            options.StorageConnectionString,
+            options.StorageContainerNames[typeof(T).Name]));
     }
 
-    public static IServiceCollection AddAzureQueueSender<T>(this IServiceCollection services, AzureQueueOptions options)
+    private static void AddAzureQueueSender<T>(this IServiceCollection services, AzureQueueOptions options)
     {
         services.AddSingleton<IMessageSender<T>>(new AzureQueueSender<T>(
-                            options.ConnectionString,
-                            options.QueueNames[typeof(T).Name]));
-        return services;
+            options.ConnectionString,
+            options.QueueNames[typeof(T).Name]));
     }
 
-    public static IServiceCollection AddAzureQueueReceiver<TConsumer, T>(this IServiceCollection services, AzureQueueOptions options)
+    private static void AddAzureQueueReceiver<TConsumer, T>(this IServiceCollection services, AzureQueueOptions options)
     {
-        services.AddTransient<IMessageReceiver<TConsumer, T>>(x => new AzureQueueReceiver<TConsumer, T>(
-                            options.ConnectionString,
-                            options.QueueNames[typeof(T).Name]));
-        return services;
+        services.AddTransient<IMessageReceiver<TConsumer, T>>(_ => new AzureQueueReceiver<TConsumer, T>(
+            options.ConnectionString,
+            options.QueueNames[typeof(T).Name]));
     }
 
-    public static IServiceCollection AddAzureServiceBusSender<T>(this IServiceCollection services, AzureServiceBusOptions options)
+    private static void AddAzureServiceBusSender<T>(this IServiceCollection services, AzureServiceBusOptions options)
     {
         services.AddSingleton<IMessageSender<T>>(new AzureServiceBusSender<T>(
-                            options.ConnectionString,
-                            options.QueueNames[typeof(T).Name]));
-        return services;
+            options.ConnectionString,
+            options.QueueNames[typeof(T).Name]));
     }
 
-    public static IServiceCollection AddAzureServiceBusReceiver<TConsumer, T>(this IServiceCollection services, AzureServiceBusOptions options)
+    private static void AddAzureServiceBusReceiver<TConsumer, T>(this IServiceCollection services, AzureServiceBusOptions options)
     {
-        services.AddTransient<IMessageReceiver<TConsumer, T>>(x => new AzureServiceBusReceiver<TConsumer, T>(
-                            options.ConnectionString,
-                            options.QueueNames[typeof(T).Name]));
-        return services;
+        services.AddTransient<IMessageReceiver<TConsumer, T>>(_ => new AzureServiceBusReceiver<TConsumer, T>(
+            options.ConnectionString,
+            options.QueueNames[typeof(T).Name]));
     }
 
-    public static IServiceCollection AddFakeSender<T>(this IServiceCollection services)
+    private static void AddFakeSender<T>(this IServiceCollection services)
     {
         services.AddSingleton<IMessageSender<T>>(new FakeSender<T>());
-        return services;
     }
 
-    public static IServiceCollection AddFakeReceiver<TConsumer, T>(this IServiceCollection services)
+    private static void AddFakeReceiver<TConsumer, T>(this IServiceCollection services)
     {
-        services.AddTransient<IMessageReceiver<TConsumer, T>>(x => new FakeReceiver<TConsumer, T>());
-        return services;
+        services.AddTransient<IMessageReceiver<TConsumer, T>>(_ => new FakeReceiver<TConsumer, T>());
     }
 
-    public static IServiceCollection AddKafkaSender<T>(this IServiceCollection services, KafkaOptions options)
+    private static void AddKafkaSender<T>(this IServiceCollection services, KafkaOptions options)
     {
         services.AddSingleton<IMessageSender<T>>(new KafkaSender<T>(options.BootstrapServers, options.Topics[typeof(T).Name]));
-        return services;
     }
 
-    public static IServiceCollection AddKafkaReceiver<TConsumer, T>(this IServiceCollection services, KafkaOptions options)
+    private static void AddKafkaReceiver<TConsumer, T>(this IServiceCollection services, KafkaOptions options)
     {
-        services.AddTransient<IMessageReceiver<TConsumer, T>>(x => new KafkaReceiver<TConsumer, T>(options.BootstrapServers,
+        services.AddTransient<IMessageReceiver<TConsumer, T>>(_ => new KafkaReceiver<TConsumer, T>(options.BootstrapServers,
             options.Topics[typeof(T).Name],
             options.GroupId));
-        return services;
     }
 
-    public static IServiceCollection AddRabbitMQSender<T>(this IServiceCollection services, RabbitMQOptions options)
+    private static void AddRabbitMQSender<T>(this IServiceCollection services, RabbitMQOptions options)
     {
         services.AddSingleton<IMessageSender<T>>(new RabbitMQSender<T>(new RabbitMQSenderOptions
         {
@@ -109,12 +98,11 @@ public static class MessageBrokersCollectionExtensions
             MessageEncryptionEnabled = options.MessageEncryptionEnabled,
             MessageEncryptionKey = options.MessageEncryptionKey
         }));
-        return services;
     }
 
-    public static IServiceCollection AddRabbitMQReceiver<TConsumer, T>(this IServiceCollection services, RabbitMQOptions options)
+    private static void AddRabbitMQReceiver<TConsumer, T>(this IServiceCollection services, RabbitMQOptions options)
     {
-        services.AddTransient<IMessageReceiver<TConsumer, T>>(x => new RabbitMQReceiver<TConsumer, T>(new RabbitMQReceiverOptions
+        services.AddTransient<IMessageReceiver<TConsumer, T>>(_ => new RabbitMQReceiver<TConsumer, T>(new RabbitMQReceiverOptions
         {
             HostName = options.HostName,
             UserName = options.UserName,
@@ -126,7 +114,6 @@ public static class MessageBrokersCollectionExtensions
             MessageEncryptionEnabled = options.MessageEncryptionEnabled,
             MessageEncryptionKey = options.MessageEncryptionKey
         }));
-        return services;
     }
 
     public static IServiceCollection AddMessageBusSender<T>(this IServiceCollection services, MessageBrokerOptions options)

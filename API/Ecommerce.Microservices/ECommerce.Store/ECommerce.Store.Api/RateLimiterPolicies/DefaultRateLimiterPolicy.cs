@@ -5,7 +5,7 @@ namespace ECommerce.Store.Api.RateLimiterPolicies;
 
 public class DefaultRateLimiterPolicy : IRateLimiterPolicy<string>
 {
-    public Func<OnRejectedContext, CancellationToken, ValueTask> OnRejected { get; } = (context, cancellationToken) =>
+    public Func<OnRejectedContext, CancellationToken, ValueTask> OnRejected { get; } = (context, _) =>
     {
         context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
         return default;
@@ -14,7 +14,7 @@ public class DefaultRateLimiterPolicy : IRateLimiterPolicy<string>
     public RateLimitPartition<string> GetPartition(HttpContext httpContext)
     {
         // same policy name and same partition key => will use the same rate limiter instance
-        string partitionKey = null;
+        string partitionKey;
 
         if (httpContext.User.Identity?.IsAuthenticated == true)
         {

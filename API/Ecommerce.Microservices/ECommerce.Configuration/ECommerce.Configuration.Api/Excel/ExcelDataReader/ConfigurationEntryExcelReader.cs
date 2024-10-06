@@ -10,55 +10,48 @@ public class ConfigurationEntryExcelReader : IExcelReader<List<ConfigurationEntr
     public List<ConfigurationEntry> Read(Stream stream)
     {
         var rows = new List<ConfigurationEntry>();
-        int headerIndex = 0;
+        const int headerIndex = 0;
 
-        using (var reader = ExcelReaderFactory.CreateReader(stream))
+        using var reader = ExcelReaderFactory.CreateReader(stream);
+        do
         {
-            int sheetIndex = 0;
-            do
+            var sheetName = reader.Name;
+            if (sheetName != "Sheet1")
             {
-                string sheetName = reader.Name;
-                if (sheetName != "Sheet1")
-                {
-                    continue;
-                }
+                continue;
+            }
 
-                int rowIndex = 0;
-                while (reader.Read())
+            var rowIndex = 0;
+            while (reader.Read())
+            {
+                switch (rowIndex)
                 {
-                    if (rowIndex < headerIndex)
-                    {
+                    case < headerIndex:
                         rowIndex++;
                         continue;
-                    }
-                    else if (rowIndex == headerIndex)
+                    case headerIndex:
                     {
-                        foreach (var header in GetCorrectHeaders())
+                        if (GetCorrectHeaders().Any(header => !string.Equals(reader.GetValue(header.Key).ToString(), header.Value, StringComparison.OrdinalIgnoreCase)))
                         {
-                            if (!string.Equals(reader.GetValue(header.Key)?.ToString(), header.Value, StringComparison.OrdinalIgnoreCase))
-                            {
-                                throw new ValidationException("Wrong Template!");
-                            }
+                            throw new ValidationException("Wrong Template!");
                         }
 
                         rowIndex++;
                         continue;
                     }
-
-                    var row = new ConfigurationEntry
-                    {
-                        Key = reader.GetValue(0)?.ToString(),
-                        Value = reader.GetValue(1)?.ToString(),
-                    };
-
-                    rows.Add(row);
-                    rowIndex++;
                 }
 
-                sheetIndex++;
+                var row = new ConfigurationEntry
+                {
+                    Key = reader.GetValue(0).ToString(),
+                    Value = reader.GetValue(1).ToString(),
+                };
+
+                rows.Add(row);
+                rowIndex++;
             }
-            while (reader.NextResult());
         }
+        while (reader.NextResult());
 
         return rows;
     }

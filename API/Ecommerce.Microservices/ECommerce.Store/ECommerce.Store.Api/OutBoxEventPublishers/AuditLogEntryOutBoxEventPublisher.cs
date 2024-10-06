@@ -15,7 +15,7 @@ public class AuditLogEntryOutBoxEventPublisher : IOutBoxEventPublisher
 
     public static string[] CanHandleEventTypes()
     {
-        return new string[] { EventTypeConstants.AuditLogEntryCreated };
+        return [EventTypeConstants.AuditLogEntryCreated];
     }
 
     public static string CanHandleEventSource()

@@ -11,7 +11,7 @@ public class ChannelFactory
             {
                 HttpClient = new HttpClient(new HttpClientHandler
                 {
-                    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true,
+                    ServerCertificateCustomValidationCallback = (_, _, _, _) => true,
                 }),
             });
 

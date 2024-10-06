@@ -7,16 +7,30 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <RuntimeHostConfigurationOption Include="System.Runtime.Loader.UseRidGraph" Value="true" />
+    </ItemGroup>
+    
+    <ItemGroup>
         <Protobuf Include="..\..\..\Contracts\AuditLog\Protos\auditlog.proto" GrpcServices="Server" Link="Protos\auditlog.proto" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Grpc.AspNetCore" Version="2.59.0" />
+        <PackageReference Include="Grpc.AspNetCore" Version="2.66.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="Certs\classifiedads.grpc.pfx">
+        <None Update="Certs\ecommerce.grpc.pfx">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Certs\ecommerce.identityserver.pfx">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Certs\ecommerce.identityserver.pub.cer">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Certs\ecommerce.secretsencryption.pfx">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
     </ItemGroup>
     

@@ -23,6 +23,6 @@ public class SendGridEmailNotification : IEmailNotification
             .ToList();
 
         var msg = MailHelper.CreateSingleEmailToMultipleRecipients(from, tos, emailMessage.Subject, string.Empty, emailMessage.Body, showAllRecipients: true);
-        var response = await client.SendEmailAsync(msg, cancellationToken);
+        await client.SendEmailAsync(msg, cancellationToken);
     }
 }

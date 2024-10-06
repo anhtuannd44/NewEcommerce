@@ -31,15 +31,9 @@ services.AddMonitoringServices(appSettings.Monitoring);
 
 services.AddExceptionHandler<GlobalExceptionHandler>();
 
-services.AddControllers(_ =>
-{
-})
-.ConfigureApiBehaviorOptions(_ =>
-{
-})
-.AddJsonOptions(_ =>
-{
-});
+services.AddControllers(_ => { })
+    .ConfigureApiBehaviorOptions(_ => { })
+    .AddJsonOptions(_ => { });
 
 services.AddSignalR();
 
@@ -51,7 +45,7 @@ services.AddCors(options =>
         .AllowAnyHeader());
 
     options.AddPolicy("SignalRHubs", builders => builders
-        .SetIsOriginAllowed(host => true)
+        .SetIsOriginAllowed(_ => true)
         .AllowAnyHeader()
         .WithMethods("GET", "POST")
         .AllowCredentials());
@@ -63,29 +57,29 @@ services.AddApplicationServices();
 services.AddNotificationModule(appSettings);
 
 services.AddAuthentication(options =>
-{
-    options.DefaultScheme = appSettings.IdentityServerAuthentication.Provider switch
     {
-        "OpenIddict" => "OpenIddict",
-        _ => JwtBearerDefaults.AuthenticationScheme
-    };
-})
-.AddJwtBearer(options =>
-{
-    options.Authority = appSettings.IdentityServerAuthentication.Authority;
-    options.Audience = appSettings.IdentityServerAuthentication.ApiName;
-    options.RequireHttpsMetadata = appSettings.IdentityServerAuthentication.RequireHttpsMetadata;
-})
-.AddJwtBearer("OpenIddict", options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
+        options.DefaultScheme = appSettings.IdentityServerAuthentication.Provider switch
+        {
+            "OpenIddict" => "OpenIddict",
+            _ => JwtBearerDefaults.AuthenticationScheme
+        };
+    })
+    .AddJwtBearer(options =>
     {
-        ValidateAudience = false,
-        ValidIssuer = appSettings.IdentityServerAuthentication.OpenIddict.IssuerUri,
-        TokenDecryptionKey = new X509SecurityKey(appSettings.IdentityServerAuthentication.OpenIddict.TokenDecryptionCertificate.FindCertificate()),
-        IssuerSigningKey = new X509SecurityKey(appSettings.IdentityServerAuthentication.OpenIddict.IssuerSigningCertificate.FindCertificate()),
-    };
-});
+        options.Authority = appSettings.IdentityServerAuthentication.Authority;
+        options.Audience = appSettings.IdentityServerAuthentication.ApiName;
+        options.RequireHttpsMetadata = appSettings.IdentityServerAuthentication.RequireHttpsMetadata;
+    })
+    .AddJwtBearer("OpenIddict", options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateAudience = false,
+            ValidIssuer = appSettings.IdentityServerAuthentication.OpenIddict.IssuerUri,
+            TokenDecryptionKey = new X509SecurityKey(appSettings.IdentityServerAuthentication.OpenIddict.TokenDecryptionCertificate.FindCertificate()),
+            IssuerSigningKey = new X509SecurityKey(appSettings.IdentityServerAuthentication.OpenIddict.IssuerSigningCertificate.FindCertificate()),
+        };
+    });
 
 services.AddSwaggerGen(setupAction =>
 {
@@ -128,9 +122,9 @@ services.AddSwaggerGen(setupAction =>
                 AuthorizationUrl = new Uri(appSettings.IdentityServerAuthentication.Authority + "/connect/authorize", UriKind.Absolute),
                 Scopes = new Dictionary<string, string>
                 {
-                            { "openid", "OpenId" },
-                            { "profile", "Profile" },
-                            { "ECommerce.WebAPI", "ECommerce WebAPI" },
+                    { "openid", "OpenId" },
+                    { "profile", "Profile" },
+                    { "ECommerce.WebAPI", "ECommerce WebAPI" },
                 },
             },
             ClientCredentials = new OpenApiOAuthFlow
@@ -138,7 +132,7 @@ services.AddSwaggerGen(setupAction =>
                 TokenUrl = new Uri(appSettings.IdentityServerAuthentication.Authority + "/connect/token", UriKind.Absolute),
                 Scopes = new Dictionary<string, string>
                 {
-                            { "ECommerce.WebAPI", "ECommerce WebAPI" },
+                    { "ECommerce.WebAPI", "ECommerce WebAPI" },
                 },
             },
         },
@@ -154,7 +148,8 @@ services.AddSwaggerGen(setupAction =>
                     Type = ReferenceType.SecurityScheme,
                     Id = "Oidc",
                 },
-            }, new List<string>()
+            },
+            new List<string>()
         },
         {
             new OpenApiSecurityScheme
@@ -164,7 +159,8 @@ services.AddSwaggerGen(setupAction =>
                     Type = ReferenceType.SecurityScheme,
                     Id = "Bearer",
                 },
-            }, new List<string>()
+            },
+            new List<string>()
         },
     });
 });
@@ -175,22 +171,19 @@ services.AddHostedService<PushNotificationHostedService>();
 var app = builder.Build();
 
 Policy.Handle<Exception>().WaitAndRetry(new[]
-{
-    TimeSpan.FromSeconds(10),
-    TimeSpan.FromSeconds(20),
-    TimeSpan.FromSeconds(30),
-})
-.Execute(() =>
-{
-    app.MigrateNotificationDb();
-});
+    {
+        TimeSpan.FromSeconds(10),
+        TimeSpan.FromSeconds(20),
+        TimeSpan.FromSeconds(30),
+    })
+    .Execute(() => { app.MigrateNotificationDb(); });
 
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
 }
 
-app.UseExceptionHandler(options => { });
+app.UseExceptionHandler();
 
 app.UseRouting();
 

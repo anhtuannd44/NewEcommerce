@@ -16,7 +16,7 @@ public class LocalFileHealthCheck : IHealthCheck
         try
         {
             var testFile = $"{_options.Path}\\HealthCheck_{Guid.NewGuid()}.txt";
-            using (var fs = File.Create(testFile))
+            using (File.Create(testFile))
             {
             }
 

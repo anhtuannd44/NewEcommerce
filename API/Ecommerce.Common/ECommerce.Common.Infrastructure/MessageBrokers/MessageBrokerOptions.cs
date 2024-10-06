@@ -7,6 +7,7 @@ using ECommerce.Common.Infrastructure.MessageBrokers.RabbitMQ;
 
 namespace ECommerce.Common.Infrastructure.MessageBrokers;
 
+// ReSharper disable once ClassNeverInstantiated.Global
 public class MessageBrokerOptions
 {
     public string Provider { get; set; }

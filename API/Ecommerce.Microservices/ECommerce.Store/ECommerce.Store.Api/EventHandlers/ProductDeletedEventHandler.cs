@@ -9,7 +9,7 @@ using ECommerce.Common.Infrastructure.Identity;
 
 namespace ECommerce.Store.Api.EventHandlers;
 
-public class ProductDeletedEventHandler : IDomainEventHandler<EntityDeletedEvent<Entities.Product>>
+public class ProductDeletedEventHandler : IDomainEventHandler<EntityDeletedEvent<Product>>
 {
     private readonly IMediator _dispatcher;
     private readonly ICurrentUser _currentUser;
@@ -24,7 +24,7 @@ public class ProductDeletedEventHandler : IDomainEventHandler<EntityDeletedEvent
         _outboxEventRepository = outboxEventRepository;
     }
 
-    public async Task HandleAsync(EntityDeletedEvent<Entities.Product> domainEvent, CancellationToken cancellationToken = default)
+    public async Task HandleAsync(EntityDeletedEvent<Product> domainEvent, CancellationToken cancellationToken = default)
     {
         await _dispatcher.Send(new AddAuditLogEntryCommand
         {
@@ -36,7 +36,7 @@ public class ProductDeletedEventHandler : IDomainEventHandler<EntityDeletedEvent
                 ObjectId = domainEvent.Entity.Id.ToString(),
                 Log = domainEvent.Entity.AsJsonString(),
             },
-        });
+        }, cancellationToken);
 
         await _outboxEventRepository.AddOrUpdateAsync(new OutboxEvent
         {

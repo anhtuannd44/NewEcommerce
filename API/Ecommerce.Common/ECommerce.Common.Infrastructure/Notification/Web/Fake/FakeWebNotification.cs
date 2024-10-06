@@ -1,7 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-
-namespace ECommerce.Common.Infrastructure.Notification.Web.Fake;
+﻿namespace ECommerce.Common.Infrastructure.Notification.Web.Fake;
 
 public class FakeWebNotification<T> : IWebNotification<T>
 {

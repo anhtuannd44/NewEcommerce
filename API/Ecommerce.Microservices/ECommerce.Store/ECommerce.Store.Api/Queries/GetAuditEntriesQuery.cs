@@ -6,9 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Store.Api.Queries;
 
-public class GetAuditEntriesQuery : AuditLogEntryQueryOptions, IRequest<List<AuditLogEntryDTO>>
-{
-}
+public class GetAuditEntriesQuery : AuditLogEntryQueryOptions, IRequest<List<AuditLogEntryDTO>>;
 
 public class GetAuditEntriesQueryHandler : IRequestHandler<GetAuditEntriesQuery, List<AuditLogEntryDTO>>
 {

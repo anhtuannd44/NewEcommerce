@@ -32,7 +32,7 @@ public class SendSmsMessagesCommandHandler : ICommandHandler<SendSmsMessagesComm
 
     public async Task HandleAsync(SendSmsMessagesCommand command, CancellationToken cancellationToken = default)
     {
-        var deplayedTimes = new[]
+        var delayedTimes = new[]
         {
             TimeSpan.FromMinutes(1),
             TimeSpan.FromMinutes(2),
@@ -68,15 +68,15 @@ public class SendSmsMessagesCommandHandler : ICommandHandler<SendSmsMessagesComm
                     {
                         Message = sms.Message,
                         PhoneNumber = sms.PhoneNumber,
-                    });
+                    }, cancellationToken);
 
                     sms.SentDateTime = _dateTimeProvider.OffsetNow;
                     sms.Log += log + "Succeed.";
                 }
                 catch (Exception ex)
                 {
-                    sms.Log += log + ex.ToString();
-                    sms.NextAttemptDateTime = _dateTimeProvider.OffsetNow + deplayedTimes[sms.AttemptCount];
+                    sms.Log += log + ex;
+                    sms.NextAttemptDateTime = _dateTimeProvider.OffsetNow + delayedTimes[sms.AttemptCount];
                 }
 
                 sms.AttemptCount += 1;
@@ -88,7 +88,7 @@ public class SendSmsMessagesCommandHandler : ICommandHandler<SendSmsMessagesComm
                     sms.MaxAttemptCount = defaultAttemptCount;
                 }
 
-                await _repository.UnitOfWork.SaveChangesAsync();
+                await _repository.UnitOfWork.SaveChangesAsync(cancellationToken);
             }
         }
         else

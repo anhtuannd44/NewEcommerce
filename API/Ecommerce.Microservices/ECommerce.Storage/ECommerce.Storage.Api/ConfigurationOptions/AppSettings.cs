@@ -1,10 +1,10 @@
 ﻿using CryptographyHelper.Certificates;
 using ECommerce.Common.Infrastructure.Caching;
 using ECommerce.Common.Infrastructure.Interceptors;
+using ECommerce.Common.Infrastructure.Logging;
 using ECommerce.Common.Infrastructure.MessageBrokers;
 using ECommerce.Common.Infrastructure.Monitoring;
 using ECommerce.Common.Infrastructure.Storages;
-using Microsoft.EntityFrameworkCore.Diagnostics.Internal;
 
 namespace ECommerce.Storage.Api.ConfigurationOptions;
 

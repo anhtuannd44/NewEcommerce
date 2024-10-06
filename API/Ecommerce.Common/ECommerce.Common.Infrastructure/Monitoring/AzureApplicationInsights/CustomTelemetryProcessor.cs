@@ -23,12 +23,14 @@ public class CustomTelemetryProcessor : ITelemetryProcessor
         Next.Process(item);
     }
 
-    private bool OKtoSend(ITelemetry item)
+    private static bool OKtoSend(ITelemetry item)
     {
+        // ReSharper disable once UnusedVariable
         if (item is RequestTelemetry request)
         {
         }
-
+        
+        // ReSharper disable once UnusedVariable
         if (item is DependencyTelemetry dependency)
         {
         }

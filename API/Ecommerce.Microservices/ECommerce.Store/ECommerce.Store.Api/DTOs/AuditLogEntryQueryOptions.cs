@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ECommerce.Store.Api.DTOs;
+﻿namespace ECommerce.Store.Api.DTOs;
 
 public class AuditLogEntryQueryOptions
 {

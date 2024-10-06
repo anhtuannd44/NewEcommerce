@@ -1,4 +1,5 @@
-﻿using ECommerce.Common.Infrastructure.Notification.Email.SendGrid;
+﻿using ECommerce.Common.Infrastructure.Notification.Email.Fake;
+using ECommerce.Common.Infrastructure.Notification.Email.SendGrid;
 using ECommerce.Common.Infrastructure.Notification.Email.SmtpClient;
 using Microsoft.Extensions.DependencyInjection;
 

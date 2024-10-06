@@ -17,7 +17,7 @@ public class AuditLogCommandDecorator<TCommand> : ICommandHandler<TCommand>
     public async Task HandleAsync(TCommand command, CancellationToken cancellationToken = default)
     {
         var commandJson = JsonSerializer.Serialize(command);
-        Console.WriteLine($"Command of type {command.GetType().Name}: {commandJson}");
+        Console.WriteLine($@"Command of type {command.GetType().Name}: {commandJson}");
         await _handler.HandleAsync(command, cancellationToken);
     }
 }

@@ -29,7 +29,7 @@ public class AuditLogEntriesController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<AuditLogEntryDTO>>> Get()
     {
-        var logs = await _dispatcher.DispatchAsync(new GetAuditEntriesQuery { });
+        var logs = await _dispatcher.DispatchAsync(new GetAuditEntriesQuery());
         return Ok(logs);
     }
 

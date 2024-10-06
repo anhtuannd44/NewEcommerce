@@ -2,7 +2,7 @@
 using ECommerce.Common.Application.Common.Commands;
 using ECommerce.Common.Application.Common.Queries;
 using ECommerce.Common.Application.Decorators;
-using ECommerce.Common.CrossCuttingConcerns.Extensions;
+using ECommerce.Common.CrossCuttingConcerns.ExtensionMethods;
 
 namespace ECommerce.Common.Application.Common;
 

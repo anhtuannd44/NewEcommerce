@@ -1,25 +1,26 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ECommerce.Store.Api.Entities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ECommerce.Store.Api.MappingConfigurations;
 
-public class ProductConfiguration : IEntityTypeConfiguration<Entities.Product>
+public class ProductConfiguration : IEntityTypeConfiguration<Product>
 {
-    public void Configure(EntityTypeBuilder<Entities.Product> builder)
+    public void Configure(EntityTypeBuilder<Product> builder)
     {
         builder.ToTable("Products");
         builder.Property(x => x.Id).HasDefaultValueSql("newsequentialid()");
 
         // Seed
-        builder.HasData(new List<Entities.Product> {
-            new Entities.Product
+        builder.HasData(new List<Product> {
+            new Product
             {
                 Id = Guid.Parse("6672E891-0D94-4620-B38A-DBC5B02DA9F7"),
                 Code = "TEST",
                 Name = "Test",
                 Description = "Description"
             },
-            new Entities.Product
+            new Product
             {
                 Id = Guid.Parse("CC9D7ECA-6428-4E6D-B40B-2C8D93AB7347"),
                 Code = "PD001",

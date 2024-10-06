@@ -45,12 +45,12 @@ public static class TypeExtensions
             text4.Append($"a.{name} = b.{name};{Environment.NewLine}");
         }
 
-        return text1.ToString()
+        return text1
             + "--------------------------------------" + Environment.NewLine
-            + text2.ToString()
+            + text2
             + "--------------------------------------" + Environment.NewLine
-            + text3.ToString()
+            + text3
             + "--------------------------------------" + Environment.NewLine
-            + text4.ToString();
+            + text4;
     }
 }

@@ -16,8 +16,8 @@ public class AuditLogQueryDecorator<TQuery, TResult> : IQueryHandler<TQuery, TRe
 
     public Task<TResult> HandleAsync(TQuery query, CancellationToken cancellationToken = default)
     {
-        string queryJson = JsonSerializer.Serialize(query);
-        Console.WriteLine($"Query of type {query.GetType().Name}: {queryJson}");
+        var queryJson = JsonSerializer.Serialize(query);
+        Console.WriteLine($@"Query of type {query.GetType().Name}: {queryJson}");
         return _handler.HandleAsync(query, cancellationToken);
     }
 }

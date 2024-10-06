@@ -1,21 +1,19 @@
-﻿using ECommerce.Common.Infrastructure.Notification.Web;
-using ECommerce.Common.Infrastructure.Notification.Web.Fake;
+﻿using ECommerce.Common.Infrastructure.Notification.Web.Fake;
 using ECommerce.Common.Infrastructure.Notification.Web.SignalR;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Microsoft.Extensions.DependencyInjection;
+namespace ECommerce.Common.Infrastructure.Notification.Web;
 
 public static class WebNotificationServiceCollectionExtensions
 {
-    public static IServiceCollection AddSignalRWebNotification<T>(this IServiceCollection services, SignalROptions options)
+    private static void AddSignalRWebNotification<T>(this IServiceCollection services, SignalROptions options)
     {
         services.AddSingleton<IWebNotification<T>>(new SignalRNotification<T>(options.Endpoint, options.Hubs[typeof(T).Name], options.MethodNames[typeof(T).Name]));
-        return services;
     }
 
-    public static IServiceCollection AddFakeWebNotification<T>(this IServiceCollection services)
+    private static void AddFakeWebNotification<T>(this IServiceCollection services)
     {
         services.AddSingleton<IWebNotification<T>>(new FakeWebNotification<T>());
-        return services;
     }
 
     public static IServiceCollection AddWebNotification<T>(this IServiceCollection services, WebOptions options)

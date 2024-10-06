@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ECommerce.Common.Domain.IRepositories;
+﻿namespace ECommerce.Common.Domain.IRepositories;
 
 public interface IConcurrencyHandler<TEntity>
 {

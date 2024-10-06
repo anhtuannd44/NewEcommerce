@@ -7,14 +7,14 @@ namespace ECommerce.Common.Domain.Infrastructure.MessageBrokers;
 public class MessageBus : IMessageBus
 {
     private readonly IServiceProvider _serviceProvider;
-    private static List<Type> _consumers = new List<Type>();
-    private static Dictionary<string, List<Type>> _outboxEventHandlers = new();
+    private static readonly List<Type> _consumers = [];
+    private static readonly Dictionary<string, List<Type>> _outboxEventHandlers = new();
 
     internal static void AddConsumers(Assembly assembly, IServiceCollection services)
     {
         var types = assembly.GetTypes()
-                            .Where(x => x.GetInterfaces().Any(y => y.IsGenericType && y.GetGenericTypeDefinition() == typeof(IMessageBusConsumer<,>)))
-                            .ToList();
+            .Where(x => x.GetInterfaces().Any(y => y.IsGenericType && y.GetGenericTypeDefinition() == typeof(IMessageBusConsumer<,>)))
+            .ToList();
 
         foreach (var type in types)
         {
@@ -27,8 +27,8 @@ public class MessageBus : IMessageBus
     internal static void AddOutboxEventPublishers(Assembly assembly, IServiceCollection services)
     {
         var types = assembly.GetTypes()
-                            .Where(x => x.GetInterfaces().Any(y => y == typeof(IOutBoxEventPublisher)))
-                            .ToList();
+            .Where(x => x.GetInterfaces().Any(y => y == typeof(IOutBoxEventPublisher)))
+            .ToList();
 
         foreach (var type in types)
         {
@@ -37,18 +37,22 @@ public class MessageBus : IMessageBus
 
         foreach (var item in types)
         {
-            var canHandlerEventTypes = (string[])item.InvokeMember(nameof(IOutBoxEventPublisher.CanHandleEventTypes), BindingFlags.InvokeMethod, null, null, null, CultureInfo.CurrentCulture);
-            var eventSource = (string)item.InvokeMember(nameof(IOutBoxEventPublisher.CanHandleEventSource), BindingFlags.InvokeMethod, null, null, null, CultureInfo.CurrentCulture);
+            var canHandlerEventTypes = (string[])item.InvokeMember(nameof(IOutBoxEventPublisher.CanHandleEventTypes), BindingFlags.InvokeMethod, null, null, null,
+                CultureInfo.CurrentCulture);
+            var eventSource = (string)item.InvokeMember(nameof(IOutBoxEventPublisher.CanHandleEventSource), BindingFlags.InvokeMethod, null, null, null,
+                CultureInfo.CurrentCulture);
 
+            if (canHandlerEventTypes == null) continue;
             foreach (var eventType in canHandlerEventTypes)
             {
                 var key = eventSource + ":" + eventType;
-                if (!_outboxEventHandlers.ContainsKey(key))
+                if (!_outboxEventHandlers.TryGetValue(key, out var value))
                 {
-                    _outboxEventHandlers[key] = new List<Type>();
+                    value = [];
+                    _outboxEventHandlers[key] = value;
                 }
 
-                _outboxEventHandlers[key].Add(item);
+                value.Add(item);
             }
         }
     }
@@ -76,18 +80,23 @@ public class MessageBus : IMessageBus
         await _serviceProvider.GetRequiredService<IMessageReceiver<TConsumer, T>>().ReceiveAsync(async (data, metaData) =>
         {
             using var scope = _serviceProvider.CreateScope();
-            foreach (Type handlerType in _consumers)
+            foreach (var handlerType in _consumers)
             {
-                bool canHandleEvent = handlerType.GetInterfaces()
+                var canHandleEvent = handlerType.GetInterfaces()
                     .Any(x => x.IsGenericType
-                        && x.GetGenericTypeDefinition() == typeof(IMessageBusConsumer<,>)
-                        && x.GenericTypeArguments[0] == typeof(TConsumer) && x.GenericTypeArguments[1] == typeof(T));
+                              && x.GetGenericTypeDefinition() == typeof(IMessageBusConsumer<,>)
+                              && x.GenericTypeArguments[0] == typeof(TConsumer) && x.GenericTypeArguments[1] == typeof(T));
 
-                if (canHandleEvent)
+                if (!canHandleEvent) continue;
+                
+                dynamic handler = scope.ServiceProvider.GetService(handlerType);
+                
+                if (handler == null)
                 {
-                    dynamic handler = scope.ServiceProvider.GetService(handlerType);
-                    await handler.HandleAsync((dynamic)data, metaData, cancellationToken);
+                    continue;
                 }
+                
+                await handler.HandleAsync((dynamic)data, metaData, cancellationToken);
             }
         }, cancellationToken);
     }
@@ -95,7 +104,7 @@ public class MessageBus : IMessageBus
     public async Task SendAsync(PublishingOutBoxEvent outbox, CancellationToken cancellationToken = default)
     {
         var key = outbox.EventSource + ":" + outbox.EventType;
-        var handlerTypes = _outboxEventHandlers.ContainsKey(key) ? _outboxEventHandlers[key] : null;
+        var handlerTypes = _outboxEventHandlers.GetValueOrDefault(key);
 
         if (handlerTypes == null)
         {
@@ -103,15 +112,14 @@ public class MessageBus : IMessageBus
             return;
         }
 
-        foreach (var type in handlerTypes)
+        foreach (var handler in handlerTypes.Select(type => _serviceProvider.GetService(type)).Where(handler => (dynamic)handler != null))
         {
-            dynamic handler = _serviceProvider.GetService(type);
-            await handler.HandleAsync(outbox, cancellationToken);
+            await ((dynamic)handler).HandleAsync(outbox, cancellationToken);
         }
     }
 }
 
-public static class MessageBusExtentions
+public static class MessageBusExtensions
 {
     public static void AddMessageBusConsumers(this IServiceCollection services, Assembly assembly)
     {

@@ -47,12 +47,12 @@ public class UpdateProductRequestHandler : IEndpointHandler
         .RequireAuthorization(AuthorizationPolicyNames.UpdateProductPolicy)
         .RequireRateLimiting(RateLimiterPolicyNames.DefaultPolicy)
         .WithName("UpdateProduct")
-        .Produces<UpdateProductResponse>(StatusCodes.Status200OK, contentType: "application/json")
+        .Produces<UpdateProductResponse>(contentType: "application/json")
         .ProducesProblem(StatusCodes.Status404NotFound)
         .ProducesProblem(StatusCodes.Status400BadRequest)
         .WithOpenApi(operation => new OpenApiOperation(operation)
         {
-            Tags = new List<OpenApiTag> { new OpenApiTag { Name = "Products" } }
+            Tags = new List<OpenApiTag> { new() { Name = "Products" } }
         });
     }
 

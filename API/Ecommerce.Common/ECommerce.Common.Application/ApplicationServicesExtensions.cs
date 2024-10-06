@@ -19,6 +19,7 @@ public static class ApplicationServicesExtensions
         return services;
     }
 
+    // ReSharper disable once UnusedMethodReturnValue.Global
     public static IServiceCollection AddMessageHandlers(this IServiceCollection services, Assembly assembly)
     {
         var assemblyTypes = assembly.GetTypes();

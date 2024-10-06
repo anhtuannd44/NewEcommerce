@@ -165,6 +165,6 @@ public class Auth0IdentityProvider : IIdentityProvider
 
         var responseText = await response.Content.ReadAsStringAsync();
 
-        var updatedUser = JsonSerializer.Deserialize<Auth0User>(responseText);
+        JsonSerializer.Deserialize<Auth0User>(responseText);
     }
 }

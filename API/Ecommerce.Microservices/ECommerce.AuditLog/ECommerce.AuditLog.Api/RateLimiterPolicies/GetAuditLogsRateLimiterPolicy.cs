@@ -5,6 +5,7 @@ namespace ECommerce.AuditLog.Api.RateLimiterPolicies;
 
 public class GetAuditLogsRateLimiterPolicy : IRateLimiterPolicy<string>
 {
+    // ReSharper disable once UnusedParameter.Local
     public Func<OnRejectedContext, CancellationToken, ValueTask> OnRejected { get; } = (context, cancellationToken) =>
     {
         context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;

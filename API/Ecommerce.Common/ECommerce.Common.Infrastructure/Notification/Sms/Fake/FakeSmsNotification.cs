@@ -1,7 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-
-namespace ECommerce.Common.Infrastructure.Notification.Sms.Fake;
+﻿namespace ECommerce.Common.Infrastructure.Notification.Sms.Fake;
 
 public class FakeSmsNotification : ISmsNotification
 {

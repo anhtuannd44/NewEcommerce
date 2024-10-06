@@ -1,7 +1,4 @@
-﻿using System.Linq;
-using System.Net.Mail;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Net.Mail;
 
 namespace ECommerce.Common.Infrastructure.Notification.Email.SmtpClient;
 

@@ -33,7 +33,7 @@ public class SendEmailMessagesCommandHandler : ICommandHandler<SendEmailMessages
 
     public async Task HandleAsync(SendEmailMessagesCommand command, CancellationToken cancellationToken = default)
     {
-        var deplayedTimes = new[]
+        var delayedTimes = new[]
         {
             TimeSpan.FromMinutes(1),
             TimeSpan.FromMinutes(2),
@@ -48,7 +48,7 @@ public class SendEmailMessagesCommandHandler : ICommandHandler<SendEmailMessages
         };
 
         var dateTime = _dateTimeProvider.OffsetNow;
-        var defaultAttemptCount = 5;
+        const int defaultAttemptCount = 5;
 
         var messages = _repository.GetQueryableSet()
             .Where(x => x.SentDateTime == null)
@@ -73,15 +73,15 @@ public class SendEmailMessagesCommandHandler : ICommandHandler<SendEmailMessages
                         BCCs = email.BCCs,
                         Subject = email.Subject,
                         Body = email.Body,
-                    });
+                    }, cancellationToken);
 
                     email.SentDateTime = _dateTimeProvider.OffsetNow;
                     email.Log += log + "Succeed.";
                 }
                 catch (Exception ex)
                 {
-                    email.Log += log + ex.ToString();
-                    email.NextAttemptDateTime = _dateTimeProvider.OffsetNow + deplayedTimes[email.AttemptCount];
+                    email.Log += log + ex;
+                    email.NextAttemptDateTime = _dateTimeProvider.OffsetNow + delayedTimes[email.AttemptCount];
                 }
 
                 email.AttemptCount += 1;
@@ -93,7 +93,7 @@ public class SendEmailMessagesCommandHandler : ICommandHandler<SendEmailMessages
                     email.MaxAttemptCount = defaultAttemptCount;
                 }
 
-                await _repository.UnitOfWork.SaveChangesAsync();
+                await _repository.UnitOfWork.SaveChangesAsync(cancellationToken);
             }
         }
         else

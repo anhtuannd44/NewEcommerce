@@ -36,7 +36,7 @@ public class UserRepository : Repository<User, Guid>, IUserRepository
 
         if (queryOptions.AsNoTracking)
         {
-            query = query = query.AsNoTracking();
+            query = query.AsNoTracking();
         }
 
         return query;

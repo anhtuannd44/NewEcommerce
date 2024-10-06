@@ -2,13 +2,9 @@
 
 namespace ECommerce.Storage.Api.Entities;
 
-public class OutboxEvent : OutboxEventBase, IAggregateRoot
-{
-}
+public class OutboxEvent : OutboxEventBase, IAggregateRoot;
 
-public class ArchivedOutboxEvent : OutboxEventBase, IAggregateRoot
-{
-}
+public class ArchivedOutboxEvent : OutboxEventBase, IAggregateRoot;
 
 public abstract class OutboxEventBase : BaseEntity<Guid>
 {

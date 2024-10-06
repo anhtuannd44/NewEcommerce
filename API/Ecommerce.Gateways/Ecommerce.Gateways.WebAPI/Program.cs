@@ -5,17 +5,13 @@ using Ocelot.Configuration.File;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var services = builder.Services;
 var configuration = builder.Configuration;
 
-builder.WebHost.UseECommerceLogger(configuration =>
-{
-    return new LoggingOptions();
-});
+builder.WebHost.UseECommerceLogger(_ => new LoggingOptions());
 
 var appSettings = new AppSettings();
 configuration.Bind(appSettings);
@@ -32,16 +28,12 @@ services.PostConfigure<FileConfiguration>(fileConfiguration =>
 
         foreach (var pathTemplate in route.UpstreamPathTemplates)
         {
-
             fileConfiguration.Routes.Add(new FileRoute
             {
                 UpstreamPathTemplate = pathTemplate,
                 DownstreamPathTemplate = pathTemplate,
                 DownstreamScheme = uri.Scheme,
-                DownstreamHostAndPorts = new List<FileHostAndPort>
-                {
-                    new FileHostAndPort{ Host = uri.Host, Port = uri.Port }
-                }
+                DownstreamHostAndPorts = [new FileHostAndPort { Host = uri.Host, Port = uri.Port }]
             });
         }
     }
@@ -50,7 +42,7 @@ services.PostConfigure<FileConfiguration>(fileConfiguration =>
     {
         if (string.IsNullOrWhiteSpace(route.DownstreamScheme))
         {
-            route.DownstreamScheme = appSettings?.Ocelot?.DefaultDownstreamScheme;
+            route.DownstreamScheme = appSettings.Ocelot?.DefaultDownstreamScheme;
         }
 
         if (string.IsNullOrWhiteSpace(route.DownstreamPathTemplate))

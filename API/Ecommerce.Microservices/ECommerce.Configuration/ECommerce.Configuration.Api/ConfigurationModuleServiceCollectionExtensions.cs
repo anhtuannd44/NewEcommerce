@@ -14,7 +14,7 @@ namespace ECommerce.Configuration;
 
 public static class ConfigurationModuleServiceCollectionExtensions
 {
-    public static IServiceCollection AddConfigurationModule(this IServiceCollection services, AppSettings appSettings)
+    public static void AddConfigurationModule(this IServiceCollection services, AppSettings appSettings)
     {
         services.AddDbContext<ConfigurationDbContext>(options => options.UseSqlServer(appSettings.ConnectionStrings.ECommerce, sql =>
         {
@@ -31,8 +31,6 @@ public static class ConfigurationModuleServiceCollectionExtensions
 
         services.AddScoped<IExcelReader<List<ConfigurationEntry>>, ConfigurationEntryExcelReader>();
         services.AddScoped<IExcelWriter<List<ConfigurationEntry>>, ConfigurationEntryExcelWriter>();
-
-        return services;
     }
 
     public static IMvcBuilder AddConfigurationModule(this IMvcBuilder builder)
@@ -42,9 +40,7 @@ public static class ConfigurationModuleServiceCollectionExtensions
 
     public static void MigrateConfigurationDb(this IApplicationBuilder app)
     {
-        using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
-        {
-            serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>().Database.Migrate();
-        }
+        using var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope();
+        serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>().Database.Migrate();
     }
 }

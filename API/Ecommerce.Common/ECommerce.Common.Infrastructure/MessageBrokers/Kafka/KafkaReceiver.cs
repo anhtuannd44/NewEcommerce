@@ -44,7 +44,7 @@ public class KafkaReceiver<TConsumer, T> : IMessageReceiver<TConsumer, T>, IDisp
             }
             catch (ConsumeException e)
             {
-                Console.WriteLine($"Consume error: {e.Error.Reason}");
+                Console.WriteLine($@"Consume error: {e.Error.Reason}");
             }
         }
     }

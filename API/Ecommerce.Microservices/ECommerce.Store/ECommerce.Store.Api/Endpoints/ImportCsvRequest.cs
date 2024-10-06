@@ -20,7 +20,7 @@ public class ImportCsvRequestHandler : IEndpointHandler
         .RequireAuthorization()
         .RequireRateLimiting(RateLimiterPolicyNames.DefaultPolicy)
         .WithName("ImportCsv")
-        .Produces<CreateProductResponse>(StatusCodes.Status200OK, contentType: "application/json")
+        .Produces<CreateProductResponse>(contentType: "application/json")
         .ProducesProblem(StatusCodes.Status400BadRequest)
         .WithOpenApi(operation => new OpenApiOperation(operation)
         {

@@ -7,9 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.AuditLog.Queries;
 
-public class GetAuditEntriesQuery : AuditLogEntryQueryOptions, IQuery<List<AuditLogEntryDTO>>
-{
-}
+public class GetAuditEntriesQuery : AuditLogEntryQueryOptions, IQuery<List<AuditLogEntryDTO>>;
 
 public class GetAuditEntriesQueryHandler : IQueryHandler<GetAuditEntriesQuery, List<AuditLogEntryDTO>>
 {

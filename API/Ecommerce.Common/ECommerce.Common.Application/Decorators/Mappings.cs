@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using ECommerce.Common.Application.Common.Commands;
 using ECommerce.Common.Application.Common.Queries;
-using ECommerce.Common.CrossCuttingConcerns.Extensions;
+using ECommerce.Common.CrossCuttingConcerns.ExtensionMethods;
 
 namespace ECommerce.Common.Application.Decorators;
 
@@ -14,7 +14,7 @@ internal static class Mappings
         {
             if (type.HasInterface(typeof(ICommandHandler<>)))
             {
-                var decoratorAttribute = (MappingAttribute)type.GetCustomAttributes(false).FirstOrDefault(x => x.GetType() == typeof(MappingAttribute));
+                var decoratorAttribute = (MappingAttribute)type.GetCustomAttributes(false).FirstOrDefault(x => x is MappingAttribute);
 
                 if (decoratorAttribute != null)
                 {
@@ -23,7 +23,7 @@ internal static class Mappings
             }
             else if (type.HasInterface(typeof(IQueryHandler<,>)))
             {
-                var decoratorAttribute = (MappingAttribute)type.GetCustomAttributes(false).FirstOrDefault(x => x.GetType() == typeof(MappingAttribute));
+                var decoratorAttribute = (MappingAttribute)type.GetCustomAttributes(false).FirstOrDefault(x => x is MappingAttribute);
 
                 if (decoratorAttribute != null)
                 {
@@ -33,9 +33,9 @@ internal static class Mappings
         }
     }
 
-    public static readonly Dictionary<Type, Type> AttributeToCommandHandler = new Dictionary<Type, Type>();
+    public static readonly Dictionary<Type, Type> AttributeToCommandHandler = new();
 
-    public static readonly Dictionary<Type, Type> AttributeToQueryHandler = new Dictionary<Type, Type>();
+    public static readonly Dictionary<Type, Type> AttributeToQueryHandler = new();
 }
 
 [AttributeUsage(AttributeTargets.Class)]

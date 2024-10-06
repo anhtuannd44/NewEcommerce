@@ -4,12 +4,7 @@ public class OcelotOptions
 {
     public string DefaultDownstreamScheme { get; set; }
 
-    public OcelotRoutesOptions Routes { get; set; }
-}
-
-public class OcelotRoutesOptions : Dictionary<string, OcelotRouteOptions>
-{
-
+    public Dictionary<string, OcelotRouteOptions> Routes { get; set; }
 }
 
 public class OcelotRouteOptions

@@ -27,8 +27,8 @@ public class PushNotificationHostedService : BackgroundService
             using (var scope = _services.CreateScope())
             {
                 var notificationHubContext = scope.ServiceProvider.GetRequiredService<IHubContext<NotificationHub>>();
-
-                await notificationHubContext.Clients.All.SendAsync("ReceiveMessage", $"Test message from NotificationHub ...", cancellationToken: stoppingToken);
+                _logger.LogInformation("ReceiveMessage ...");
+                await notificationHubContext.Clients.All.SendAsync("ReceiveMessage", "Test message from NotificationHub ...", cancellationToken: stoppingToken);
             }
 
             await Task.Delay(30000, stoppingToken);

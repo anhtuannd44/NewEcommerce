@@ -17,7 +17,7 @@ namespace ECommerce.Configuration.Controllers;
 
 [Authorize]
 [Produces("application/json")]
-[Microsoft.AspNetCore.Mvc.Route("api/[controller]")]
+[Route("api/[controller]")]
 [ApiController]
 public class ConfigurationEntriesController : ControllerBase
 {
@@ -29,7 +29,7 @@ public class ConfigurationEntriesController : ControllerBase
 
     public ConfigurationEntriesController(Dispatcher dispatcher,
         ILogger<ConfigurationEntriesController> logger,
-        IOptionsSnapshot<AppSettings> appSettings,
+        IOptions<AppSettings> appSettings,
         IExcelWriter<List<ConfigurationEntry>> configurationEntriesExcelWriter,
         IExcelReader<List<ConfigurationEntry>> configurationEntriesExcelReader)
     {

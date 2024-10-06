@@ -18,10 +18,7 @@ var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 var configuration = builder.Configuration;
 
-builder.WebHost.UseECommerceLogger(configuration =>
-{
-    return new LoggingOptions();
-});
+builder.WebHost.UseECommerceLogger(_ => new LoggingOptions());
 
 var appSettings = new AppSettings();
 configuration.Bind(appSettings);
@@ -34,53 +31,46 @@ services.AddMonitoringServices(appSettings.Monitoring);
 
 services.AddExceptionHandler<GlobalExceptionHandler>();
 
-services.AddControllers(configure =>
-{
-})
-.ConfigureApiBehaviorOptions(options =>
-{
-})
-.AddJsonOptions(options =>
-{
-});
+services.AddControllers(_ => { })
+    .ConfigureApiBehaviorOptions(_ => { })
+    .AddJsonOptions(_ => { });
 
 services.AddCors(options =>
 {
-    options.AddPolicy("AllowAnyOrigin", builder => builder
+    options.AddPolicy("AllowAnyOrigin", builders => builders
         .AllowAnyOrigin()
         .AllowAnyMethod()
         .AllowAnyHeader());
 });
 
-services.AddDateTimeProvider();
-services.AddApplicationServices();
-
-services.AddConfigurationModule(appSettings);
+services.AddDateTimeProvider()
+    .AddApplicationServices()
+    .AddConfigurationModule(appSettings);
 
 services.AddAuthentication(options =>
-{
-    options.DefaultScheme = appSettings.IdentityServerAuthentication.Provider switch
     {
-        "OpenIddict" => "OpenIddict",
-        _ => JwtBearerDefaults.AuthenticationScheme
-    };
-})
-.AddJwtBearer(options =>
-{
-    options.Authority = appSettings.IdentityServerAuthentication.Authority;
-    options.Audience = appSettings.IdentityServerAuthentication.ApiName;
-    options.RequireHttpsMetadata = appSettings.IdentityServerAuthentication.RequireHttpsMetadata;
-})
-.AddJwtBearer("OpenIddict", options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
+        options.DefaultScheme = appSettings.IdentityServerAuthentication.Provider switch
+        {
+            "OpenIddict" => "OpenIddict",
+            _ => JwtBearerDefaults.AuthenticationScheme
+        };
+    })
+    .AddJwtBearer(options =>
     {
-        ValidateAudience = false,
-        ValidIssuer = appSettings.IdentityServerAuthentication.OpenIddict.IssuerUri,
-        TokenDecryptionKey = new X509SecurityKey(appSettings.IdentityServerAuthentication.OpenIddict.TokenDecryptionCertificate.FindCertificate()),
-        IssuerSigningKey = new X509SecurityKey(appSettings.IdentityServerAuthentication.OpenIddict.IssuerSigningCertificate.FindCertificate()),
-    };
-});
+        options.Authority = appSettings.IdentityServerAuthentication.Authority;
+        options.Audience = appSettings.IdentityServerAuthentication.ApiName;
+        options.RequireHttpsMetadata = appSettings.IdentityServerAuthentication.RequireHttpsMetadata;
+    })
+    .AddJwtBearer("OpenIddict", options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateAudience = false,
+            ValidIssuer = appSettings.IdentityServerAuthentication.OpenIddict.IssuerUri,
+            TokenDecryptionKey = new X509SecurityKey(appSettings.IdentityServerAuthentication.OpenIddict.TokenDecryptionCertificate.FindCertificate()),
+            IssuerSigningKey = new X509SecurityKey(appSettings.IdentityServerAuthentication.OpenIddict.IssuerSigningCertificate.FindCertificate()),
+        };
+    });
 
 services.AddSwaggerGen(setupAction =>
 {
@@ -123,9 +113,9 @@ services.AddSwaggerGen(setupAction =>
                 AuthorizationUrl = new Uri(appSettings.IdentityServerAuthentication.Authority + "/connect/authorize", UriKind.Absolute),
                 Scopes = new Dictionary<string, string>
                 {
-                            { "openid", "OpenId" },
-                            { "profile", "Profile" },
-                            { "ECommerce.WebAPI", "ECommerce WebAPI" },
+                    { "openid", "OpenId" },
+                    { "profile", "Profile" },
+                    { "ECommerce.WebAPI", "ECommerce WebAPI" },
                 },
             },
             ClientCredentials = new OpenApiOAuthFlow
@@ -133,7 +123,7 @@ services.AddSwaggerGen(setupAction =>
                 TokenUrl = new Uri(appSettings.IdentityServerAuthentication.Authority + "/connect/token", UriKind.Absolute),
                 Scopes = new Dictionary<string, string>
                 {
-                            { "ECommerce.WebAPI", "ECommerce WebAPI" },
+                    { "ECommerce.WebAPI", "ECommerce WebAPI" },
                 },
             },
         },
@@ -149,7 +139,8 @@ services.AddSwaggerGen(setupAction =>
                     Type = ReferenceType.SecurityScheme,
                     Id = "Oidc",
                 },
-            }, new List<string>()
+            },
+            new List<string>()
         },
         {
             new OpenApiSecurityScheme
@@ -159,7 +150,8 @@ services.AddSwaggerGen(setupAction =>
                     Type = ReferenceType.SecurityScheme,
                     Id = "Bearer",
                 },
-            }, new List<string>()
+            },
+            new List<string>()
         },
     });
 });
@@ -168,22 +160,19 @@ services.AddSwaggerGen(setupAction =>
 var app = builder.Build();
 
 Policy.Handle<Exception>().WaitAndRetry(new[]
-{
-    TimeSpan.FromSeconds(10),
-    TimeSpan.FromSeconds(20),
-    TimeSpan.FromSeconds(30),
-})
-.Execute(() =>
-{
-    app.MigrateConfigurationDb();
-});
+    {
+        TimeSpan.FromSeconds(10),
+        TimeSpan.FromSeconds(20),
+        TimeSpan.FromSeconds(30),
+    })
+    .Execute(() => { app.MigrateConfigurationDb(); });
 
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
 }
 
-app.UseExceptionHandler(options => { });
+app.UseExceptionHandler(_ => { });
 
 app.UseRouting();
 

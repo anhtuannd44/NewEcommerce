@@ -4,7 +4,7 @@ using ECommerce.AuditLog.Repositories;
 using ECommerce.Common.Application.Common;
 using ECommerce.Common.Application.Common.DTOs;
 using ECommerce.Common.Application.Common.Queries;
-using ECommerce.Common.CrossCuttingConcerns.Extensions;
+using ECommerce.Common.CrossCuttingConcerns.ExtensionMethods;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.AuditLog.Queries;
@@ -48,12 +48,12 @@ public class GetPagedAuditEntriesQueryHandler : IQueryHandler<GetPagedAuditEntri
 
         var result = new Paged<AuditLogEntryDTO>
         {
-            TotalItems = await query.CountAsync(),
+            TotalItems = await query.CountAsync(cancellationToken: cancellationToken),
         };
 
         var auditLogs = await query.OrderByDescending(x => x.CreatedDateTime)
             .Paged(queryOptions.Page, queryOptions.PageSize)
-            .ToListAsync();
+            .ToListAsync(cancellationToken: cancellationToken);
 
         var users = await _dispatcher.DispatchAsync(new GetUsersQuery(), cancellationToken);
 

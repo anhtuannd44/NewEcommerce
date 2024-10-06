@@ -1,7 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-
-namespace ECommerce.Common.Infrastructure.Notification.Email.SmtpClient;
+﻿namespace ECommerce.Common.Infrastructure.Notification.Email.Fake;
 
 public class FakeEmailNotification : IEmailNotification
 {
